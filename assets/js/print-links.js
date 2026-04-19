@@ -5,10 +5,16 @@
  */
 
 function generatePrintLinksSection() {
-  // Find the post content area
-  const contentElement = document.querySelector('.post-content');
+  // Find the main content area - try multiple selectors to support different layouts
+  let contentElement = document.querySelector('.post-content');
+  
+  // Fallback for other layouts
   if (!contentElement) {
-    console.warn('[print-links] .post-content not found');
+    contentElement = document.querySelector('main.page-content');
+  }
+  
+  if (!contentElement) {
+    console.warn('[print-links] No suitable content area found');
     return;
   }
 
@@ -110,7 +116,7 @@ function generatePrintLinksSection() {
   table.appendChild(tbody);
   linksSection.appendChild(table);
 
-  // Append the section after the post body inner
+  // Append the section after the main content
   const postBodyInner = document.querySelector('.post-body__inner');
   const postBody = contentElement.closest('.post-body');
   
@@ -121,8 +127,9 @@ function generatePrintLinksSection() {
     postBody.appendChild(linksSection);
     console.log('[print-links] Section appended to post-body');
   } else {
-    document.body.appendChild(linksSection);
-    console.log('[print-links] Section appended to body');
+    // For other layouts, append after the content element
+    contentElement.parentElement.appendChild(linksSection);
+    console.log('[print-links] Section appended after main content');
   }
 }
 
