@@ -22,7 +22,9 @@ has_author: true
       </div>
     </div>
   </div>
+  {%- if author_name and author_name != empty -%}
   {%- include author-card.html name=author_name avatar=author_avatar bio=author_bio location=author_location %}
+  {%- endif -%}
   {%- if continue_post %}
     {%- assign continue_image = continue_post.image | default: site.default_post_image -%}
     <section class="post-banner">

@@ -38,6 +38,8 @@
   --border: #{$light-border};
   --accent: #{$light-accent};
   --accent-strong: #{$light-accent-strong};
+  --link-color: #{$light-accent};
+  --link-color-visited: #{$light-accent-strong};
   --header-bg: #{$light-header};
   --header-bg-scrolled: #{$light-header-scrolled};
   --drawer-bg: #{$light-drawer};
@@ -58,6 +60,8 @@ html[data-theme="dark"] {
   --border: #{$dark-border};
   --accent: #{$dark-accent};
   --accent-strong: #{$dark-accent-strong};
+  --link-color: #{$dark-accent};
+  --link-color-visited: #{$dark-accent-strong};
   --header-bg: #{$dark-header};
   --header-bg-scrolled: #{$dark-header-scrolled};
   --drawer-bg: #{$dark-drawer};
@@ -79,6 +83,8 @@ html[data-theme="dark"] {
     --border: #{$dark-border};
     --accent: #{$dark-accent};
     --accent-strong: #{$dark-accent-strong};
+    --link-color: #{$dark-accent};
+    --link-color-visited: #{$dark-accent-strong};
     --header-bg: #{$dark-header};
     --header-bg-scrolled: #{$dark-header-scrolled};
     --drawer-bg: #{$dark-drawer};
@@ -112,13 +118,21 @@ body {
 }
 
 a {
-  color: inherit;
-  text-decoration-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  color: var(--link-color);
+  text-decoration: underline;
+  text-decoration-color: var(--link-color);
   text-underline-offset: 0.18em;
+  transition: color $motion-ui ease-in-out, text-decoration-color $motion-ui ease-in-out;
+}
+
+a:visited {
+  color: var(--link-color-visited);
+  text-decoration-color: var(--link-color-visited);
 }
 
 a:hover {
   color: var(--accent-strong);
+  text-decoration-color: var(--accent-strong);
 }
 
 h1,
@@ -230,4 +244,9 @@ button {
     animation-iteration-count: 1 !important;
     transition-duration: NaNs !important;
   }
+}
+
+// Hide print-only sections on screen
+.print-links-section {
+  display: none;
 }

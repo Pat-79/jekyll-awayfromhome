@@ -3,6 +3,9 @@
 {% if page.layout == 'home' %}
 <script src="{{ '/assets/js/home-landing.js' | relative_url }}" defer></script>
 {% endif %}
+{% if page.layout == 'post' or page.layout == 'page' %}
+<script src="{{ '/assets/js/print-links.js' | relative_url }}" defer></script>
+{% endif %}
 {% if page.layout == 'post' %}
 <script src="{{ '/assets/js/post-snap.js' | relative_url }}" defer></script>
 {% endif %}

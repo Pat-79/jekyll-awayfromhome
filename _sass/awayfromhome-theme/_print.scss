@@ -17,6 +17,8 @@
     --header-bg: transparent;
     --header-bg-scrolled: transparent;
     --shadow-soft: none;
+    --link-color: #0066cc;
+    --link-color-visited: #663399;
   }
 
   body {
@@ -154,11 +156,22 @@
     line-height: 1.45;
     widows: 3;
     orphans: 3;
+    counter-reset: link-ref;
   }
 
   .post-content a {
     color: #000000;
     text-decoration: underline;
+    font-style: italic;
+    counter-increment: link-ref;
+  }
+
+  .post-content a::after {
+    content: "[" counter(link-ref) "]";
+    font-size: 0.85em;
+    vertical-align: super;
+    margin-left: 0.1em;
+    font-style: normal;
   }
 
   .post-content img,
@@ -211,5 +224,60 @@
   h4 {
     break-after: avoid-page;
     page-break-after: avoid;
+  }
+
+  /* Print-specific links section for displaying all link references */
+  .print-links-section {
+    display: block;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #000000;
+    page-break-before: always;
+  }
+
+  .print-links-section h2 {
+    font-size: 14pt;
+    margin: 0 0 1rem 0;
+    break-after: avoid-page;
+    page-break-after: avoid;
+  }
+
+  .print-links-table {
+    width: auto;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 11pt;
+  }
+
+  .print-links-table th,
+  .print-links-table td {
+    padding: 0.3rem 0.5rem;
+    text-align: left;
+    border: none;
+  }
+
+  .print-links-table tbody tr {
+    border-bottom: 1px dotted #000000;
+  }
+
+  .print-links-table th {
+    font-weight: bold;
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+    border-bottom: 1px dotted #000000;
+  }
+
+  .print-links-num {
+    text-align: center;
+  }
+
+  .print-links-url-cell {
+    word-break: break-word;
+  }
+
+  .print-links-url {
+    color: #000000;
+    text-decoration: underline;
+    font-style: italic;
   }
 }
