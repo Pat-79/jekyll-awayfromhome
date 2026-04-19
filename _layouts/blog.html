@@ -1,0 +1,52 @@
+---
+layout: page
+---
+
+{%- assign blog_intro = page.blog_intro | default: site.blog_page.intro | default: 'Recent posts using the reusable article layout.' -%}
+{%- assign excerpt_words = page.blog_excerpt_words | default: site.blog_page.excerpt_words | default: 30 -%}
+{%- assign posts_limit = page.blog_posts_limit | default: site.blog_page.posts_limit -%}
+
+<section class="page-section">
+  <div class="container">
+    {% unless page.image %}
+      <h1>{{ page.title | default: "Blog" }}</h1>
+    {% endunless %}
+    {% if blog_intro and blog_intro != '' %}
+      <p>{{ blog_intro }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="page-section page-section--spaced">
+  <div class="container story-list">
+    {%- if posts_limit and posts_limit != '' -%}
+      {%- for post in site.posts limit: posts_limit -%}
+        {%- assign post_image = post.image | default: site.default_post_image -%}
+        <a class="story-card story-card--blog" href="{{ post.url | relative_url }}">
+          <div class="story-card__media">
+            <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="story-card__body">
+            <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
+          </div>
+        </a>
+      {%- endfor -%}
+    {%- else -%}
+      {%- for post in site.posts -%}
+        {%- assign post_image = post.image | default: site.default_post_image -%}
+        <a class="story-card story-card--blog" href="{{ post.url | relative_url }}">
+          <div class="story-card__media">
+            <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+          </div>
+          <div class="story-card__body">
+            <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
+          </div>
+        </a>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</section>

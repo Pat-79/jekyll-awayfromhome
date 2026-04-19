@@ -1,0 +1,65 @@
+<div class="menu-drawer__top-controls">
+  <div class="theme-switch theme-switch--drawer-top" role="group" aria-label="Color theme">
+    <button class="theme-switch__option" type="button" data-theme-option="auto" aria-pressed="false" aria-label="Use system theme" title="System">
+      {% include icon.html platform='theme-system' %}
+      <span class="sr-only">System theme</span>
+    </button>
+    <button class="theme-switch__option" type="button" data-theme-option="light" aria-pressed="false" aria-label="Use light theme" title="Light">
+      {% include icon.html platform='theme-light' %}
+      <span class="sr-only">Light theme</span>
+    </button>
+    <button class="theme-switch__option" type="button" data-theme-option="dark" aria-pressed="false" aria-label="Use dark theme" title="Dark">
+      {% include icon.html platform='theme-dark' %}
+      <span class="sr-only">Dark theme</span>
+    </button>
+  </div>
+</div>
+
+<div class="menu-panel">
+  <section class="menu-section">
+    <h2>NAVIGATE</h2>
+    <nav aria-label="Drawer navigation">
+      <ul class="menu-list">
+        {%- for item in site.navigation %}
+          <li><a href="{{ item.url | relative_url }}" data-drawer-link>{{ item.title }}</a></li>
+        {%- endfor %}
+      </ul>
+    </nav>
+  </section>
+
+  <section class="menu-section">
+    <h2>TAGS</h2>
+    {%- include tag-cloud.html
+      min_size=13
+      max_size=19
+      show_count=false
+      drawer_link=true
+      class_name='tag-cloud tag-cloud--scaled tag-cloud--drawer'
+      chip_class='tag-chip tag-chip--cloud'
+      empty_class='menu-note'
+    -%}
+  </section>
+
+  <section class="menu-section">
+    <h2>SOCIAL MEDIA</h2>
+    {%- include social-links.html class_name='social-links social-links--drawer' %}
+  </section>
+
+
+  <section class="menu-section">
+    <h2>ARCHIVE</h2>
+    <ul class="menu-list">
+      {%- assign archive_months = '' | split: '' -%}
+      {%- for post in site.posts -%}
+        {%- assign month_key = post.date | date: '%Y-%m' -%}
+        {%- unless archive_months contains month_key -%}
+          {%- assign archive_months = archive_months | push: month_key -%}
+          {%- assign archive_label = post.date | date: '%B %Y' -%}
+          {%- assign archive_path = post.date | date: '%Y/%m' -%}
+          {%- assign archive_url = '/' | append: archive_path -%}
+          <li><a href="{{ archive_url | relative_url }}" data-drawer-link>{{ archive_label }}</a></li>
+        {%- endunless -%}
+      {%- endfor -%}
+    </ul>
+  </section>
+</div>

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="dhTitle">
+  <title id="dhTitle">Open road at golden hour illustration</title>
+  <defs>
+    <linearGradient id="dhBg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%"   stop-color="#0a1628"/>
+      <stop offset="45%"  stop-color="#0d3350"/>
+      <stop offset="100%" stop-color="#0a2a3a"/>
+    </linearGradient>
+    <linearGradient id="dhCurve1" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%"   stop-color="#00c8d8" stop-opacity="0"/>
+      <stop offset="35%"  stop-color="#00c8d8" stop-opacity="0.75"/>
+      <stop offset="65%"  stop-color="#40e8f0" stop-opacity="0.60"/>
+      <stop offset="100%" stop-color="#40e8f0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="dhCurve2" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%"   stop-color="#0090b8" stop-opacity="0"/>
+      <stop offset="40%"  stop-color="#0090b8" stop-opacity="0.60"/>
+      <stop offset="70%"  stop-color="#20b8d0" stop-opacity="0.50"/>
+      <stop offset="100%" stop-color="#20b8d0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="dhCurve3" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%"   stop-color="#006880" stop-opacity="0"/>
+      <stop offset="30%"  stop-color="#006880" stop-opacity="0.50"/>
+      <stop offset="60%"  stop-color="#00a8c0" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#00a8c0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="dhAccent" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%"   stop-color="#80ffee" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#80ffee" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#80ffee" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="900" fill="url(#dhBg)"/>
+
+  <!-- Deep background volume arcs -->
+  <path d="M-200 700 C300 200 800 100 1800 500" stroke="#0a5070" stroke-width="280" fill="none" opacity="0.30"/>
+  <path d="M-200 200 C400 600 1000 750 1800 300" stroke="#083848" stroke-width="240" fill="none" opacity="0.25"/>
+
+  <!-- Curve set A — large arc lower-left to upper-right -->
+  <path d="M-100 820 C200 600 500 300 900 180 C1200 80 1450 200 1700 450" stroke="url(#dhCurve3)" stroke-width="80" fill="none" opacity="0.35"/>
+  <path d="M-100 820 C200 600 500 300 900 180 C1200 80 1450 200 1700 450" stroke="url(#dhCurve2)" stroke-width="40" fill="none" opacity="0.55"/>
+  <path d="M-100 820 C200 600 500 300 900 180 C1200 80 1450 200 1700 450" stroke="url(#dhCurve1)" stroke-width="16" fill="none" opacity="0.80"/>
+  <path d="M-100 820 C200 600 500 300 900 180 C1200 80 1450 200 1700 450" stroke="url(#dhAccent)" stroke-width="3"  fill="none" opacity="0.70"/>
+
+  <!-- Curve set B — S-sweep upper-left to lower-right -->
+  <path d="M-100 100 C250 300 600 250 900 400 C1150 530 1350 700 1700 820" stroke="url(#dhCurve3)" stroke-width="70" fill="none" opacity="0.30"/>
+  <path d="M-100 100 C250 300 600 250 900 400 C1150 530 1350 700 1700 820" stroke="url(#dhCurve2)" stroke-width="34" fill="none" opacity="0.50"/>
+  <path d="M-100 100 C250 300 600 250 900 400 C1150 530 1350 700 1700 820" stroke="url(#dhCurve1)" stroke-width="12" fill="none" opacity="0.72"/>
+  <path d="M-100 100 C250 300 600 250 900 400 C1150 530 1350 700 1700 820" stroke="url(#dhAccent)" stroke-width="2.5" fill="none" opacity="0.60"/>
+
+  <!-- Curve set C — mid canvas arc -->
+  <path d="M0 480 C350 620 700 560 1000 640 C1250 700 1450 600 1700 680" stroke="url(#dhCurve3)" stroke-width="60" fill="none" opacity="0.28"/>
+  <path d="M0 480 C350 620 700 560 1000 640 C1250 700 1450 600 1700 680" stroke="url(#dhCurve2)" stroke-width="28" fill="none" opacity="0.48"/>
+  <path d="M0 480 C350 620 700 560 1000 640 C1250 700 1450 600 1700 680" stroke="url(#dhCurve1)" stroke-width="10" fill="none" opacity="0.68"/>
+  <path d="M0 480 C350 620 700 560 1000 640 C1250 700 1450 600 1700 680" stroke="url(#dhAccent)" stroke-width="2"  fill="none" opacity="0.55"/>
+
+  <!-- Curve set D — upper arc -->
+  <path d="M-100 300 C300 160 700 220 1100 140 C1350 90 1550 180 1700 260" stroke="url(#dhCurve3)" stroke-width="50" fill="none" opacity="0.22"/>
+  <path d="M-100 300 C300 160 700 220 1100 140 C1350 90 1550 180 1700 260" stroke="url(#dhCurve2)" stroke-width="22" fill="none" opacity="0.40"/>
+  <path d="M-100 300 C300 160 700 220 1100 140 C1350 90 1550 180 1700 260" stroke="url(#dhCurve1)" stroke-width="8"  fill="none" opacity="0.60"/>
+  <path d="M-100 300 C300 160 700 220 1100 140 C1350 90 1550 180 1700 260" stroke="url(#dhAccent)" stroke-width="1.5" fill="none" opacity="0.50"/>
+
+  <!-- Curve set E — bottom sweep -->
+  <path d="M-100 960 C400 780 800 820 1200 760 C1450 720 1600 800 1800 900" stroke="url(#dhCurve2)" stroke-width="55" fill="none" opacity="0.28"/>
+  <path d="M-100 960 C400 780 800 820 1200 760 C1450 720 1600 800 1800 900" stroke="url(#dhCurve1)" stroke-width="20" fill="none" opacity="0.45"/>
+  <path d="M-100 960 C400 780 800 820 1200 760 C1450 720 1600 800 1800 900" stroke="url(#dhAccent)" stroke-width="3"  fill="none" opacity="0.40"/>
+
+  <!-- Fine hairline accents -->
+  <path d="M-100 820 C180 580 520 340 860 220 C1140 120 1400 180 1700 350" stroke="#a0f8f0" stroke-width="1" fill="none" opacity="0.35"/>
+  <path d="M-100 150 C260 320 580 280 880 420 C1120 530 1380 680 1700 800" stroke="#80e8e8" stroke-width="1" fill="none" opacity="0.28"/>
+  <path d="M0 560 C320 640 680 600 1000 670 C1260 728 1480 640 1700 700"  stroke="#60d8e0" stroke-width="1" fill="none" opacity="0.30"/>
+
+  <!-- Soft glow nodes at curve intersections -->
+  <circle cx="900" cy="310" r="90" fill="#00d8e8" opacity="0.06"/>
+  <circle cx="900" cy="310" r="40" fill="#00d8e8" opacity="0.08"/>
+  <circle cx="480" cy="580" r="70" fill="#00a8c8" opacity="0.06"/>
+  <circle cx="1220" cy="520" r="80" fill="#00c0d8" opacity="0.06"/>
+</svg>

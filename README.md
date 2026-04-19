@@ -1,2 +1,599 @@
 # jekyll-awayfromhome
-The Away From Home theme is a modern, responsive Jekyll theme optimized for GitHub Pages (Jekyll 3.10.0+). It was designed for my personal website, hence the name, but anybody can use it for their own Jekyll website. Features include built-in search, light/dark/auto theme switching, SEO optimization, and mobile-first responsive design.
+
+A modern, responsive Jekyll theme for personal websites and travel blogs, built for GitHub Pages. It features a full-screen video landing hero (HLS stream or YouTube), client-side full-text search, light/dark/auto theme switching, SEO meta tags, and a mobile-first layout — all without requiring a build pipeline or server-side plugins beyond what GitHub Pages already provides.
+
+---
+
+## Features
+
+- **Full-screen landing hero** — HLS live/VOD stream, YouTube embed, or static image as the homepage background, with chapter-weighted random seek
+- **Light / Dark / Auto theme** — persistent user preference stored in `localStorage`, no flash on load
+- **Client-side search** — full-text search engine with a JSON index built at compile time; no external service required
+- **SEO ready** — Open Graph, Twitter Card, and JSON-LD structured data included on every page
+- **Mobile-first responsive layout** — single-column on phones, expanding to a sidebar+content layout on wider screens
+- **Accessible** — semantic HTML5, ARIA labels, keyboard-navigable drawer and search
+- **GitHub Pages compatible** — works with Jekyll 3.10.0 and the `github-pages ~> 232` gem; no unsupported plugins
+- **No build pipeline** — plain ES6 modules and SCSS `@import`; everything compiles inside Jekyll
+
+---
+
+## Requirements
+
+| Dependency | Minimum version |
+|---|---|
+| Ruby | 2.6 |
+| Jekyll | 3.10.0 |
+| Bundler | 2.0 |
+| github-pages gem | ~> 232 |
+
+No Node.js, npm, or webpack required.
+
+---
+
+## Browser Support
+
+| Browser | Supported |
+|---|---|
+| Chrome / Edge | Latest 2 versions |
+| Firefox | Latest 2 versions |
+| Safari | 14+ |
+| iOS Safari | 14+ |
+
+---
+
+## Installation
+
+### 1. Add the theme to your site's `_config.yml`
+
+```yaml
+remote_theme: Pat-79/jekyll-awayfromhome
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+```
+
+> Theme repository: https://github.com/Pat-79/jekyll-awayfromhome.git
+
+### 2. Configure your site's `Gemfile`
+
+```ruby
+source "https://rubygems.org"
+
+gem "github-pages", "~> 232", group: :jekyll_plugins
+
+group :jekyll_plugins do
+  gem "jekyll-feed"
+  gem "jekyll-remote-theme"
+end
+```
+
+### 3. Install and preview locally
+
+```bash
+bundle install
+bundle exec jekyll serve
+```
+
+Open `http://localhost:4000` in your browser.
+
+### 4. Deploy to GitHub Pages
+
+Push your site repository to GitHub. In **Settings → Pages**, set the source branch to `main` and the folder to `/` (root). GitHub will build and publish the site automatically within about a minute.
+
+---
+
+## Configuration
+
+All theme settings live in your site's `_config.yml`.
+
+```yaml
+# ── Site identity ──────────────────────────────────────────────────────────────
+title: My Site
+description: A short description shown in search results and the RSS feed.
+url: "https://yourusername.github.io"
+baseurl: ""           # Leave empty for user/org sites. Use /repo-name for project sites.
+email: you@example.com
+
+# ── Brand ──────────────────────────────────────────────────────────────────────
+brand:
+  title: My Site Name           # Shown in the header and drawer
+  logo: /assets/images/logo-mark.svg  # Path to your SVG or PNG logo
+
+# ── Navigation ─────────────────────────────────────────────────────────────────
+navigation:
+  - title: Home
+    url: /
+  - title: About
+    url: /about/
+  - title: Blog
+    url: /blog/
+  - title: Search
+    url: /search/
+
+# ── Social links ───────────────────────────────────────────────────────────────
+social_links:
+  - platform: x
+    url: https://x.com/yourhandle
+  - platform: instagram
+    url: https://www.instagram.com/yourhandle
+  - platform: youtube
+    url: https://www.youtube.com/yourchannel
+  - platform: github
+    url: https://github.com/yourusername
+  - platform: linkedin
+    url: https://www.linkedin.com/in/yourprofile
+  - platform: tiktok
+    url: https://www.tiktok.com/@yourhandle
+  - platform: email
+    url: mailto:you@example.com
+  - platform: phone
+    url: tel:+1234567890
+
+# ── Post defaults ──────────────────────────────────────────────────────────────
+default_post_image: /assets/images/default-hero.svg   # Fallback hero for posts without an image
+
+# ── Home landing hero ──────────────────────────────────────────────────────────
+home_landing:
+  hls_url: https://example.com/streams/playlist.m3u8  # HLS stream (takes priority)
+  youtube_id: dQw4w9WgXcQ                             # YouTube video ID (fallback)
+  image: /assets/images/default-hero.svg              # Static image (last fallback)
+  latest_posts_limit: 6                               # Posts shown in the homepage grid
+
+# ── Plugins ────────────────────────────────────────────────────────────────────
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+```
+
+### Supported Social Media Platforms
+
+The theme includes icons for the following platforms. Add any or all to your `social_links` array in `_config.yml`:
+
+| Platform | URL Format | Notes |
+|---|---|---|
+| **Social Media** | | |
+| `x` | `https://x.com/yourhandle` | X (Twitter X) logo |
+| `twitter` | `https://twitter.com/yourhandle` | Classic Twitter bird (legacy) |
+| `facebook` | `https://www.facebook.com/yourpage` | Facebook icon |
+| `instagram` | `https://www.instagram.com/yourhandle` | Instagram icon |
+| `linkedin` | `https://www.linkedin.com/in/yourprofile` | LinkedIn icon |
+| `youtube` | `https://www.youtube.com/yourchannel` | YouTube icon |
+| `tiktok` | `https://www.tiktok.com/@yourhandle` | TikTok icon |
+| `pinterest` | `https://www.pinterest.com/yourprofile` | Pinterest icon |
+| `reddit` | `https://www.reddit.com/u/yourprofile` | Reddit icon |
+| `discord` | `https://discord.gg/yourserver` | Discord icon |
+| `mastodon` | `https://mastodon.social/@yourhandle` | Mastodon icon |
+| `twitch` | `https://www.twitch.tv/yourhandle` | Twitch icon |
+| `spotify` | `https://open.spotify.com/user/yourprofile` | Spotify icon |
+| **Contact** | | |
+| `email` | `mailto:you@example.com` | Envelope icon |
+| `phone` | `tel:+1234567890` | Phone icon |
+| **Auto-detected** | | |
+| `rss` | *(auto-injected if jekyll-feed is enabled)* | RSS feed icon — automatically added if not manually configured |
+
+Only include the platforms you actively use. Icons are rendered as a responsive grid with automatic wrapping.
+
+---
+
+## Theme Structure
+
+
+```
+jekyll-awayfromhome/
+├── _includes/                    # Reusable HTML partials
+│   ├── head.html                 # <head>: charset, viewport, CSS links
+│   ├── meta.html                 # SEO: Open Graph, Twitter Card, JSON-LD
+│   ├── header.html               # Top navigation bar
+│   ├── footer.html               # Site footer
+│   ├── sidebar.html              # Slide-in drawer / sidebar
+│   ├── author-card.html          # Post author byline
+│   ├── post-hero.html            # Hero banner for posts
+│   ├── search-widget.html        # Inline search input with dropdown results
+│   ├── social-links.html         # Social media icon row
+│   ├── tag-cloud.html            # Compact tag cloud snippet
+│   ├── tag-cloud-page.html       # Full-page tag cloud
+│   ├── tag-index.html            # Tag index listing
+│   ├── entity-index.html         # Browse / category index partial
+│   ├── icon.html                 # SVG icon helper
+│   ├── css.html                  # <link> stylesheet tags
+│   ├── font.html                 # Web font loading
+│   ├── javascript-head.html      # Scripts loaded in <head>
+│   └── javascript-body.html      # Scripts loaded before </body>
+│
+├── _layouts/                     # Page templates
+│   ├── base.html                 # Root shell — <html>, header, footer
+│   ├── home.html                 # Homepage: hero + latest posts grid
+│   ├── page.html                 # Generic prose page (About, etc.)
+│   ├── post.html                 # Blog post with hero, author card, tags
+│   ├── blog.html                 # Reverse-chronological post archive
+│   ├── entity-index.html         # Filterable browse / category page
+│   ├── search.html               # Full-page search interface
+│   ├── search-data.html          # Generates /assets/data/search-data.json
+│   ├── tag-cloud.html            # Tag cloud page
+│   ├── tag-index.html            # Posts grouped by tag
+│   ├── social-media.html         # Link-in-bio / social hub page
+│   ├── sitemap.html              # Human-readable HTML sitemap
+│   ├── sitemap_xml.html          # Machine-readable sitemap.xml
+│   └── error.html                # 404 / error page
+│
+├── _sass/
+│   └── awayfromhome-theme/
+│       ├── _variables.scss       # Design tokens — override to customise
+│       ├── _base.scss            # CSS reset and element defaults
+│       ├── _layout.scss          # Header, footer, drawer, grid
+│       ├── _post.scss            # Post and article styles
+│       ├── _search-widget.scss   # Search input component
+│       └── _print.scss           # Print stylesheet
+│
+├── assets/
+│   ├── css/
+│   │   └── main.scss             # SCSS entrypoint (imports all partials)
+│   ├── js/
+│   │   ├── theme.js              # Light/dark/auto mode switching
+│   │   ├── search.js             # Search engine: index loading and querying
+│   │   ├── search-widget.js      # Search UI: input, dropdown, keyboard nav
+│   │   ├── home-landing.js       # Hero player: HLS, chapter-based random seek
+│   │   ├── post-snap.js          # Post-page scroll-snap behaviour
+│   │   ├── entity-index.js       # Browse page live filtering
+│   │   └── tag-index.js          # Tag index live filtering
+│   ├── data/
+│   │   ├── search-data.md        # Liquid template → outputs search-data.json
+│   │   └── home-landing-chapters.json  # Chapter markers for HLS hero
+│   ├── fonts/                    # Self-hosted web fonts (optional)
+│   └── images/                   # Default theme images (replace with your own)
+│       ├── logo-mark.svg         # Site logo shown in header/drawer
+│       ├── default-hero.svg      # Fallback hero for posts with no image
+│       ├── avatar.svg            # Author avatar placeholder
+│       ├── icons.svg             # SVG sprite for UI icons
+│       └── page-hero-*.svg       # Per-layout hero illustrations
+│
+└── lib/
+    └── jekyll-awayfromhome.rb    # Ruby gem entry point (minimal)
+```
+
+---
+
+## Layouts
+
+Set the layout in any page or post's front matter with `layout:`.
+
+| Layout | Description |
+|---|---|
+| `base` | Root shell — `<html>`, `<head>`, header, footer. All other layouts extend this. |
+| `home` | Homepage. Full-screen hero (HLS / YouTube / image) and a latest-posts grid. |
+| `page` | Standard content page (About, contact, landing pages). |
+| `post` | Blog post. Includes a hero banner, author card, tags, and post body. |
+| `blog` | Post archive listed in reverse-chronological order. |
+| `entity-index` | Filterable browse/category index. |
+| `search` | Full-page search interface with query input and results. |
+| `tag-cloud` | Visual tag cloud weighted by post count. |
+| `tag-index` | All posts grouped and listed by tag. |
+| `social-media` | Link-in-bio / social media hub page. |
+| `sitemap` | Human-readable HTML sitemap. |
+| `sitemap_xml` | Machine-readable `sitemap.xml`. |
+| `error` | 404 and error pages. |
+
+**Example — a blog post:**
+
+```yaml
+---
+layout: post
+title: Three Days in Ljubljana
+date: 2026-04-19
+image: /assets/images/my-hero.jpg
+tags: [europe, city, travel]
+---
+
+Post content goes here.
+```
+
+**Example — a standard page:**
+
+```yaml
+---
+layout: page
+title: About
+permalink: /about/
+---
+```
+
+---
+
+## Customisation
+
+### Overriding SCSS variables
+
+Every design token in `_sass/awayfromhome-theme/_variables.scss` is declared with `!default`, which means your own value wins if you set it first.
+
+Create `assets/css/main.scss` in your site with an empty YAML front matter block, declare your overrides, then import the theme:
+
+```scss
+---
+---
+
+// ── Your overrides (must come before the @import) ────────────────────────────
+
+// Accent colours
+$light-accent:       #e63946;
+$light-accent-strong:#c1121f;
+$dark-accent:        #ff6b7a;
+$dark-accent-strong: #ff8fa3;
+
+// Fonts (use any Google Font or system font stack)
+$font-display: 'Playfair Display', Georgia, serif;
+$font-body:    'Lato', 'Helvetica Neue', Arial, sans-serif;
+
+// Rounding — set to 0 for a sharper look
+$radius-small: 0.25rem;
+$radius-large: 0.5rem;
+
+// ── Theme import ─────────────────────────────────────────────────────────────
+@import "awayfromhome-theme/base";
+@import "awayfromhome-theme/layout";
+@import "awayfromhome-theme/search-widget";
+@import "awayfromhome-theme/post";
+@import "awayfromhome-theme/print";
+```
+
+#### Typography
+
+| Variable | Default | Description |
+|---|---|---|
+| `$font-display` | `Sora, "Avenir Next", sans-serif` | Headings and display text |
+| `$font-body` | `"Nunito Sans", "Segoe UI", Arial, sans-serif` | Body copy |
+
+#### Layout & Geometry
+
+| Variable | Default | Description |
+|---|---|---|
+| `$layout-max-width` | `76rem` | Maximum overall page width |
+| `$reading-width` | `48rem` | Maximum width of post body text |
+| `$panel-max-width` | `52rem` | Maximum width for narrower panels |
+| `$page-gutter` | `1.15rem` | Horizontal edge padding |
+| `$drawer-width` | `18rem` | Sidebar/drawer width |
+| `$drawer-width-wide` | `22rem` | Sidebar width on wide screens |
+| `$header-height` | `4.75rem` | Fixed header bar height |
+| `$radius-small` | `1rem` | Corner radius for cards and inputs |
+| `$radius-large` | `1.75rem` | Corner radius for modals and panels |
+| `$radius-pill` | `999px` | Fully rounded pill shape |
+
+#### Motion
+
+| Variable | Default | Description |
+|---|---|---|
+| `$motion-fast` | `160ms` | Micro-interactions |
+| `$motion-base` | `240ms` | Standard transitions |
+| `$motion-theme` | `400ms` | Dark/light mode crossfade |
+
+#### Responsive Breakpoints
+
+| Variable | Default |
+|---|---|
+| `$breakpoint-sm` | `560px` |
+| `$breakpoint-mobile` | `640px` |
+| `$breakpoint-tablet` | `700px` |
+| `$breakpoint-desktop` | `900px` |
+
+#### Light Theme Palette
+
+| Variable | Default | Description |
+|---|---|---|
+| `$light-bg` | `#f4f7fb` | Page background |
+| `$light-surface` | `#ffffff` | Card / surface background |
+| `$light-text` | `#102033` | Primary text |
+| `$light-muted` | `#5a677a` | Secondary / muted text |
+| `$light-accent` | `#11b8bd` | Accent, links, interactive elements |
+| `$light-accent-strong` | `#0e8793` | Hovered / pressed accent |
+| `$light-border` | `rgba(16,32,51,0.12)` | Dividers and borders |
+
+#### Dark Theme Palette
+
+| Variable | Default | Description |
+|---|---|---|
+| `$dark-bg` | `#171b22` | Page background |
+| `$dark-surface` | `#222833` | Card / surface background |
+| `$dark-text` | `#f4f8fb` | Primary text |
+| `$dark-muted` | `#b3c0cb` | Secondary / muted text |
+| `$dark-accent` | `#1dc9d2` | Accent, links, interactive elements |
+| `$dark-accent-strong` | `#7ce8ed` | Hovered / pressed accent |
+| `$dark-border` | `rgba(244,248,251,0.12)` | Dividers and borders |
+
+#### Footer
+
+| Variable | Default | Description |
+|---|---|---|
+| `$footer-bg` | `#0b1016` | Footer background (same in both themes) |
+| `$footer-text` | `rgba(245,248,251,0.88)` | Footer primary text |
+| `$footer-text-muted` | `rgba(245,248,251,0.68)` | Footer secondary text |
+
+---
+
+### Replacing images
+
+The theme ships with a set of SVG placeholder images in `assets/images/`. Replace any of them in your own site by placing a file with the same name in your site's `assets/images/` folder — Jekyll will use yours instead of the theme's.
+
+| File | Used for |
+|---|---|
+| `logo-mark.svg` | Site logo in the header and drawer |
+| `default-hero.svg` | Fallback hero image for posts that have no `image:` set |
+| `avatar.svg` | Author avatar placeholder in the author card |
+| `icons.svg` | SVG sprite for all UI icons (navigation, social, controls) |
+| `page-hero-blog.svg` | Hero on the blog archive page |
+| `page-hero-about.svg` | Hero on the about page |
+| `page-hero-tags.svg` | Hero on the tag pages |
+| `page-hero-sitemap.svg` | Hero on the sitemap page |
+| `page-hero-social.svg` | Hero on the social media page |
+| `page-hero-error-404.svg` | Hero on the 404 error page |
+
+You can also set a per-post hero image via front matter:
+
+```yaml
+---
+layout: post
+title: My Post
+image: /assets/images/my-custom-hero.jpg
+---
+```
+
+---
+
+### Overriding layouts and includes
+
+Jekyll's theme override mechanism lets you replace any layout or include by placing a file with the same path in your site:
+
+- To override a layout, copy it from `_layouts/` to your site's `_layouts/` folder.
+- To override a partial, copy it from `_includes/` to your site's `_includes/` folder.
+
+Your version takes precedence, leaving the rest of the theme untouched.
+
+---
+
+### Adding custom JavaScript
+
+Place your scripts in your site's `assets/js/` folder and load them by overriding `_includes/javascript-body.html`:
+
+```html
+<!-- _includes/javascript-body.html -->
+{% include javascript-body.html %}   <!-- keeps the theme scripts -->
+<script src="{{ '/assets/js/my-custom.js' | relative_url }}" defer></script>
+```
+
+---
+
+## Search
+
+The theme includes a client-side full-text search engine. No external service, API key, or server-side plugin required.
+
+### How it works
+
+1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes common English stopwords, and emits a weighted inverted-keyword index as `/assets/data/search-data.json`.
+
+2. **Runtime caching** — On first visit, `search.js` fetches `search-data.json` and stores it in `localStorage` for 24 hours, keyed by a build-time version hash. Subsequent searches in the same browser use the cached index without a network request.
+
+3. **Query matching** — The engine tokenises the query, looks up each token in the inverted index, and scores results (title and tag matches weighted higher than body matches). Results are returned sorted by relevance score.
+
+4. **Two entry points:**
+   - **`/search/`** — A dedicated full-page search powered by the `search` layout.
+   - **Search widget** — An inline search input with a live dropdown, rendered via `{% include search-widget.html %}` and visible in the sidebar on every page.
+
+### Required search page
+
+Create a `search.md` file in your site:
+
+```yaml
+---
+layout: search
+title: Search
+permalink: /search/
+---
+```
+
+Do not delete `assets/data/search-data.md` — it is the Liquid template that generates the JSON index at build time.
+
+### What gets indexed
+
+- All posts in `_posts/`
+- All pages with a layout (except `error`, `none`, and asset files)
+- Post and page titles, tags, categories, excerpts, and body content
+
+---
+
+## Home Landing Hero
+
+The `home` layout renders a full-screen hero at the top of the page. Three video sources are tried in order:
+
+| Source | Condition |
+|---|---|
+| **HLS stream** | `hls_url` is set to an `.m3u8` URL |
+| **YouTube** | `youtube_id` is set (or `video_url` contains a YouTube link) |
+| **Static image** | Always available as a fallback / poster while video loads |
+
+### Configuring the hero
+
+In `_config.yml` (applies to all home pages):
+
+```yaml
+home_landing:
+  hls_url: https://example.com/streams/playlist.m3u8
+  youtube_id: dQw4w9WgXcQ
+  image: /assets/images/default-hero.svg
+  latest_posts_limit: 6
+```
+
+Override per-page in your `index.md` front matter:
+
+```yaml
+---
+layout: home
+landing_hls_url: /assets/streams/my-stream/playlist.m3u8
+landing_image: /assets/images/my-hero.jpg
+latest_posts_limit: 8
+---
+```
+
+---
+
+### Using an HLS stream
+
+[HLS (HTTP Live Streaming)](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) breaks a video into small `.ts` segments described by a `.m3u8` playlist. The theme loads [hls.js](https://github.com/video-dev/hls.js) dynamically — only when `hls_url` is set — so there is zero overhead on pages without video.
+
+The video plays muted, autoplays, and loops. Playback starts at a position chosen by the chapter file (see below) rather than always from the beginning.
+
+**Generating HLS segments with ffmpeg:**
+
+```bash
+ffmpeg -i input.mp4 \
+  -codec: copy \
+  -start_number 0 \
+  -hls_time 6 \
+  -hls_list_size 0 \
+  -f hls \
+  assets/streams/my-stream/playlist.m3u8
+```
+
+Commit the resulting `playlist.m3u8` and all `.ts` segment files, or host them on a CDN. Update `hls_url` to point to the `playlist.m3u8`.
+
+---
+
+### Chapter file (`home-landing-chapters.json`)
+
+`assets/data/home-landing-chapters.json` defines named time ranges in the stream. When the page loads, the theme performs a **weighted random pick** to decide where playback begins — so cinematically interesting sections appear more often than credits or slow intros.
+
+```json
+[
+  {
+    "id": "chapter-01",
+    "label": "Aerial opening",
+    "start": 1,
+    "weight": 4
+  },
+  {
+    "id": "chapter-02",
+    "label": "City walkthrough",
+    "start": 45,
+    "weight": 5
+  },
+  {
+    "id": "chapter-03",
+    "label": "Credits",
+    "start": 280,
+    "weight": 0
+  }
+]
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | string | Unique identifier (not displayed) |
+| `label` | string | Human-readable name (not displayed; for your reference) |
+| `start` | number | Chapter start time in **seconds** from the beginning of the stream |
+| `weight` | number | Relative likelihood of this chapter being picked. `0` disables it. Higher values = more likely. |
+
+A chapter is chosen by weighted random selection based on its weight value, then playback starts exactly at that chapter's `start` time. Chapters that would end within 4 seconds of the stream's end are automatically skipped. If the chapter file cannot be fetched or no valid chapters remain after filtering, playback falls back to a uniform random position across the full stream duration.
+
+---
+
+## License
+
+This theme is released under the [MIT License](LICENSE).

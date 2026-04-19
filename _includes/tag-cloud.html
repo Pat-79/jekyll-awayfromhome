@@ -1,0 +1,50 @@
+{%- assign cloud_tags = site.tags | sort -%}
+{%- assign show_count = include.show_count -%}
+{%- if show_count == nil -%}
+  {%- assign show_count = true -%}
+{%- endif -%}
+
+{%- if cloud_tags.size > 0 -%}
+  {%- assign min_posts = 999999999 -%}
+  {%- assign max_posts = 0 -%}
+  {%- assign min_size = include.min_size | default: 14 -%}
+  {%- assign max_size = include.max_size | default: 34 -%}
+
+  {%- for tag in cloud_tags -%}
+    {%- assign post_count = tag[1] | size -%}
+    {%- if post_count < min_posts -%}
+      {%- assign min_posts = post_count -%}
+    {%- endif -%}
+    {%- if post_count > max_posts -%}
+      {%- assign max_posts = post_count -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- assign steps = max_posts | minus: min_posts -%}
+  {%- if steps == 0 -%}
+    {%- assign steps = 1 -%}
+  {%- endif -%}
+  {%- assign size_range = max_size | minus: min_size -%}
+
+  <div class="{{ include.class_name | default: 'tag-cloud tag-cloud--scaled' }}">
+    {%- for tag in cloud_tags -%}
+      {%- assign tag_name = tag[0] -%}
+      {%- assign tag_slug = tag_name | slugify -%}
+      {%- assign post_count = tag[1] | size -%}
+      {%- assign font_size = post_count | minus: min_posts | times: size_range | divided_by: steps | plus: min_size -%}
+      {%- assign size_bucket = font_size | minus: min_size | times: 5 | divided_by: size_range | plus: 1 -%}
+      <a
+        class="{{ include.chip_class | default: 'tag-chip tag-chip--cloud' }} tag-chip--size-{{ size_bucket }}"
+        href="{{ '/tags/' | relative_url }}?tag={{ tag_slug }}"
+        {% if include.drawer_link %}data-drawer-link{% endif %}
+      >
+        <span class="tag-chip__label">{{ tag_name }}</span>
+        {%- if show_count -%}
+          <span class="tag-chip__count">{{ post_count }}</span>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+  </div>
+{%- else -%}
+  <p class="{{ include.empty_class | default: 'menu-note' }}">No tags yet.</p>
+{%- endif -%}

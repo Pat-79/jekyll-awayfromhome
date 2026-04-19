@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="sl2Title">
+  <title id="sl2Title">Lake Bled and Julian Alps illustration</title>
+  <defs>
+    <!-- Sky: bright Slovenian summer day at Lake Bled -->
+    <linearGradient id="sl2Sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%"   stop-color="#2c7fc4"/>
+      <stop offset="40%"  stop-color="#5aaee8"/>
+      <stop offset="75%"  stop-color="#9ed4f5"/>
+      <stop offset="100%" stop-color="#e8f4fb"/>
+    </linearGradient>
+    <!-- Lake Bled: deep emerald-teal -->
+    <linearGradient id="sl2Lake" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%"   stop-color="#3a8070"/>
+      <stop offset="100%" stop-color="#1a3c34"/>
+    </linearGradient>
+    <!-- Mountain reflections in water -->
+    <linearGradient id="sl2Reflect" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%"   stop-color="#2c5e52" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#122820" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1600" height="900" fill="url(#sl2Sky)"/>
+
+  <!-- Bright summer sun -->
+  <circle cx="310" cy="145" r="56" fill="#fff5c0" opacity="0.96"/>
+  <circle cx="310" cy="145" r="44" fill="#ffe87a" opacity="0.80"/>
+
+  <!-- === DISTANT ALPS (back range, lighter) === -->
+  <!-- Triglav-like jagged ridge, right-centre — lighter, hazy -->
+  <path d="M500 390 L600 230 L640 280 L700 200 L760 265 L820 205 L890 285 L940 235 L1010 300 L1060 250 L1130 310 L1170 260 L1240 320 L1300 280 L1380 350 L1600 360 V520 H500Z"
+        fill="#2e3d4a" opacity="0.55"/>
+
+  <!-- === NEAR ALPINE RANGE (mid range, darker) === -->
+  <path d="M0 430 L80 340 L140 400 L230 300 L310 365 L390 295 L470 370 L550 310 L640 390 L720 330 L800 400 L860 335 L940 405 L1020 350 L1100 415 L1180 355 L1260 420 L1350 340 L1430 395 L1530 320 L1600 380 V560 H0Z"
+        fill="#233038"/>
+
+  <!-- === FORESTED FOOTHILLS === -->
+  <!-- Left forest band -->
+  <path d="M0 490 C60 470 110 460 160 468 C220 476 260 470 310 458 C360 446 410 452 460 462 C510 472 550 468 590 474 V600 H0Z"
+        fill="#1e4228"/>
+  <!-- Right forest band -->
+  <path d="M880 474 C940 462 1000 468 1060 460 C1120 452 1180 458 1240 466 C1300 474 1360 462 1420 458 C1480 454 1540 462 1600 468 V600 H880Z"
+        fill="#1e4228"/>
+
+  <!-- Individual trees — left shore -->
+  <!-- tree silhouettes as simple triangles / tapered spires -->
+  <polygon points="30,490 52,430 74,490"   fill="#163521"/>
+  <polygon points="64,495 84,438 104,495"  fill="#1a3e26"/>
+  <polygon points="96,492 120,428 144,492" fill="#163521"/>
+  <polygon points="136,498 158,442 180,498" fill="#1a3e26"/>
+  <polygon points="178,494 200,435 222,494" fill="#163521"/>
+  <polygon points="220,492 244,432 268,492" fill="#1a3e26"/>
+  <polygon points="264,496 286,440 308,496" fill="#163521"/>
+  <polygon points="306,492 330,428 354,492" fill="#1a3e26"/>
+  <polygon points="350,498 374,436 398,498" fill="#163521"/>
+  <polygon points="394,493 416,435 438,493" fill="#1a3e26"/>
+  <polygon points="438,496 462,432 486,496" fill="#163521"/>
+  <polygon points="482,492 506,434 530,492" fill="#1a3e26"/>
+  <polygon points="528,498 550,438 572,498" fill="#163521"/>
+  <polygon points="572,494 594,436 616,494" fill="#1a3e26"/>
+  <polygon points="612,490 634,432 656,490" fill="#163521"/>
+
+  <!-- Individual trees — right shore -->
+  <polygon points="880,492 902,434 924,492"  fill="#163521"/>
+  <polygon points="924,496 946,438 968,496"  fill="#1a3e26"/>
+  <polygon points="968,492 990,432 1012,492" fill="#163521"/>
+  <polygon points="1012,496 1034,436 1056,496" fill="#1a3e26"/>
+  <polygon points="1056,492 1078,434 1100,492" fill="#163521"/>
+  <polygon points="1100,496 1122,438 1144,496" fill="#1a3e26"/>
+  <polygon points="1144,492 1166,434 1188,492" fill="#163521"/>
+  <polygon points="1188,496 1210,438 1232,496" fill="#1a3e26"/>
+  <polygon points="1232,492 1254,435 1276,492" fill="#163521"/>
+  <polygon points="1276,496 1298,438 1320,496" fill="#1a3e26"/>
+  <polygon points="1320,492 1342,434 1364,492" fill="#163521"/>
+  <polygon points="1364,496 1386,437 1408,496" fill="#1a3e26"/>
+  <polygon points="1408,492 1430,434 1452,492" fill="#163521"/>
+  <polygon points="1452,496 1474,437 1496,496" fill="#1a3e26"/>
+  <polygon points="1496,492 1520,433 1544,492" fill="#163521"/>
+  <polygon points="1546,494 1568,435 1590,494" fill="#1a3e26"/>
+
+  <!-- === LAKE BLED === -->
+  <rect y="508" width="1600" height="392" fill="url(#sl2Lake)"/>
+
+  <!-- Water surface shimmer lines -->
+  <path d="M0 530 C200 524 500 532 800 526 C1100 520 1400 528 1600 522"
+        stroke="#5ab09a" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M0 550 C250 544 600 552 900 546 C1150 540 1380 548 1600 542"
+        stroke="#4a9c88" stroke-width="1.5" fill="none" opacity="0.28"/>
+  <path d="M0 572 C300 566 700 574 1050 568 C1300 562 1500 570 1600 564"
+        stroke="#3a8070" stroke-width="1" fill="none" opacity="0.22"/>
+
+  <!-- Mountain reflections in lake -->
+  <path d="M0 510 L80 565 L180 530 L310 580 L420 535 L530 572 L650 538 L760 575 L860 530 V900 H0Z"
+        fill="url(#sl2Reflect)" opacity="0.6"/>
+
+  <!-- Tree reflections — dark bands in water -->
+  <rect x="0"    y="508" width="660" height="40" fill="#1a3c2e" opacity="0.35"/>
+  <rect x="880"  y="508" width="720" height="40" fill="#1a3c2e" opacity="0.35"/>
+
+  <!-- === BLED ISLAND === -->
+  <!-- Island base / rock -->
+  <ellipse cx="800" cy="512" rx="92" ry="22" fill="#2e4030"/>
+  <!-- Church walls -->
+  <rect x="768" y="464" width="64" height="52" rx="3" fill="#c8bfaa"/>
+  <!-- Bell tower -->
+  <rect x="786" y="430" width="26" height="40" rx="2" fill="#bab1a0"/>
+  <!-- Tower roof — pointed spire -->
+  <polygon points="799,408 779,432 819,432" fill="#5a4a3c"/>
+  <!-- Church roof -->
+  <polygon points="800,456 765,468 835,468" fill="#5a4a3c"/>
+  <!-- Arched window (symbolic) -->
+  <path d="M793 472 A6 8 0 0 1 805 472 V482 H793Z" fill="#4a6858" opacity="0.7"/>
+  <!-- Door -->
+  <rect x="793" y="500" width="14" height="16" rx="2" fill="#4a3c30"/>
+  <!-- Small trees on island -->
+  <polygon points="755,490 763,468 771,490" fill="#163521"/>
+  <polygon points="828,490 836,468 844,490" fill="#163521"/>
+
+  <!-- Island reflection in lake -->
+  <ellipse cx="800" cy="534" rx="88" ry="14" fill="#1a3028" opacity="0.55"/>
+  <rect x="784" y="534" width="32" height="28" rx="2" fill="#1e2c24" opacity="0.4"/>
+  <polygon points="800,548 780,534 820,534" fill="#1a2820" opacity="0.3"/>
+
+  <!-- === BLED CASTLE hint on cliff (right of island) === -->
+  <!-- Cliff -->
+  <path d="M1040 440 C1060 430 1090 426 1110 432 L1130 460 C1110 456 1080 458 1060 464Z"
+        fill="#2e3830"/>
+  <!-- Castle wall -->
+  <rect x="1050" y="416" width="70" height="32" rx="2" fill="#b8ae9c"/>
+  <!-- Battlements -->
+  <rect x="1050" y="408" width="10" height="12" rx="1" fill="#a89e8c"/>
+  <rect x="1064" y="408" width="10" height="12" rx="1" fill="#a89e8c"/>
+  <rect x="1078" y="408" width="10" height="12" rx="1" fill="#a89e8c"/>
+  <rect x="1092" y="408" width="10" height="12" rx="1" fill="#a89e8c"/>
+  <rect x="1106" y="408" width="10" height="12" rx="1" fill="#a89e8c"/>
+  <!-- Tower -->
+  <rect x="1100" y="394" width="22" height="30" rx="2" fill="#a89e8c"/>
+  <polygon points="1111,382 1097,396 1125,396" fill="#4a3e34"/>
+</svg>

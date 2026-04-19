@@ -1,0 +1,129 @@
+---
+layout: base
+---
+
+{%- assign landing_video_url = page.landing_video_url | default: page.landing_video | default: site.home_landing.video_url -%}
+{%- assign landing_video_id = page.landing_youtube_id | default: site.home_landing.youtube_id -%}
+{%- assign landing_hls_raw = page.landing_hls_url | default: page.landing_hls | default: site.home_landing.hls_url | default: site.home_landing.landing_hls_url -%}
+{%- assign landing_image_raw = page.landing_image | default: page.image | default: site.home_landing.image | default: site.default_post_image -%}
+{%- assign latest_posts_limit = page.latest_posts_limit | default: site.home_landing.latest_posts_limit | default: 2 -%}
+
+{%- if landing_video_id == nil or landing_video_id == '' -%}
+  {%- if landing_video_url and landing_video_url != '' -%}
+  {%- assign normalized_video_url = landing_video_url | strip -%}
+
+  {%- if normalized_video_url contains 'youtu.be/' -%}
+    {%- assign landing_video_id = normalized_video_url | split: 'youtu.be/' | last | split: '?' | first | split: '&' | first | split: '/' | first -%}
+  {%- elsif normalized_video_url contains 'youtube.com/watch' and normalized_video_url contains 'v=' -%}
+    {%- assign landing_video_id = normalized_video_url | split: 'v=' | last | split: '&' | first -%}
+  {%- elsif normalized_video_url contains 'youtube.com/embed/' -%}
+    {%- assign landing_video_id = normalized_video_url | split: 'youtube.com/embed/' | last | split: '?' | first | split: '&' | first | split: '/' | first -%}
+  {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if landing_image_raw contains '://' -%}
+  {%- assign landing_image_url = landing_image_raw -%}
+{%- else -%}
+  {%- assign landing_image_url = landing_image_raw | relative_url -%}
+{%- endif -%}
+
+{%- if landing_hls_raw and landing_hls_raw != '' -%}
+  {%- assign landing_hls_url = landing_hls_raw | strip -%}
+  {%- unless landing_hls_url contains '://' -%}
+    {%- assign landing_hls_url = landing_hls_url | relative_url -%}
+  {%- endunless -%}
+{%- endif -%}
+
+<section class="landing-hero" data-home-landing aria-label="Homepage intro">
+  <div class="landing-hero__media" aria-hidden="true">
+    {%- if landing_hls_url and landing_hls_url != '' -%}
+      <video
+        class="landing-hero__video landing-hero__video--hls"
+        data-hls-video
+        data-hls-src="{{ landing_hls_url }}"
+        autoplay
+        muted
+        playsinline
+        loop
+        disablepictureinpicture
+        disableremoteplayback
+        controlslist="nodownload nofullscreen noplaybackrate noremoteplayback"
+        x-webkit-airplay="deny"
+        preload="auto"
+        poster="{{ landing_image_url }}"
+      ></video>
+    {%- elsif landing_video_id and landing_video_id != '' -%}
+      <iframe
+        class="landing-hero__video"
+        src="https://www.youtube.com/embed/{{ landing_video_id }}?autoplay=1&mute=1&controls=0&loop=1&playlist={{ landing_video_id }}&modestbranding=1&playsinline=1&rel=0"
+        title="Homepage background video"
+        loading="eager"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+    {%- else -%}
+      <img class="landing-hero__image" src="{{ landing_image_url }}" alt="" loading="eager" decoding="async">
+    {%- endif -%}
+  </div>
+
+  <div class="landing-hero__overlay" aria-hidden="true"></div>
+
+  <div class="container landing-hero__content">
+    <h1 class="landing-hero__title">{{ site.brand.title | default: site.title }}</h1>
+    <p class="landing-hero__tagline">{{ site.description }}</p>
+  </div>
+
+  <a class="landing-hero__scroll" href="#home-main" data-home-scroll aria-label="Scroll to latest posts">
+    <span class="landing-hero__chevron" aria-hidden="true"></span>
+  </a>
+</section>
+
+<section class="page-section home-search-bar" aria-label="Site search" data-home-scroll-target>
+  <div class="container">
+    {% include search-widget.html id='home-search' limit=8 placeholder='Search stories...' sync_query=false %}
+  </div>
+</section>
+
+{%- assign home_content_preview = content | strip_html | strip -%}
+{%- if home_content_preview != '' -%}
+<section class="page-section page-section--spaced" id="home-content" data-home-content aria-label="Homepage content">
+  <article class="post-page">
+    <div class="post-body container">
+      <div class="post-body__inner">
+        <div class="post-content">
+          {{ content }}
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+{%- endif -%}
+
+
+
+<section class="page-section page-section--spaced" id="home-main" data-home-main>
+  <div class="container story-list">
+    <div class="home-section-head">
+      <h2>Latest Posts</h2>
+    </div>
+    {%- for post in site.posts limit: latest_posts_limit -%}
+      {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
+      {%- assign post_word_count = post.content | strip_html | number_of_words -%}
+      {%- assign post_image = post.image | default: site.default_post_image -%}
+      <a class="story-card" href="{{ post.url | relative_url }}">
+        <div class="story-card__media">
+          <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="story-card__body">
+          <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
+          <h2>{{ post.title }}</h2>
+          <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
+          {%- if post_word_count > 60 -%}
+            <p class="story-card__read-more">Read more...</p>
+          {%- endif -%}
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>

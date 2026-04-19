@@ -1,0 +1,131 @@
+// Away From Home Theme design tokens.
+//
+// All values use !default so site owners can override them from their own SCSS
+// before this file is loaded.
+
+// Typography
+// Fonts used across headings and body copy.
+$font-display: Sora, "Avenir Next", sans-serif !default;
+$font-body: "Nunito Sans", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+
+// Layout geometry
+// Core widths, gutters, drawer dimensions, and global corner radii.
+$layout-max-width: 76rem !default;
+$reading-width: 48rem !default;
+$panel-max-width: 52rem !default;
+$page-gutter: 1.15rem !default;
+$drawer-width: 18rem !default;
+$drawer-width-wide: 22rem !default;
+$header-height: 4.75rem !default;
+$radius-small: 1rem !default;
+$radius-large: 1.75rem !default;
+$radius-pill: 999px !default;
+
+// Shared control sizing
+// Common dimensions for icon buttons and control icons.
+$control-size: 2.5rem !default;
+$control-size-compact: 2.2rem !default;
+$control-size-mobile: 2rem !default;
+$icon-size-control: 1rem !default;
+$icon-size-social: 2rem !default;
+
+// Motion timing scale
+// Reuse these for transitions and animations to keep timing consistent.
+$motion-fast: 160ms !default;
+$motion-base: 240ms !default;
+$motion-toast: 180ms !default;
+$motion-theme: 400ms !default;
+$motion-ui: 200ms !default;
+
+// Responsive breakpoints
+// Canonical viewport widths used across media queries.
+$breakpoint-sm: 560px !default;
+$breakpoint-mobile: 640px !default;
+$breakpoint-tablet: 700px !default;
+$breakpoint-desktop: 900px !default;
+
+// Utility colors
+// Small set of reusable non-theme-specific colors.
+$color-white: #fff !default;
+$color-black: #000 !default;
+$color-accent-ink: #071017 !default;
+$color-danger-soft: rgba(255, 120, 120, 0.2) !default;
+$color-danger-text: #ffb6b6 !default;
+
+// Frosted/glass surface tokens
+// Shared translucent backgrounds, borders, and elevation used in overlays.
+$frost-bg-soft: rgba(11, 17, 24, 0.22) !default;
+$frost-bg-strong: rgba(11, 17, 24, 0.58) !default;
+$frost-border-soft: rgba(255, 255, 255, 0.14) !default;
+$frost-border-strong: rgba(255, 255, 255, 0.22) !default;
+$frost-fill-soft: rgba(255, 255, 255, 0.06) !default;
+$elevation-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !default;
+
+// On-image legibility tokens
+// Text and shadow values intended for content shown over photos/hero images.
+$header-text-shadow:
+  -1px -1px 0   rgba(0, 0, 0, 0.72),
+   1px -1px 0   rgba(0, 0, 0, 0.72),
+  -1px  1px 0   rgba(0, 0, 0, 0.72),
+   1px  1px 0   rgba(0, 0, 0, 0.72),
+   0    2px 10px rgba(0, 0, 0, 0.55) !default;
+$on-image-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !default;
+$on-image-heading-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !default;
+$on-image-soft: rgba(255, 255, 255, 0.78) !default;
+$on-image-strong: rgba(255, 255, 255, 0.92) !default;
+$on-image-muted: rgba(255, 255, 255, 0.85) !default;
+$on-image-subtle: rgba(255, 255, 255, 0.72) !default;
+$on-image-label: rgba(255, 255, 255, 0.76) !default;
+
+// Overlay gradients
+// Gradient stops used for hero and post-banner overlays.
+$hero-top-overlay: rgba(4, 6, 10, 0.1) !default;
+$landing-hero-radial-start: rgba(8, 14, 22, 0.12) !default;
+$landing-hero-radial-mid: rgba(8, 14, 22, 0.55) !default;
+$landing-hero-radial-end: rgba(6, 10, 15, 0.78) !default;
+$landing-hero-linear-start: rgba(5, 10, 16, 0.2) !default;
+$landing-hero-linear-end: rgba(5, 10, 16, 0.7) !default;
+$post-banner-overlay-start: rgba(7, 11, 17, 0.32) !default;
+$post-banner-overlay-end: rgba(255, 255, 255, 0.25) !default;
+
+// Footer palette
+// Dedicated footer background and text colors.
+$footer-bg: #0b1016 !default;
+$footer-text: rgba(245, 248, 251, 0.88) !default;
+$footer-text-muted: rgba(245, 248, 251, 0.68) !default;
+
+// Light theme palette
+// Values mapped into CSS custom properties when light mode is active.
+$light-bg: #f4f7fb !default;
+$light-surface: #ffffff !default;
+$light-surface-muted: rgba(255, 255, 255, 0.84) !default;
+$light-text: #102033 !default;
+$light-muted: #5a677a !default;
+$light-border: rgba(16, 32, 51, 0.12) !default;
+$light-accent: #11b8bd !default;
+$light-accent-strong: #0e8793 !default;
+$light-header: rgba(255, 255, 255, 0.24) !default;
+$light-header-scrolled: rgba(17, 26, 39, 0.72) !default;
+$light-drawer: #0f151d !default;
+$light-drawer-text: #f2f6fa !default;
+$light-drawer-muted: rgba(242, 246, 250, 0.72) !default;
+$light-hero-overlay: rgba(5, 10, 16, 0.46) !default;
+$light-shadow: 0 24px 60px rgba(15, 23, 42, 0.16) !default;
+
+// Dark theme palette
+// Values mapped into CSS custom properties when dark mode is active.
+$dark-bg: #171b22 !default;
+$dark-surface: #222833 !default;
+$dark-surface-muted: rgba(34, 40, 51, 0.9) !default;
+$dark-text: #f4f8fb !default;
+$dark-muted: #b3c0cb !default;
+$dark-border: rgba(244, 248, 251, 0.12) !default;
+$dark-accent: #1dc9d2 !default;
+$dark-accent-strong: #7ce8ed !default;
+$dark-header: rgba(6, 10, 16, 0.22) !default;
+$dark-header-scrolled: rgba(5, 8, 12, 0.78) !default;
+$dark-drawer: #0a0d12 !default;
+$dark-drawer-text: #f4f8fb !default;
+$dark-drawer-muted: rgba(244, 248, 251, 0.66) !default;
+$dark-hero-overlay: rgba(5, 10, 16, 0.58) !default;
+$dark-shadow: 0 26px 70px rgba(0, 0, 0, 0.28) !default;

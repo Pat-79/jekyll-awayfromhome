@@ -1,0 +1,45 @@
+---
+layout: page
+has_author: true
+---
+
+{%- assign author_name = site.author.name -%}
+{%- if page.author and page.author.name and page.author.name != empty -%}
+  {%- assign author_name = page.author.name -%}
+{%- elsif page.author and page.author != empty -%}
+  {%- assign author_name = page.author -%}
+{%- endif -%}
+{%- assign author_avatar = page.author.avatar | default: site.author.avatar -%}
+{%- assign author_bio = page.author.bio | default: site.author.bio -%}
+{%- assign author_location = page.author.location | default: site.author.location -%}
+{%- assign continue_post = page.previous | default: site.posts.first -%}
+
+<article class="post-page{% unless continue_post %} post-page--no-continue{% endunless %}">
+  <div class="post-body container">
+    <div class="post-body__inner">
+      <div class="post-content">
+        {{ content }}
+      </div>
+    </div>
+  </div>
+  {%- include author-card.html name=author_name avatar=author_avatar bio=author_bio location=author_location %}
+  {%- if continue_post %}
+    {%- assign continue_image = continue_post.image | default: site.default_post_image -%}
+    <section class="post-banner">
+      <a class="post-banner__link" href="{{ continue_post.url | relative_url }}">
+        <div class="post-banner__media">
+          {%- if continue_image -%}
+            <img class="post-banner__media-image" src="{{ continue_image | relative_url }}" alt="" loading="lazy" decoding="async">
+          {%- endif -%}
+        </div>
+        <div class="post-banner__content container">
+          <p class="post-banner__label">Continue Reading</p>
+          <h2>{{ continue_post.title }}</h2>
+          {%- if continue_post.date %}
+            <time datetime="{{ continue_post.date | date_to_xmlschema }}">{{ continue_post.date | date: '%B %-d, %Y' }}</time>
+          {%- endif %}
+        </div>
+      </a>
+    </section>
+  {%- endif %}
+</article>

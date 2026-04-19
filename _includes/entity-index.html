@@ -1,0 +1,453 @@
+{%- assign all_docs = site.posts | concat: site.pages -%}
+{%- assign entity_index_url = '/browse/' | relative_url -%}
+{%- assign entity_results_anchor = '#browse-results' -%}
+
+{%- assign author_entries = '' | split: '' -%}
+{%- assign category_entries = '' | split: '' -%}
+{%- assign tag_entries = '' | split: '' -%}
+
+{%- for item in all_docs -%}
+  {%- assign include_item = true -%}
+  {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+  {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+  {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+  {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+  {%- if include_item -%}
+    {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
+    {%- assign item_author_slug = '' -%}
+    {%- if item_author_name != '' -%}
+      {%- assign item_author_slug = item_author_name | slugify -%}
+    {%- endif -%}
+    {%- if item_author_name != '' and item_author_slug != '' -%}
+      {%- assign author_entry = item_author_slug | append: '::' | append: item_author_name -%}
+      {%- unless author_entries contains author_entry -%}
+        {%- assign author_entries = author_entries | push: author_entry -%}
+      {%- endunless -%}
+    {%- endif -%}
+
+    {%- assign item_categories = '' | split: '' -%}
+    {%- if item.categories and item.categories != empty -%}
+      {%- if item.categories.first -%}
+        {%- assign item_categories = item.categories -%}
+      {%- else -%}
+        {%- assign item_categories = item.categories | split: ',' -%}
+      {%- endif -%}
+    {%- elsif item.category and item.category != empty -%}
+      {%- assign item_categories = item.category | split: ',' -%}
+    {%- endif -%}
+
+    {%- for category in item_categories -%}
+      {%- assign category_name = category | strip -%}
+      {%- assign category_slug = '' -%}
+      {%- if category_name != '' -%}
+        {%- assign category_slug = category_name | slugify -%}
+      {%- endif -%}
+      {%- if category_name != '' and category_slug != '' -%}
+        {%- assign category_entry = category_slug | append: '::' | append: category_name -%}
+        {%- unless category_entries contains category_entry -%}
+          {%- assign category_entries = category_entries | push: category_entry -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+      {%- assign item_tags = '' | split: '' -%}
+      {%- if item.tags and item.tags != empty -%}
+        {%- if item.tags.first -%}
+          {%- assign item_tags = item.tags -%}
+        {%- else -%}
+          {%- assign item_tags = item.tags | split: ',' -%}
+        {%- endif -%}
+      {%- elsif item.tag and item.tag != empty -%}
+        {%- assign item_tags = item.tag | split: ',' -%}
+      {%- endif -%}
+
+      {%- for tag in item_tags -%}
+        {%- assign tag_name = tag | strip -%}
+        {%- assign tag_slug = '' -%}
+        {%- if tag_name != '' -%}
+          {%- assign tag_slug = tag_name | slugify -%}
+        {%- endif -%}
+        {%- if tag_name != '' and tag_slug != '' -%}
+          {%- assign tag_entry = tag_slug | append: '::' | append: tag_name -%}
+          {%- unless tag_entries contains tag_entry -%}
+            {%- assign tag_entries = tag_entries | push: tag_entry -%}
+          {%- endunless -%}
+        {%- endif -%}
+      {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign author_entries = author_entries | sort -%}
+{%- assign category_entries = category_entries | sort -%}
+  {%- assign tag_entries = tag_entries | sort -%}
+
+<section class="page-section">
+  <div class="container">
+    {% unless page.image %}
+      <h1>{{ page.title | default: 'Browse' }}</h1>
+    {% endunless %}
+    <p>{{ page.entity_posts_intro | default: 'Select a category below to filter posts and pages by author, category, or tag.' }}</p>
+
+    <div class="entity-type-selector">
+      <button class="entity-type-selector__button" data-entity-type-selector="author">Authors</button>
+      <button class="entity-type-selector__button" data-entity-type-selector="category">Categories</button>
+      <button class="entity-type-selector__button" data-entity-type-selector="tag">Tags</button>
+    </div>
+
+    <div class="entity-filter-groups">
+
+      <div class="entity-filter-group" data-entity-filter-group="author">
+        <p class="entity-filter-group__title">Authors</p>
+        <div class="tag-cloud tag-cloud--scaled tag-cloud--page">
+          {%- if author_entries and author_entries.size > 0 -%}
+            {%- for author_entry in author_entries -%}
+              {%- assign entry_parts = author_entry | split: '::' -%}
+              {%- assign author_slug = entry_parts[0] -%}
+              {%- assign author_label = entry_parts | shift | join: '::' -%}
+              <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ entity_index_url }}?author={{ author_slug }}" data-entity-filter-link data-entity-type="author" data-entity-value="{{ author_slug }}">
+                <span class="tag-chip__label">{{ author_label }}</span>
+              </a>
+            {%- endfor -%}
+          {%- else -%}
+            <p class="entity-filter-group__empty">No authors available yet.</p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="entity-filter-group" data-entity-filter-group="category">
+        <p class="entity-filter-group__title">Categories</p>
+        <div class="tag-cloud tag-cloud--scaled tag-cloud--page">
+          {%- if category_entries and category_entries.size > 0 -%}
+            {%- for category_entry in category_entries -%}
+              {%- assign entry_parts = category_entry | split: '::' -%}
+              {%- assign category_slug = entry_parts[0] -%}
+              {%- assign category_label = entry_parts | shift | join: '::' -%}
+              <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ entity_index_url }}?category={{ category_slug }}" data-entity-filter-link data-entity-type="category" data-entity-value="{{ category_slug }}">
+                <span class="tag-chip__label">{{ category_label }}</span>
+              </a>
+            {%- endfor -%}
+          {%- else -%}
+            <p class="entity-filter-group__empty">No categories available yet.</p>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="entity-filter-group" data-entity-filter-group="tag">
+        <p class="entity-filter-group__title">Tags</p>
+        <div class="tag-cloud tag-cloud--scaled tag-cloud--page">
+          {%- if tag_entries and tag_entries.size > 0 -%}
+            {%- for tag_entry in tag_entries -%}
+              {%- assign entry_parts = tag_entry | split: '::' -%}
+              {%- assign tag_slug = entry_parts[0] -%}
+              {%- assign tag_label = entry_parts | shift | join: '::' -%}
+              <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ entity_index_url }}?tag={{ tag_slug }}" data-entity-filter-link data-entity-type="tag" data-entity-value="{{ tag_slug }}">
+                <span class="tag-chip__label">{{ tag_label }}</span>
+              </a>
+            {%- endfor -%}
+          {%- else -%}
+            <p class="entity-filter-group__empty">No tags available yet.</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <p class="entity-status" data-entity-status hidden></p>
+  </div>
+</section>
+
+<section class="page-section" id="browse-results">
+  <div class="container entity-index" data-entity-posts-page>
+    {%- for author_entry in author_entries -%}
+      {%- assign entry_parts = author_entry | split: '::' -%}
+      {%- assign author_slug = entry_parts[0] -%}
+      {%- assign author_label = entry_parts | shift | join: '::' -%}
+      {%- assign author_match_count = 0 -%}
+
+      {%- for item in all_docs -%}
+        {%- assign include_item = true -%}
+        {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+        {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
+        {%- assign item_author_slug = '' -%}
+        {%- if item_author_name != '' -%}
+          {%- assign item_author_slug = item_author_name | slugify -%}
+        {%- endif -%}
+        {%- if include_item and item_author_slug == author_slug -%}
+          {%- assign author_match_count = author_match_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      <div class="story-list entity-section" data-entity-section data-entity-type="author" data-entity-value="{{ author_slug }}" data-entity-label="{{ author_label }}" hidden>
+        <div class="home-section-head">
+          <p class="entity-section__eyebrow">Author</p>
+          <h2>{{ author_label }}</h2>
+          <p class="entity-section__summary">{{ author_match_count }} item{% if author_match_count != 1 %}s{% endif %}</p>
+        </div>
+
+        {%- for item in all_docs -%}
+            {%- assign include_item = true -%}
+            {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+            {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
+            {%- assign item_author_slug = '' -%}
+            {%- if item_author_name != '' -%}
+              {%- assign item_author_slug = item_author_name | slugify -%}
+            {%- endif -%}
+            {%- if include_item and item_author_slug == author_slug -%}
+              {%- assign item_title = item.title | default: item.name | default: item.url -%}
+              {%- assign item_image = item.image | default: site.default_post_image -%}
+              {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
+              {%- assign is_post = false -%}
+              {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
+              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}">
+                <div class="story-card__media">
+                  <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
+                </div>
+                <div class="story-card__body">
+                  <p class="story-card__meta">
+                    {%- if is_post and item.date -%}
+                      {{ item.date | date: '%B %-d, %Y' }}
+                    {%- else -%}
+                      Page
+                    {%- endif -%}
+                    {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
+                  </p>
+                  <h2>{{ item_title }}</h2>
+                  <p class="story-card__excerpt">{{ item_excerpt }}</p>
+                </div>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+      </div>
+    {%- endfor -%}
+
+    {%- for category_entry in category_entries -%}
+      {%- assign entry_parts = category_entry | split: '::' -%}
+      {%- assign category_slug = entry_parts[0] -%}
+      {%- assign category_label = entry_parts | shift | join: '::' -%}
+      {%- assign category_match_count = 0 -%}
+
+      {%- for item in all_docs -%}
+        {%- assign include_item = true -%}
+        {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+        {%- assign item_categories = '' | split: '' -%}
+        {%- if item.categories and item.categories != empty -%}
+          {%- if item.categories.first -%}
+            {%- assign item_categories = item.categories -%}
+          {%- else -%}
+            {%- assign item_categories = item.categories | split: ',' -%}
+          {%- endif -%}
+        {%- elsif item.category and item.category != empty -%}
+          {%- assign item_categories = item.category | split: ',' -%}
+        {%- endif -%}
+
+        {%- assign matched_category = false -%}
+        {%- for category in item_categories -%}
+          {%- assign item_category_name = category | strip -%}
+          {%- assign item_category_slug = '' -%}
+          {%- if item_category_name != '' -%}
+            {%- assign item_category_slug = item_category_name | slugify -%}
+          {%- endif -%}
+          {%- if item_category_slug == category_slug -%}
+            {%- assign matched_category = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if include_item and matched_category -%}
+          {%- assign category_match_count = category_match_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      <div class="story-list entity-section" data-entity-section data-entity-type="category" data-entity-value="{{ category_slug }}" data-entity-label="{{ category_label }}" hidden>
+        <div class="home-section-head">
+          <p class="entity-section__eyebrow">Category</p>
+          <h2>{{ category_label }}</h2>
+          <p class="entity-section__summary">{{ category_match_count }} item{% if category_match_count != 1 %}s{% endif %}</p>
+        </div>
+
+        {%- for item in all_docs -%}
+            {%- assign include_item = true -%}
+            {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+            {%- assign item_categories = '' | split: '' -%}
+            {%- if item.categories and item.categories != empty -%}
+              {%- if item.categories.first -%}
+                {%- assign item_categories = item.categories -%}
+              {%- else -%}
+                {%- assign item_categories = item.categories | split: ',' -%}
+              {%- endif -%}
+            {%- elsif item.category and item.category != empty -%}
+              {%- assign item_categories = item.category | split: ',' -%}
+            {%- endif -%}
+
+            {%- assign matched_category = false -%}
+            {%- for category in item_categories -%}
+              {%- assign item_category_name = category | strip -%}
+              {%- assign item_category_slug = '' -%}
+              {%- if item_category_name != '' -%}
+                {%- assign item_category_slug = item_category_name | slugify -%}
+              {%- endif -%}
+              {%- if item_category_slug == category_slug -%}
+                {%- assign matched_category = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if include_item and matched_category -%}
+              {%- assign item_title = item.title | default: item.name | default: item.url -%}
+              {%- assign item_image = item.image | default: site.default_post_image -%}
+              {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
+              {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
+              {%- assign is_post = false -%}
+              {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
+              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}">
+                <div class="story-card__media">
+                  <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
+                </div>
+                <div class="story-card__body">
+                  <p class="story-card__meta">
+                    {%- if is_post and item.date -%}
+                      {{ item.date | date: '%B %-d, %Y' }}
+                    {%- else -%}
+                      Page
+                    {%- endif -%}
+                    {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
+                  </p>
+                  <h2>{{ item_title }}</h2>
+                  <p class="story-card__excerpt">{{ item_excerpt }}</p>
+                </div>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+      </div>
+    {%- endfor -%}
+
+    {%- for tag_entry in tag_entries -%}
+      {%- assign entry_parts = tag_entry | split: '::' -%}
+      {%- assign tag_slug = entry_parts[0] -%}
+      {%- assign tag_label = entry_parts | shift | join: '::' -%}
+      {%- assign tag_match_count = 0 -%}
+
+      {%- for item in all_docs -%}
+        {%- assign include_item = true -%}
+        {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+        {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+        {%- assign item_tags = '' | split: '' -%}
+        {%- if item.tags and item.tags != empty -%}
+          {%- if item.tags.first -%}
+            {%- assign item_tags = item.tags -%}
+          {%- else -%}
+            {%- assign item_tags = item.tags | split: ',' -%}
+          {%- endif -%}
+        {%- elsif item.tag and item.tag != empty -%}
+          {%- assign item_tags = item.tag | split: ',' -%}
+        {%- endif -%}
+
+        {%- assign matched_tag = false -%}
+        {%- for tag in item_tags -%}
+          {%- assign item_tag_name = tag | strip -%}
+          {%- assign item_tag_slug = '' -%}
+          {%- if item_tag_name != '' -%}
+            {%- assign item_tag_slug = item_tag_name | slugify -%}
+          {%- endif -%}
+          {%- if item_tag_slug == tag_slug -%}
+            {%- assign matched_tag = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if include_item and matched_tag -%}
+          {%- assign tag_match_count = tag_match_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      <div class="story-list entity-section" data-entity-section data-entity-type="tag" data-entity-value="{{ tag_slug }}" data-entity-label="{{ tag_label }}" hidden>
+        <div class="home-section-head">
+          <p class="entity-section__eyebrow">Tag</p>
+          <h2>{{ tag_label }}</h2>
+          <p class="entity-section__summary">{{ tag_match_count }} item{% if tag_match_count != 1 %}s{% endif %}</p>
+        </div>
+
+        {%- for item in all_docs -%}
+            {%- assign include_item = true -%}
+            {%- if item.url == nil or item.url == '' -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.sitemap == false -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.url == '/browse/' or item.url == '/sitemap.xml' or item.url == '/search/' or item.url == '/404.html' -%}{%- assign include_item = false -%}{%- endif -%}
+            {%- if item.layout == 'error' or item.layout == 'none' -%}{%- assign include_item = false -%}{%- endif -%}
+
+            {%- assign item_tags = '' | split: '' -%}
+            {%- if item.tags and item.tags != empty -%}
+              {%- if item.tags.first -%}
+                {%- assign item_tags = item.tags -%}
+              {%- else -%}
+                {%- assign item_tags = item.tags | split: ',' -%}
+              {%- endif -%}
+            {%- elsif item.tag and item.tag != empty -%}
+              {%- assign item_tags = item.tag | split: ',' -%}
+            {%- endif -%}
+
+            {%- assign matched_tag = false -%}
+            {%- for tag in item_tags -%}
+              {%- assign item_tag_name = tag | strip -%}
+              {%- assign item_tag_slug = '' -%}
+              {%- if item_tag_name != '' -%}
+                {%- assign item_tag_slug = item_tag_name | slugify -%}
+              {%- endif -%}
+              {%- if item_tag_slug == tag_slug -%}
+                {%- assign matched_tag = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if include_item and matched_tag -%}
+              {%- assign item_title = item.title | default: item.name | default: item.url -%}
+              {%- assign item_image = item.image | default: site.default_post_image -%}
+              {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
+              {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
+              {%- assign is_post = false -%}
+              {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
+              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}">
+                <div class="story-card__media">
+                  <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
+                </div>
+                <div class="story-card__body">
+                  <p class="story-card__meta">
+                    {%- if is_post and item.date -%}
+                      {{ item.date | date: '%B %-d, %Y' }}
+                    {%- else -%}
+                      Page
+                    {%- endif -%}
+                    {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
+                  </p>
+                  <h2>{{ item_title }}</h2>
+                  <p class="story-card__excerpt">{{ item_excerpt }}</p>
+                </div>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+      </div>
+    {%- endfor -%}
+
+    <div class="story-list">
+      <section class="intro-card entity-section entity-section--missing" data-entity-not-found hidden>
+        <p class="entity-section__eyebrow">Filter</p>
+        <h2>Filter does not exist</h2>
+        <p class="entity-section__summary">Unable to show the requested author, category, or tag because it does not exist in this site.</p>
+      </section>
+    </div>
+  </div>
+</section>

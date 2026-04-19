@@ -1,0 +1,148 @@
+{%- assign favicon_path = site.favicon | default: site.brand.logo | default: '/assets/images/logo-mark.svg' -%}
+<!-- SEO & Social Media Meta Tags -->
+{%- assign page_title = page.title | default: site.title -%}
+{%- assign page_description = page.excerpt | default: page.description | default: site.description | strip_html | normalize_whitespace | truncatewords: 30 | escape -%}
+{%- assign page_url = page.url | default: '/' | absolute_url -%}
+{%- assign site_name = site.title | default: site.brand.title -%}
+{%- assign author_name = page.author.name | default: page.author | default: site.author.name -%}
+{%- assign page_category = page.category | default: page.categories | first -%}
+{%- assign twitter_site = site.twitter_username | default: site.twitter.site | default: site.social.twitter -%}
+{%- assign twitter_creator = page.twitter_username | default: page.author.twitter | default: site.author.twitter -%}
+{%- if twitter_site and twitter_site != '' and twitter_site contains '@' == false -%}
+  {%- assign twitter_site = '@' | append: twitter_site -%}
+{%- endif -%}
+{%- if twitter_creator and twitter_creator != '' and twitter_creator contains '@' == false -%}
+  {%- assign twitter_creator = '@' | append: twitter_creator -%}
+{%- endif -%}
+{%- assign page_image = page.image | default: site.default_post_image | default: site.brand.logo -%}
+{%- assign page_image_url = page_image | relative_url | absolute_url -%}
+{%- assign page_image_clean = page_image_url | split: '?' | first | split: '#' | first -%}
+{%- assign page_image_ext = page_image_clean | split: '.' | last | downcase -%}
+{%- assign page_image_type = 'image/jpeg' -%}
+{%- if page_image_ext == 'png' -%}
+  {%- assign page_image_type = 'image/png' -%}
+{%- elsif page_image_ext == 'gif' -%}
+  {%- assign page_image_type = 'image/gif' -%}
+{%- elsif page_image_ext == 'webp' -%}
+  {%- assign page_image_type = 'image/webp' -%}
+{%- elsif page_image_ext == 'svg' or page_image_ext == 'svgz' -%}
+  {%- assign page_image_type = 'image/svg+xml' -%}
+{%- endif -%}
+{%- if page.layout == 'post' -%}
+  {%- assign og_type = 'article' -%}
+  {%- assign is_article = true -%}
+{%- else -%}
+  {%- assign og_type = 'website' -%}
+  {%- assign is_article = false -%}
+{%- endif -%}
+<!-- Document -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="{{ favicon_path | relative_url }}">
+<link rel="shortcut icon" href="{{ favicon_path | relative_url }}">
+<!-- SEO & Search Engine Optimization -->
+<meta name="description" content="{{ page_description }}">
+<meta name="author" content="{{ author_name }}">
+<meta name="keywords" content="{%- if page.tags -%}{{ page.tags | join: ', ' }}{%- endif -%}">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="google-site-verification" content="">
+<meta name="googlebot" content="index, follow">
+<meta name="bingbot" content="index, follow">
+<link rel="canonical" href="{{ page_url }}">
+<!-- Open Graph (Social Media: Facebook, LinkedIn, Pinterest, WhatsApp, Telegram, Discord, Mastodon) -->
+<meta property="og:site_name" content="{{ site_name }}">
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:description" content="{{ page_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ page_image_url }}">
+<meta property="og:image:alt" content="{{ page_title }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="{{ page_image_type }}">
+<meta property="og:locale" content="{{ site.lang | default: 'en_US' | replace: '-', '_' }}">
+{%- if is_article -%}
+  {%- if page.date -%}
+<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+<meta property="article:modified_time" content="{{ page.last_modified_at | default: page.date | date_to_xmlschema }}">
+  {%- endif -%}
+  {%- if page_category and page_category != '' -%}
+<meta property="article:section" content="{{ page_category }}">
+  {%- endif -%}
+  {%- if author_name -%}
+<meta property="article:author" content="{{ author_name }}">
+  {%- endif -%}
+  {%- if page.tags -%}
+    {%- for tag in page.tags -%}
+<meta property="article:tag" content="{{ tag }}">
+    {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page_title }}">
+<meta name="twitter:description" content="{{ page_description }}">
+<meta name="twitter:image" content="{{ page_image_url }}">
+<meta name="twitter:image:alt" content="{{ page_title }}">
+{%- if twitter_site and twitter_site != '' -%}
+<meta name="twitter:site" content="{{ twitter_site }}">
+{%- endif -%}
+{%- if twitter_creator and twitter_creator != '' -%}
+<meta name="twitter:creator" content="{{ twitter_creator }}">
+{%- endif -%}
+<!-- Structured Data & Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ site_name | jsonify }},
+  "url": {{ site.url | absolute_url | jsonify }},
+  "logo": {{ site.brand.logo | relative_url | absolute_url | jsonify }},
+  "description": {{ site.description | jsonify }}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{% if is_article %}BlogPosting{% else %}WebPage{% endif %}",
+  "headline": {{ page_title | jsonify }},
+  "description": {{ page_description | jsonify }},
+  "image": {
+    "@type": "ImageObject",
+    "url": {{ page_image_url | jsonify }},
+    "width": 1200,
+    "height": 630
+  },
+  "url": {{ page_url | jsonify }},
+  "site_name": {{ site_name | jsonify }},
+  "inLanguage": {{ site.lang | default: 'en' | jsonify }}{%- if is_article -%}
+  ,"author": {
+    "@type": "Person",
+    "name": {{ author_name | jsonify }}
+  }{%- if page.date -%}
+  ,"datePublished": {{ page.date | date_to_xmlschema | jsonify }}
+  ,"dateModified": {{ page.last_modified_at | default: page.date | date_to_xmlschema | jsonify }}{%- endif -%}{%- endif -%}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": {{ site.url | absolute_url | jsonify }}
+    }{%- if page.url != '/' -%},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ page_title | jsonify }},
+      "item": {{ page_url | jsonify }}
+    }{%- endif -%}
+  ]
+}
+</script>

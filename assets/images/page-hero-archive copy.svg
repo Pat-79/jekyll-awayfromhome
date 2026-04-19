@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="archTitle">
+  <title id="archTitle">Archive destinations illustration</title>
+  <defs>
+    <linearGradient id="archSky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="25%" stop-color="#ee5a6f"/>
+      <stop offset="50%" stop-color="#f9a825"/>
+      <stop offset="75%" stop-color="#ffd93d"/>
+      <stop offset="100%" stop-color="#f1ddae"/>
+    </linearGradient>
+    <linearGradient id="archLand" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#6bcf7f"/>
+      <stop offset="100%" stop-color="#2d8659"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky background -->
+  <rect width="1600" height="900" fill="url(#archSky)"/>
+
+  <!-- Floating destination circles with warm colors -->
+  <circle cx="200" cy="150" r="80" fill="#ff6b6b" opacity="0.7"/>
+  <circle cx="200" cy="150" r="70" fill="#ff9c9c" opacity="0.5"/>
+
+  <circle cx="600" cy="200" r="100" fill="#ffd93d" opacity="0.6"/>
+  <circle cx="600" cy="200" r="85" fill="#ffeb99" opacity="0.4"/>
+
+  <circle cx="1100" cy="130" r="75" fill="#6bcf7f" opacity="0.65"/>
+  <circle cx="1100" cy="130" r="60" fill="#a8e6b8" opacity="0.45"/>
+
+  <circle cx="1400" cy="250" r="65" fill="#d4a5ff" opacity="0.6"/>
+  <circle cx="1400" cy="250" r="50" fill="#e8d5ff" opacity="0.4"/>
+
+  <!-- Main landscape layers -->
+  <path d="M0 450 L100 380 L250 420 L380 300 L520 380 L650 320 L800 440 L950 280 L1100 420 L1250 340 L1400 450 L1600 350 L1600 900 L0 900 Z" fill="url(#archLand)"/>
+
+  <!-- Middle terrain layer -->
+  <path d="M0 550 L150 480 L280 520 L420 460 L580 510 L720 440 L850 540 L1000 460 L1150 520 L1300 480 L1450 560 L1600 500 L1600 900 L0 900 Z" fill="#419c5a" opacity="0.8"/>
+
+  <!-- Foreground terrain -->
+  <rect y="650" width="1600" height="250" fill="#2d7a48"/>
+
+  <!-- Accent trees/vegetation -->
+  <path d="M120 600 Q100 560 120 520 Q140 560 120 600 Z" fill="#1a4d2e"/>
+  <rect x="115" y="600" width="10" height="100" fill="#6b4423"/>
+
+  <path d="M900 520 Q870 470 900 420 Q930 470 900 520 Z" fill="#1a4d2e"/>
+  <rect x="895" y="520" width="10" height="130" fill="#6b4423"/>
+
+  <path d="M1300 560 Q1270 510 1300 460 Q1330 510 1300 560 Z" fill="#1a4d2e"/>
+  <rect x="1295" y="560" width="10" height="90" fill="#6b4423"/>
+
+  <!-- Destination markers -->
+  <circle cx="300" cy="400" r="12" fill="#ff6b6b" stroke="white" stroke-width="3"/>
+  <circle cx="700" cy="360" r="12" fill="#ffd93d" stroke="white" stroke-width="3"/>
+  <circle cx="1300" cy="380" r="12" fill="#6bcf7f" stroke="white" stroke-width="3"/>
+  <circle cx="1500" cy="420" r="12" fill="#d4a5ff" stroke="white" stroke-width="3"/>
+
+  <!-- Sun -->
+  <circle cx="1500" cy="100" r="45" fill="#fff8da" opacity="0.8"/>
+  <circle cx="1500" cy="100" r="35" fill="#ffe680" opacity="0.6"/>
+
+  <!-- Calendar Card Overlay -->
+  <g>
+    <!-- Semi-transparent calendar background -->
+    <rect x="80" y="480" width="320" height="320" rx="16" fill="white" opacity="0.95" stroke="#f0f0f0" stroke-width="2"/>
+
+    <!-- Calendar header -->
+    <rect x="80" y="480" width="320" height="70" rx="16" fill="url(#archSky)" opacity="0.9"/>
+
+    <!-- Calendar title -->
+    <text x="240" y="520" font-family="sans-serif" font-size="28" font-weight="700" text-anchor="middle" fill="white">
+      Archive
+    </text>
+    <text x="240" y="545" font-family="sans-serif" font-size="13" text-anchor="middle" fill="rgba(255,255,255,0.9)">
+      Browse by Date
+    </text>
+
+    <!-- Weekday headers -->
+    <g font-family="sans-serif" font-size="11" font-weight="600" text-anchor="middle" fill="#666">
+      <text x="105" y="580">S</text>
+      <text x="135" y="580">M</text>
+      <text x="165" y="580">T</text>
+      <text x="195" y="580">W</text>
+      <text x="225" y="580">T</text>
+      <text x="255" y="580">F</text>
+      <text x="285" y="580">S</text>
+    </g>
+
+    <!-- Separator -->
+    <line x1="95" y1="592" x2="385" y2="592" stroke="#e0e0e0" stroke-width="1"/>
+
+    <!-- Calendar dates grid -->
+    <g font-family="sans-serif" font-size="12" text-anchor="middle" fill="#555">
+      <!-- Row 1 -->
+      <text x="105" y="615">1</text>
+      <text x="135" y="615">2</text>
+      <text x="165" y="615">3</text>
+      <text x="195" y="615">4</text>
+      <text x="225" y="615">5</text>
+      <circle cx="255" cy="609" r="12" fill="#ff6b6b" opacity="0.2"/>
+      <text x="255" y="615" fill="#ff6b6b" font-weight="600">6</text>
+      <circle cx="285" cy="609" r="12" fill="#ffd93d" opacity="0.2"/>
+      <text x="285" y="615" fill="#f9a825" font-weight="600">7</text>
+
+      <!-- Row 2 -->
+      <text x="105" y="645">8</text>
+      <text x="135" y="645">9</text>
+      <text x="165" y="645">10</text>
+      <text x="195" y="645">11</text>
+      <circle cx="225" cy="639" r="12" fill="#6bcf7f" opacity="0.2"/>
+      <text x="225" y="645" fill="#2d8659" font-weight="600">12</text>
+      <text x="255" y="645">13</text>
+      <text x="285" y="645">14</text>
+
+      <!-- Row 3 -->
+      <text x="105" y="675">15</text>
+      <text x="135" y="675">16</text>
+      <circle cx="165" cy="669" r="12" fill="#d4a5ff" opacity="0.3"/>
+      <text x="165" y="675" fill="#9644c9" font-weight="600">17</text>
+      <text x="195" y="675">18</text>
+      <text x="225" y="675">19</text>
+      <text x="255" y="675">20</text>
+      <text x="285" y="675">21</text>
+
+      <!-- Row 4 -->
+      <text x="105" y="705">22</text>
+      <text x="135" y="705">23</text>
+      <text x="165" y="705">24</text>
+      <text x="195" y="705">25</text>
+      <text x="225" y="705">26</text>
+      <text x="255" y="705">27</text>
+      <text x="285" y="705">28</text>
+
+      <!-- Row 5 -->
+      <text x="105" y="735">29</text>
+      <text x="135" y="735">30</text>
+      <text x="165" y="735" fill="#ccc">1</text>
+      <text x="195" y="735" fill="#ccc">2</text>
+      <text x="225" y="735" fill="#ccc">3</text>
+    </g>
+
+    <!-- Bottom accent bar -->
+    <rect x="80" y="760" width="320" height="4" rx="2" fill="url(#archSky)" opacity="0.7"/>
+  </g>
+</svg>

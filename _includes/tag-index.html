@@ -1,0 +1,92 @@
+{%- assign sorted_tags = site.tags | sort -%}
+{%- assign min_posts = 999999999 -%}
+{%- assign max_posts = 0 -%}
+{%- assign min_size = 14 -%}
+{%- assign max_size = 28 -%}
+
+{%- for tag in sorted_tags -%}
+  {%- assign post_count = tag[1] | size -%}
+  {%- if post_count < min_posts -%}
+    {%- assign min_posts = post_count -%}
+  {%- endif -%}
+  {%- if post_count > max_posts -%}
+    {%- assign max_posts = post_count -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign steps = max_posts | minus: min_posts -%}
+{%- if steps == 0 -%}
+  {%- assign steps = 1 -%}
+{%- endif -%}
+{%- assign size_range = max_size | minus: min_size -%}
+
+<section class="page-section">
+  <div class="container">
+    {% unless page.image %}
+      <h1>{{ page.title | default: 'Tags' }}</h1>
+    {% endunless %}
+    <p>{{ page.tag_posts_intro | default: 'Filter posts by tag, or leave the page unfiltered to browse every tagged section.' }}</p>
+    <div class="tag-cloud tag-cloud--scaled tag-cloud--page tag-cloud--filters">
+      <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ '/tags/' | relative_url }}" data-tag-filter-link data-tag-value="all">
+        <span class="tag-chip__label">All</span>
+      </a>
+      <div class="tag-cloud tag-cloud--scaled tag-cloud--filters-list">
+        {%- for tag in sorted_tags -%}
+          {%- assign tag_name = tag[0] -%}
+          {%- assign tag_slug = tag_name | slugify -%}
+          {%- assign post_count = tag[1] | size -%}
+          {%- assign font_size = post_count | minus: min_posts | times: size_range | divided_by: steps | plus: min_size -%}
+          {%- assign size_bucket = font_size | minus: min_size | times: 5 | divided_by: size_range | plus: 1 -%}
+          <a class="tag-chip tag-chip--cloud tag-filter-chip tag-chip--size-{{ size_bucket }}" href="{{ '/tags/' | relative_url }}?tag={{ tag_slug }}" data-tag-filter-link data-tag-value="{{ tag_slug }}">
+            <span class="tag-chip__label">{{ tag_name }}</span>
+            <span class="tag-chip__count">{{ post_count }}</span>
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+    <p class="tag-posts__status" data-tag-status hidden></p>
+  </div>
+</section>
+
+<section class="page-section">
+  <div class="container tag-index" data-tag-posts-page>
+    {%- for tag in sorted_tags -%}
+      {%- assign tag_name = tag[0] -%}
+      {%- assign tag_slug = tag_name | slugify -%}
+      {%- assign tagged_posts = tag[1] | sort: 'date' | reverse -%}
+      <div class="story-list tag-section" id="tag-{{ tag_slug }}" data-tag-section data-tag-value="{{ tag_slug }}" data-tag-label="{{ tag_name }}">
+        <div class="home-section-head">
+          <p class="tag-section__eyebrow">Tag</p>
+          <h2>{{ tag_name }}</h2>
+          <p class="tag-section__summary">{{ tagged_posts.size }} post{% if tagged_posts.size != 1 %}s{% endif %}</p>
+        </div>
+        {%- for post in tagged_posts -%}
+          {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
+          {%- assign post_word_count = post.content | strip_html | number_of_words -%}
+          {%- assign post_image = post.image | default: site.default_post_image -%}
+          <a class="story-card" href="{{ post.url | relative_url }}">
+            <div class="story-card__media">
+              <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="story-card__body">
+              <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
+              <h2>{{ post.title }}</h2>
+              <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
+              {%- if post_word_count > 60 -%}
+                <p class="story-card__read-more">Read more...</p>
+              {%- endif -%}
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+
+    <div class="story-list">
+      <section class="intro-card tag-section tag-section--missing" data-tag-not-found hidden>
+        <p class="tag-section__eyebrow">Tag</p>
+        <h2>Tag does not exist</h2>
+        <p class="tag-section__summary">Unable to show the requested tag because it does not exist in this site.</p>
+      </section>
+    </div>
+  </div>
+</section>

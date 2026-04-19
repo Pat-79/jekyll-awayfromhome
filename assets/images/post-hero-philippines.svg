@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="phTitle">
+  <title id="phTitle">Tropical coastline illustration</title>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#5cb8ff"/>
+      <stop offset="62%" stop-color="#a4daf7"/>
+      <stop offset="100%" stop-color="#f1c492"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0c8bb0"/>
+      <stop offset="100%" stop-color="#0b4f6b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect y="520" width="1600" height="380" fill="url(#sea)"/>
+  <path d="M0 520c143 40 237 50 355 44 96-5 170-27 271-29 130-2 223 45 351 45 119 0 201-39 332-43 130-4 196 17 291 49V900H0Z" fill="#173e46" opacity="0.55"/>
+  <path d="M70 680c50-180 94-270 132-270 42 0 78 111 106 270h-38c-20-113-43-177-68-177-21 0-48 62-87 177Z" fill="#2a2116"/>
+  <path d="M195 326c56 22 110 60 135 104-77-1-131-22-176-64 7-14 19-28 41-40Z" fill="#2e8047"/>
+  <path d="M206 339c-42 34-77 85-87 138 64-16 104-44 135-93-12-15-25-28-48-45Z" fill="#359553"/>
+  <path d="M262 325c66 17 133 53 164 102-91-4-147-29-196-77 8-12 16-20 32-25Z" fill="#4cab5f"/>
+  <path d="M498 700c53-210 101-315 145-315 40 0 82 116 122 315h-44c-22-131-47-210-81-210-28 0-63 78-102 210Z" fill="#281e17"/>
+  <path d="M640 318c85 29 151 86 184 154-97-9-166-44-230-115 11-16 22-28 46-39Z" fill="#3f9b51"/>
+  <path d="M651 334c-58 57-105 136-118 214 88-24 144-74 187-152-16-21-31-38-69-62Z" fill="#2f7c44"/>
+  <path d="M1080 700c47-194 93-292 126-292 38 0 71 104 99 292h-38c-18-116-38-185-60-185-23 0-51 69-89 185Z" fill="#261d17"/>
+  <path d="M1185 338c74 24 136 73 162 132-85-3-143-28-194-89 8-15 17-27 32-43Z" fill="#3f9757"/>
+  <path d="M1183 347c-53 43-98 111-115 176 80-18 132-61 171-128-13-20-26-33-56-48Z" fill="#2f7d45"/>
+  <circle cx="1260" cy="170" r="42" fill="#fff8da" opacity="0.72"/>
+</svg>

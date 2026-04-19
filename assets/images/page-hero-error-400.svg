@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" role="img" aria-labelledby="title desc">
+  <title id="title">400 Bad Request header</title>
+  <desc id="desc">An abstract warning scene with geometric markers for malformed requests.</desc>
+  <defs>
+    <linearGradient id="bg400" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1a2333"/>
+      <stop offset="48%" stop-color="#2d3b55"/>
+      <stop offset="100%" stop-color="#6d5d78"/>
+    </linearGradient>
+    <linearGradient id="line400" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#ffc97a" stop-opacity="0.08"/>
+      <stop offset="50%" stop-color="#ffdca8" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#ffc97a" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="700" fill="url(#bg400)"/>
+
+  <g fill="none" stroke="url(#line400)" stroke-width="2">
+    <path d="M0 168 H1600"/>
+    <path d="M0 252 H1600"/>
+    <path d="M0 336 H1600"/>
+    <path d="M0 420 H1600"/>
+  </g>
+
+  <g opacity="0.72">
+    <polygon points="300,470 430,250 560,470" fill="#f1a74a"/>
+    <polygon points="720,510 860,270 1000,510" fill="#f5bf68"/>
+    <polygon points="1080,460 1200,255 1320,460" fill="#e89739"/>
+  </g>
+
+  <g fill="#2f3d57" opacity="0.85">
+    <rect x="0" y="510" width="1600" height="190"/>
+    <path d="M0 510 C220 480 420 560 680 530 C900 505 1160 560 1600 520 L1600 700 L0 700 Z" fill="#212d44"/>
+  </g>
+
+  <g fill="#fff6e8" opacity="0.78" font-family="Sora, sans-serif" font-weight="700" font-size="110" letter-spacing="8">
+    <text x="150" y="210">400</text>
+  </g>
+</svg>

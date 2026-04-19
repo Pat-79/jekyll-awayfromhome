@@ -1,0 +1,39 @@
+---
+layout: page
+---
+
+{%- assign social_items = page.social_links | default: site.social_page.links | default: site.social_links -%}
+{%- assign social_intro = page.social_intro | default: site.social_page.intro | default: 'Use this page for the site-specific social channels that sit behind the shared theme.' -%}
+{%- assign open_new_tab = page.social_open_new_tab -%}
+{%- if open_new_tab == nil -%}
+  {%- assign open_new_tab = site.social_page.open_new_tab -%}
+{%- endif -%}
+{%- if open_new_tab == nil -%}
+  {%- assign open_new_tab = true -%}
+{%- endif -%}
+
+<section class="page-section">
+  <div class="container">
+    {% unless page.image %}
+      <h1>{{ page.title | default: "Social Media" }}</h1>
+    {% endunless %}
+
+    {% if social_intro and social_intro != '' %}
+      <p>{{ social_intro }}</p>
+    {% endif %}
+
+    {% if social_items and social_items.size > 0 %}
+      <ul>
+        {% for item in social_items %}
+          <li>
+            <a href="{{ item.url }}"{% if open_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>
+              {{ item.title | default: item.label | default: item.platform | capitalize }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No social links configured.</p>
+    {% endif %}
+  </div>
+</section>

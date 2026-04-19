@@ -1,0 +1,4 @@
+{%- assign icon_id = 'icon-' | append: include.platform | default: 'icon-globe' -%}
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="1em" height="1em">
+  <use href="{{ '/assets/images/icons.svg' | relative_url }}#{{ icon_id }}"></use>
+</svg>

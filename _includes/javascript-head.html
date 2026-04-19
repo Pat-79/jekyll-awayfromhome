@@ -1,0 +1,14 @@
+<script>
+  // Inline theme detection — must run before CSS to prevent flash of wrong theme.
+  (function () {
+    var savedTheme = localStorage.getItem("afh-theme");
+    var defaultTheme = {{ site.theme_settings.default_theme | default: 'auto' | jsonify }};
+    var explicitTheme = (savedTheme === "light" || savedTheme === "dark")
+      ? savedTheme
+      : (defaultTheme === "light" || defaultTheme === "dark" ? defaultTheme : null);
+
+    if (explicitTheme) {
+      document.documentElement.dataset.theme = explicitTheme;
+    }
+  }());
+</script>

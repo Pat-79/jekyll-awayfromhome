@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" role="img" aria-labelledby="title desc">
+  <title id="title">About page header</title>
+  <desc id="desc">A calm abstract landscape with layered hills and a sunrise gradient.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1b2a49"/>
+      <stop offset="55%" stop-color="#2f6f89"/>
+      <stop offset="100%" stop-color="#e9b872"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="700" fill="url(#sky)"/>
+  <circle cx="1180" cy="190" r="86" fill="#ffe8b2" opacity="0.75"/>
+  <path d="M0 480 C260 390 430 410 720 500 C980 580 1240 560 1600 470 L1600 700 L0 700 Z" fill="#1f3e54" opacity="0.85"/>
+  <path d="M0 560 C260 500 500 520 760 590 C1060 670 1320 640 1600 575 L1600 700 L0 700 Z" fill="#132a3a" opacity="0.95"/>
+</svg>

@@ -1,0 +1,233 @@
+@import "variables";
+
+// Flag emoji font — scoped to Regional Indicator Symbols, waving flags, and
+// emoji tag characters. The browser only downloads this font when the page
+// contains glyphs in those ranges; all other characters fall through to the
+// normal body font stack.
+@font-face {
+  font-family: "BabelStone Flags";
+  src:
+    url("/assets/fonts/BabelStoneFlags.woff2") format("woff2"),
+    url("/assets/fonts/BabelStoneFlags.woff")  format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+1F1E6-1F1FF,   /* Regional Indicator Symbols (country flag pairs, e.g. 🇳🇱) */
+    U+1F3F3-1F3F4,   /* Waving White / Black Flag (ZWJ & tag sequences)          */
+    U+E0000-E007F;   /* Tags block (flag emoji tag sequences for subdivisions)    */
+}
+
+:root {
+  color-scheme: light;
+  --layout-max-width: #{$layout-max-width};
+  --reading-width: #{$reading-width};
+  --page-gutter: #{$page-gutter};
+  --drawer-width: #{$drawer-width};
+  --drawer-width-wide: #{$drawer-width-wide};
+  --header-height: #{$header-height};
+  --radius-small: #{$radius-small};
+  --radius-large: #{$radius-large};
+  --font-display: #{$font-display};
+  --font-body: #{$font-body};
+  --page-bg: #{$light-bg};
+  --surface: #{$light-surface};
+  --surface-muted: #{$light-surface-muted};
+  --text: #{$light-text};
+  --muted: #{$light-muted};
+  --border: #{$light-border};
+  --accent: #{$light-accent};
+  --accent-strong: #{$light-accent-strong};
+  --header-bg: #{$light-header};
+  --header-bg-scrolled: #{$light-header-scrolled};
+  --drawer-bg: #{$light-drawer};
+  --drawer-text: #{$light-drawer-text};
+  --drawer-muted: #{$light-drawer-muted};
+  --hero-overlay: #{$light-hero-overlay};
+  --shadow-soft: #{$light-shadow};
+  --search-results-bg: color-mix(in srgb, var(--surface) 74%, var(--text));
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #{$dark-bg};
+  --surface: #{$dark-surface};
+  --surface-muted: #{$dark-surface-muted};
+  --text: #{$dark-text};
+  --muted: #{$dark-muted};
+  --border: #{$dark-border};
+  --accent: #{$dark-accent};
+  --accent-strong: #{$dark-accent-strong};
+  --header-bg: #{$dark-header};
+  --header-bg-scrolled: #{$dark-header-scrolled};
+  --drawer-bg: #{$dark-drawer};
+  --drawer-text: #{$dark-drawer-text};
+  --drawer-muted: #{$dark-drawer-muted};
+  --hero-overlay: #{$dark-hero-overlay};
+  --shadow-soft: #{$dark-shadow};
+  --search-results-bg: color-mix(in srgb, var(--surface) 84%, #fff);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page-bg: #{$dark-bg};
+    --surface: #{$dark-surface};
+    --surface-muted: #{$dark-surface-muted};
+    --text: #{$dark-text};
+    --muted: #{$dark-muted};
+    --border: #{$dark-border};
+    --accent: #{$dark-accent};
+    --accent-strong: #{$dark-accent-strong};
+    --header-bg: #{$dark-header};
+    --header-bg-scrolled: #{$dark-header-scrolled};
+    --drawer-bg: #{$dark-drawer};
+    --drawer-text: #{$dark-drawer-text};
+    --drawer-muted: #{$dark-drawer-muted};
+    --hero-overlay: #{$dark-hero-overlay};
+    --shadow-soft: #{$dark-shadow};
+    --search-results-bg: color-mix(in srgb, var(--surface) 84%, #fff);
+  }
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: $footer-bg;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background:
+    radial-gradient(circle at top center, color-mix(in srgb, var(--accent) 12%, transparent), transparent 28rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)) var(--page-bg);
+  line-height: 1.6;
+  overflow-x: clip;
+}
+
+* {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.03em;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 1rem;
+  font-family: var(--font-body);
+}
+
+li {
+  font-family: var(--font-body);
+}
+
+a {
+  font-family: var(--font-body);
+}
+
+.container {
+  width: min(calc(100% - (2 * var(--page-gutter))), var(--layout-max-width));
+  margin: 0 auto;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+img {
+  display: block;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -5rem;
+  left: 0.75rem;
+  z-index: 120;
+  padding: 0.7rem 0.95rem;
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-soft);
+}
+
+.skip-link:focus-visible {
+  top: 0.75rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.flag-glyph {
+  display: inline-block;
+  font-family: "BabelStone Flags", var(--font-body);
+  line-height: 1;
+  text-shadow:
+    0.5px 0 0 rgba(0, 0, 0, 0.55),
+    -0.5px 0 0 rgba(0, 0, 0, 0.55),
+    0 0.5px 0 rgba(0, 0, 0, 0.55),
+    0 -0.5px 0 rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: NaNs !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: NaNs !important;
+  }
+}

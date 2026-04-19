@@ -1,0 +1,13 @@
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <a href="{{ '/' | relative_url }}">{{ site.footer.domain_label | default: site.title }}</a>
+      <a href="{{ site.footer.sitemap_url | default: '/sitemap/' | relative_url }}">Sitemap</a>
+    </div>
+    <div class="site-footer__note">
+      <p>{{ site.footer.copyright | default: 'All rights reserved.' }}</p>
+      <p>{{ site.footer.disclaimer | default: 'Content and opinions are provided for informational purposes.' }}</p>
+    </div>
+    {%- include social-links.html class_name='social-links social-links--footer' %}
+  </div>
+</footer>

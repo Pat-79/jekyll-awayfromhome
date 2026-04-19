@@ -1,0 +1,16 @@
+<section class="page-section">
+  <div class="container page-copy">
+    {% unless page.image %}
+      <h1>{{ page.title | default: 'Tag Cloud' }}</h1>
+    {% endunless %}
+    <p>{{ page.tag_intro | default: 'Browse all tags and jump to the filtered tag index view for each one.' }}</p>
+    {%- include tag-cloud.html
+      min_size=14
+      max_size=34
+      show_count=true
+      class_name='tag-cloud tag-cloud--scaled tag-cloud--page'
+      chip_class='tag-chip tag-chip--cloud'
+      empty_class='menu-note'
+    -%}
+  </div>
+</section>

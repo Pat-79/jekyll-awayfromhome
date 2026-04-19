@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="slTitle">
+  <title id="slTitle">Mountain lake illustration</title>
+  <defs>
+    <linearGradient id="slSky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0f2037"/>
+      <stop offset="55%" stop-color="#67718a"/>
+      <stop offset="100%" stop-color="#f2bb7a"/>
+    </linearGradient>
+    <linearGradient id="slLake" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#27495c"/>
+      <stop offset="100%" stop-color="#0e1b24"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#slSky)"/>
+  <path d="M0 500 210 280l168 140L560 235l157 185 196-244 174 247 177-172 336 249V900H0Z" fill="#1f2730"/>
+  <path d="M0 548 230 390l176 124 189-171 182 153 154-209 193 218 151-103 325 146V900H0Z" fill="#33414b" opacity="0.88"/>
+  <rect y="520" width="1600" height="380" fill="url(#slLake)"/>
+  <path d="M0 575c111 34 265 64 420 64 182 0 288-50 453-50 143 0 240 38 389 38 115 0 228-19 338-53v326H0Z" fill="#14252f" opacity="0.8"/>
+  <circle cx="964" cy="178" r="58" fill="#ffe2b5" opacity="0.55"/>
+</svg>

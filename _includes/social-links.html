@@ -1,0 +1,62 @@
+{%- assign social_class = include.class_name | default: 'social-links' -%}
+{%- assign social_links_list = site.social_links | default: empty -%}
+{%- assign has_rss_link = false -%}
+{%- assign feed_plugin_enabled = false -%}
+{%- assign configured_plugins = site.plugins | default: site.gems -%}
+{%- assign social_rss_enabled = site.social_rss_enabled | default: true -%}
+{%- assign auto_rss_added = false -%}
+
+{%- if social_links_list and social_links_list.size > 0 -%}
+  {%- for item in social_links_list -%}
+    {%- assign platform_name = item.platform | downcase -%}
+    {%- if platform_name == 'rss' -%}
+      {%- assign has_rss_link = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- if configured_plugins and configured_plugins contains 'jekyll-feed' -%}
+  {%- assign feed_plugin_enabled = true -%}
+{%- endif -%}
+
+{%- if social_rss_enabled and feed_plugin_enabled and has_rss_link == false -%}
+  {%- assign auto_rss_added = true -%}
+{%- endif -%}
+
+{%- assign social_icon_count = social_links_list.size | plus: 1 -%}
+{%- if auto_rss_added -%}
+  {%- assign social_icon_count = social_icon_count | plus: 1 -%}
+{%- endif -%}
+
+{%- assign social_class_list = social_class -%}
+{%- assign social_wrap_columns = 0 -%}
+{%- if social_icon_count > 5 -%}
+  {%- assign social_class_list = social_class_list | append: ' social-links--balanced' -%}
+  {%- assign max_per_row = 5 -%}
+  {%- assign rows_needed = social_icon_count | plus: max_per_row | minus: 1 | divided_by: max_per_row -%}
+  {%- assign social_wrap_columns = social_icon_count | plus: rows_needed | minus: 1 | divided_by: rows_needed -%}
+{%- endif -%}
+
+<div class="{{ social_class_list }}"{%- if social_wrap_columns > 0 -%} style="--social-wrap-columns: {{ social_wrap_columns }};"{%- endif -%}>
+  {%- if social_links_list and social_links_list.size > 0 %}
+    {%- for item in social_links_list %}
+      {%- assign platform_name = item.platform | downcase -%}
+      <a class="social-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+        {%- include icon.html platform=platform_name %}
+        <span class="sr-only">{{ platform_name }} (opens in a new tab)</span>
+      </a>
+    {%- endfor %}
+  {%- endif %}
+
+  {%- if auto_rss_added -%}
+    <a class="social-link" href="{{ '/feed.xml' | relative_url }}" target="_blank" rel="noopener noreferrer">
+      {%- include icon.html platform='rss' %}
+      <span class="sr-only">rss feed (opens in a new tab)</span>
+    </a>
+  {%- endif -%}
+
+  <button class="social-link social-link--share" type="button" data-share-button aria-label="Copy page link" title="Share">
+    {%- include icon.html platform='share' %}
+    <span class="sr-only">Copy page link</span>
+  </button>
+</div>

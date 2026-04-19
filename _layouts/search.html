@@ -1,0 +1,18 @@
+---
+layout: page
+---
+
+<section class="page-section">
+  <div class="container">
+    {% unless page.image %}
+      <h1>{{ page.title | default: "Search" }}</h1>
+    {% endunless %}
+    <p>{{ page.intro | default: "Find stories, places, and pages across the site." }}</p>
+  </div>
+</section>
+
+<section class="page-section page-section--spaced">
+  <div class="container">
+    {% include search-widget.html id='search-page' limit=20 class='search-widget--page' sync_query=true %}
+  </div>
+</section>

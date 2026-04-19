@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="logoTitle">
+  <title id="logoTitle">Away From Home logo</title>
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#18d0d6"/>
+      <stop offset="100%" stop-color="#0b7888"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#0d1117"/>
+  <circle cx="60" cy="60" r="52" fill="url(#logoGradient)" opacity="0.95"/>
+  <path d="M60 18 87 33v27c0 20-11 38-27 47C44 98 33 80 33 60V33Z" fill="#e9fbfc" opacity="0.94"/>
+  <path d="M60 32 74 40v18c0 11-5.5 21.3-14 27.4C51.5 79.3 46 69 46 58V40Z" fill="#0f7b87"/>
+  <circle cx="60" cy="58" r="8" fill="#18d0d6"/>
+</svg>

@@ -1,0 +1,29 @@
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-brand" href="{{ '/' | relative_url }}" aria-label="{{ site.brand.title | default: site.title }}">
+      {%- if site.brand.logo %}
+        <img class="site-brand__logo" src="{{ site.brand.logo | relative_url }}" alt="" width="40" height="40">
+      {%- else %}
+        <span class="site-brand__mark">{{ site.title | slice: 0, 1 }}</span>
+      {%- endif %}
+      <span class="site-brand__text">{{ site.brand.title | default: site.title }}</span>
+    </a>
+    <div class="site-header__search" aria-label="Site search">
+      {% include search-widget.html id='site-header-search' class='search-widget--header' limit=6 placeholder='Search stories...' sync_query=false %}
+    </div>
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-drawer"
+      aria-label="Open site menu"
+      data-menu-button
+    >
+      <span class="menu-toggle__bars" aria-hidden="true">
+        <span class="menu-toggle__bar menu-toggle__bar--top"></span>
+        <span class="menu-toggle__bar menu-toggle__bar--middle"></span>
+        <span class="menu-toggle__bar menu-toggle__bar--bottom"></span>
+      </span>
+    </button>
+  </div>
+</header>

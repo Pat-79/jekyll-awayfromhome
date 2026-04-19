@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" role="img" aria-labelledby="title desc">
+  <title id="title">Archive page header</title>
+  <desc id="desc">A layered timeline-inspired composition with card-like date blocks.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#121d2e"/>
+      <stop offset="58%" stop-color="#304f6b"/>
+      <stop offset="100%" stop-color="#8ab0c5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="700" fill="url(#bg)"/>
+  <g opacity="0.22" fill="#e4f5ff">
+    <rect x="180" y="170" width="260" height="100" rx="24"/>
+    <rect x="500" y="220" width="260" height="100" rx="24"/>
+    <rect x="820" y="170" width="260" height="100" rx="24"/>
+    <rect x="1140" y="220" width="260" height="100" rx="24"/>
+    <rect x="280" y="370" width="260" height="100" rx="24"/>
+    <rect x="700" y="370" width="260" height="100" rx="24"/>
+    <rect x="1120" y="370" width="260" height="100" rx="24"/>
+  </g>
+  <g stroke="#d7efff" stroke-width="3" opacity="0.35" fill="none">
+    <path d="M120 320 H1480"/>
+    <path d="M440 220 L500 270"/>
+    <path d="M760 270 L820 220"/>
+    <path d="M1080 220 L1140 270"/>
+    <path d="M540 420 L700 420"/>
+    <path d="M960 420 L1120 420"/>
+  </g>
+  <path d="M0 620 C260 585 470 650 780 620 C1060 595 1320 665 1600 625 L1600 700 L0 700 Z" fill="#0d2035" opacity="0.92"/>
+</svg>

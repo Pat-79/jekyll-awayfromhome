@@ -1,0 +1,67 @@
+{%- assign hero_title = include.title | default: page.title -%}
+{%- assign hero_image = include.image -%}
+{%- assign hero_show_tags = include.show_tags | default: false -%}
+{%- assign hero_show_meta = include.show_meta | default: false -%}
+{%- assign hero_author_name = include.author_name -%}
+{%- assign hero_date = include.date -%}
+{%- assign entity_index_url = '/browse/' | relative_url -%}
+{%- assign entity_results_anchor = '#browse-results' -%}
+
+{%- assign hero_categories = '' | split: '' -%}
+{%- if page.categories and page.categories != empty -%}
+  {%- if page.categories.first -%}
+    {%- assign hero_categories = page.categories -%}
+  {%- else -%}
+    {%- assign hero_categories = page.categories | split: ',' -%}
+  {%- endif -%}
+{%- elsif page.category and page.category != empty -%}
+  {%- assign hero_categories = page.category | split: ',' -%}
+{%- endif -%}
+
+<header class="post-hero{% unless hero_image %} post-hero--plain{% endunless %}">
+  {%- if hero_image -%}
+    <div class="post-hero__media">
+      <img class="post-hero__media-image" src="{{ hero_image | relative_url }}" alt="" loading="eager" decoding="async">
+    </div>
+  {%- endif -%}
+  <div class="post-hero__content container">
+    {%- if hero_show_tags and page.tags and page.tags.size > 0 -%}
+      <p class="post-hero__tags">
+        {%- for tag in page.tags -%}
+          {%- assign tag_name = tag | strip -%}
+          {%- if tag_name != '' -%}
+            {%- assign tag_slug = tag_name | slugify -%}
+            <a class="post-hero__tag-link" href="{{ entity_index_url }}?tag={{ tag_slug }}{{ entity_results_anchor }}">{{ tag_name }}</a>{% unless forloop.last %}, {% endunless %}
+          {%- endif -%}
+        {%- endfor -%}
+      </p>
+    {%- endif -%}
+    <h1>{{ hero_title }}</h1>
+    {%- if hero_show_meta and (hero_author_name or hero_date) -%}
+      <p class="post-hero__meta">
+        {%- if hero_author_name -%}
+          <span class="post-hero__separator" aria-hidden="true">by&nbsp;</span>
+          <a class="post-hero__byline post-hero__meta-link" href="{{ entity_index_url }}?author={{ hero_author_name | slugify }}{{ entity_results_anchor }}">{{ hero_author_name }}</a>
+        {%- endif -%}
+        {%- if hero_author_name and hero_date -%}
+          <span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>
+        {%- endif -%}
+        {%- if hero_date -%}
+          <time datetime="{{ hero_date | date_to_xmlschema }}">{{ hero_date | date: '%B %-d, %Y' }}</time>
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+    {%- if hero_categories and hero_categories.size > 0 -%}
+      <p class="post-hero__categories">
+        <span class="post-hero__separator">in&nbsp;</span>
+        {%- for category in hero_categories -%}
+          {%- assign category_name = category | strip -%}
+          {%- if category_name != '' -%}
+            {%- assign category_slug = category_name | slugify -%}
+            <a class="post-hero__category-link" href="{{ entity_index_url }}?category={{ category_slug }}{{ entity_results_anchor }}">{{ category_name }}</a>{% unless forloop.last %}, {% endunless %}
+          {%- endif -%}
+        {%- endfor -%}
+      </p>
+    {%- endif -%}
+  </div>
+</header>

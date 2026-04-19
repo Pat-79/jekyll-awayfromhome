@@ -1,0 +1,48 @@
+---
+layout: page
+---
+
+{%- assign error_code = page.error_code | default: '' -%}
+{%- if error_code == '' -%}
+  {%- if page.title and page.title contains '403' -%}
+    {%- assign error_code = '403' -%}
+  {%- elsif page.title and page.title contains '404' -%}
+    {%- assign error_code = '404' -%}
+  {%- elsif page.title and page.title contains '500' -%}
+    {%- assign error_code = '500' -%}
+  {%- else -%}
+    {%- assign error_code = 'Error' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign error_title = page.error_title | default: page.title | default: 'Something went wrong' -%}
+{%- assign error_message = page.error_message | default: site.error_page.message -%}
+{%- if error_message == nil or error_message == '' -%}
+  {%- if error_code == '403' -%}
+    {%- assign error_message = 'You do not have permission to access this page.' -%}
+  {%- elsif error_code == '404' -%}
+    {%- assign error_message = 'The page you are looking for could not be found.' -%}
+  {%- elsif error_code == '500' -%}
+    {%- assign error_message = 'The server encountered an issue. Please try again in a moment.' -%}
+  {%- else -%}
+    {%- assign error_message = 'An unexpected error occurred.' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign cta_label = page.error_cta_label | default: site.error_page.cta_label | default: 'Back to home' -%}
+{%- assign cta_url = page.error_cta_url | default: site.error_page.cta_url | default: '/' -%}
+
+<section class="page-section">
+  <div class="container page-copy error-page">
+    {% if page.image %}
+      <p class="error-page__code">{{ error_code }}</p>
+    {% else %}
+      <h1>{{ error_title }}</h1>
+      <p class="error-page__code">{{ error_code }}</p>
+    {% endif %}
+    <p>{{ error_message }}</p>
+    <p>
+      <a class="button" href="{{ cta_url | relative_url }}">{{ cta_label }}</a>
+    </p>
+  </div>
+</section>

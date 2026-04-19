@@ -1,0 +1,50 @@
+---
+layout: base
+---
+
+{%- assign is_post_layout = false -%}
+{%- if page.layout == 'post' or page.collection == 'posts' -%}
+  {%- assign is_post_layout = true -%}
+{%- endif -%}
+
+{%- assign hero_image = page.image | default: site.default_post_image | default: '/assets/images/default-hero.svg' -%}
+
+{%- assign hero_has_author = page.has_author | default: is_post_layout | default: false -%}
+{%- assign hero_author_name = false -%}
+{%- if hero_has_author -%}
+  {%- if page.author and page.author.name and page.author.name != empty -%}
+    {%- assign hero_author_name = page.author.name -%}
+  {%- elsif page.author and page.author != empty -%}
+    {%- assign hero_author_name = page.author -%}
+  {%- elsif site.author and site.author.name and site.author.name != empty -%}
+    {%- assign hero_author_name = site.author.name -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign hero_date = page.date -%}
+{%- assign hero_show_meta = false -%}
+{%- if hero_author_name or hero_date -%}
+  {%- assign hero_show_meta = true -%}
+{%- endif -%}
+
+{%- include post-hero.html
+  title=page.title
+  image=hero_image
+  show_tags=is_post_layout
+  show_meta=hero_show_meta
+  author_name=hero_author_name
+  date=hero_date
+-%}
+
+{%- if page.layout == 'page' -%}
+<article class="post-page">
+  <div class="post-body container">
+    <div class="post-body__inner">
+      <div class="post-content">
+        {{ content }}
+      </div>
+    </div>
+  </div>
+</article>
+{%- else -%}
+{{ content }}
+{%- endif -%}

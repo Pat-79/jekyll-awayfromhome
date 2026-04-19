@@ -1,0 +1,25 @@
+{%- assign widget_id = include.id | default: 'search-widget' -%}
+{%- assign widget_limit = include.limit | default: 8 -%}
+{%- assign widget_placeholder = include.placeholder | default: 'Search...' -%}
+{%- assign widget_class = include.class -%}
+{%- assign widget_sync_query = include.sync_query | default: true -%}
+
+<div
+  class="search-widget{% if widget_class %} {{ widget_class }}{% endif %}"
+  data-search-widget
+  data-search-id="{{ widget_id }}"
+  data-search-limit="{{ widget_limit }}"
+  data-search-version="{{ site.time | date: '%Y%m%d%H%M%S' }}"
+  data-search-sync-query="{{ widget_sync_query }}"
+>
+  <div class="search-widget__control">
+    <input
+      class="search-widget__input"
+      data-search-input
+      autocomplete="off"
+      placeholder="{{ widget_placeholder }}"
+      aria-label="Search"
+    />
+  </div>
+  <ul class="search-widget__results" data-search-results></ul>
+</div>
