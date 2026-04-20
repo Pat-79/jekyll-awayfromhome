@@ -1,7 +1,21 @@
+{%- assign page_content = page.content | default: '' -%}
+{%- assign has_gallery_widget = false -%}
+{%- assign has_map_widget = false -%}
+{%- if page_content contains 'include gallery-widget.html' or page_content contains 'data-gallery' -%}
+	{%- assign has_gallery_widget = true -%}
+{%- endif -%}
+{%- if page_content contains 'include map-widget.html' or page_content contains 'data-map-widget' -%}
+	{%- assign has_map_widget = true -%}
+{%- endif -%}
+
 <script src="{{ '/assets/js/theme.js' | relative_url }}" defer></script>
+{% if has_gallery_widget %}
 <script src="{{ '/assets/js/gallery-widget.js' | relative_url }}" defer></script>
+{% endif %}
+{% if has_map_widget %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 <script src="{{ '/assets/js/map-widget.js' | relative_url }}" defer></script>
+{% endif %}
 <script type="module" src="{{ '/assets/js/search-widget.js' | relative_url }}" defer></script>
 {% if page.layout == 'home' %}
 <script src="{{ '/assets/js/home-landing.js' | relative_url }}" defer></script>

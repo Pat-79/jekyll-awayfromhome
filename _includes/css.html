@@ -1,5 +1,23 @@
 <!--{%- assign css_version = site.time | date: '%s' -%}-->
 <!--link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ css_version }}"-->
 {%- assign css_version = site.github.build_revision | default: site.time | date: '%s' -%}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{%- assign page_content = page.content | default: '' -%}
+{%- assign has_gallery_widget = false -%}
+{%- assign has_map_widget = false -%}
+{%- if page_content contains 'include gallery-widget.html' or page_content contains 'data-gallery' -%}
+	{%- assign has_gallery_widget = true -%}
+{%- endif -%}
+{%- if page_content contains 'include map-widget.html' or page_content contains 'data-map-widget' -%}
+	{%- assign has_map_widget = true -%}
+{%- endif -%}
+
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ css_version }}">
+{%- if has_map_widget -%}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{%- endif -%}
+{%- if has_gallery_widget -%}
+<link rel="stylesheet" href="{{ '/assets/css/gallery-widget.css' | relative_url }}?v={{ css_version }}">
+{%- endif -%}
+{%- if has_map_widget -%}
+<link rel="stylesheet" href="{{ '/assets/css/map-widget.css' | relative_url }}?v={{ css_version }}">
+{%- endif -%}
