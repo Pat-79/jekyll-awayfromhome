@@ -17,36 +17,34 @@ layout: page
   </div>
 </section>
 
+{%- assign blog_per_page = page.blog_per_page | default: site.blog_page.per_page | default: 10 -%}
+
 <section class="page-section page-section--spaced">
-  <div class="container story-list">
+  <div class="container story-list" data-blog-list data-blog-per-page="{{ blog_per_page }}">
+    {%- assign all_posts = site.posts -%}
     {%- if posts_limit and posts_limit != '' -%}
-      {%- for post in site.posts limit: posts_limit -%}
-        {%- assign post_image = post.image | default: site.default_post_image -%}
-        <a class="story-card story-card--blog" href="{{ post.url | relative_url }}">
-          <div class="story-card__media">
-            <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="story-card__body">
-            <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
-          </div>
-        </a>
-      {%- endfor -%}
-    {%- else -%}
-      {%- for post in site.posts -%}
-        {%- assign post_image = post.image | default: site.default_post_image -%}
-        <a class="story-card story-card--blog" href="{{ post.url | relative_url }}">
-          <div class="story-card__media">
-            <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
-          </div>
-          <div class="story-card__body">
-            <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
-          </div>
-        </a>
-      {%- endfor -%}
+      {%- assign all_posts = site.posts | slice: 0, posts_limit -%}
     {%- endif -%}
+    {%- for post in all_posts -%}
+      {%- assign post_image = post.image | default: site.default_post_image -%}
+      <a class="story-card story-card--blog" href="{{ post.url | relative_url }}" data-blog-item>
+        <div class="story-card__media">
+          <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="story-card__body">
+          <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
+        </div>
+      </a>
+    {%- endfor -%}
+
+    <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination aria-label="Blog pagination">
+      <button class="blog-pagination__btn" data-blog-prev aria-label="Previous page">Previous</button>
+      <span class="blog-pagination__meta" data-blog-page-meta></span>
+      <button class="blog-pagination__btn" data-blog-next aria-label="Next page">Next</button>
+    </nav>
   </div>
 </section>
+
+<script src="{{ '/assets/js/blog-pagination.js' | relative_url }}" defer></script>

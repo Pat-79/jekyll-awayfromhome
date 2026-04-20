@@ -6,7 +6,8 @@ layout: base
 {%- assign landing_video_id = page.landing_youtube_id | default: site.home_landing.youtube_id -%}
 {%- assign landing_hls_raw = page.landing_hls_url | default: page.landing_hls | default: site.home_landing.hls_url | default: site.home_landing.landing_hls_url -%}
 {%- assign landing_image_raw = page.landing_image | default: page.image | default: site.home_landing.image | default: site.default_post_image -%}
-{%- assign latest_posts_limit = page.latest_posts_limit | default: site.home_landing.latest_posts_limit | default: 2 -%}
+{%- assign latest_posts_limit = page.latest_posts_limit | default: site.home_landing.latest_posts_limit -%}
+{%- assign home_per_page = page.home_per_page | default: site.home_landing.per_page | default: 10 -%}
 
 {%- if landing_video_id == nil or landing_video_id == '' -%}
   {%- if landing_video_url and landing_video_url != '' -%}
@@ -103,15 +104,20 @@ layout: base
 
 
 <section class="page-section page-section--spaced" id="home-main" data-home-main>
-  <div class="container story-list">
+  <div class="container story-list" data-blog-list data-blog-per-page="{{ home_per_page }}">
     <div class="home-section-head">
       <h2>Latest Posts</h2>
     </div>
-    {%- for post in site.posts limit: latest_posts_limit -%}
+    {%- if latest_posts_limit and latest_posts_limit != '' -%}
+      {%- assign home_posts = site.posts | slice: 0, latest_posts_limit -%}
+    {%- else -%}
+      {%- assign home_posts = site.posts -%}
+    {%- endif -%}
+    {%- for post in home_posts -%}
       {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
       {%- assign post_word_count = post.content | strip_html | number_of_words -%}
       {%- assign post_image = post.image | default: site.default_post_image -%}
-      <a class="story-card" href="{{ post.url | relative_url }}">
+      <a class="story-card" href="{{ post.url | relative_url }}" data-blog-item>
         <div class="story-card__media">
           <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
         </div>
@@ -125,5 +131,13 @@ layout: base
         </div>
       </a>
     {%- endfor -%}
+
+    <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination aria-label="Home posts pagination">
+      <button class="blog-pagination__btn" data-blog-prev aria-label="Previous page">Previous</button>
+      <span class="blog-pagination__meta" data-blog-page-meta></span>
+      <button class="blog-pagination__btn" data-blog-next aria-label="Next page">Next</button>
+    </nav>
   </div>
 </section>
+
+<script src="{{ '/assets/js/blog-pagination.js' | relative_url }}" defer></script>

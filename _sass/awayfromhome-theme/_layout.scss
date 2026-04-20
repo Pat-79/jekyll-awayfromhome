@@ -1145,6 +1145,58 @@ body:not(.layout-post) .page-content > :last-child {
 
 /// Reusable card styles for intro cards, story cards, and page copy
 .intro-card,
+// ============================================================================
+// BLOG: Client-side pagination controls
+// ============================================================================
+
+[data-blog-item].is-pagination-hidden {
+  display: none !important;
+}
+
+.blog-pagination {
+  display: none;
+}
+
+.blog-pagination:not(.blog-pagination--hidden) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.blog-pagination__btn {
+  font-family: $font-body;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: $radius-pill;
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: background $motion-base, border-color $motion-base, opacity $motion-base;
+
+  &:hover:not(:disabled) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+.blog-pagination__meta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  min-width: 7rem;
+  text-align: center;
+}
+
 .story-card,
 .page-copy {
   border: 1px solid var(--border);
