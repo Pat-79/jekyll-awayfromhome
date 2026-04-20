@@ -1,0 +1,43 @@
+{%- assign map_title = include.title | default: '' -%}
+{%- assign map_description = include.description | default: '' -%}
+{%- assign map_zoom = include.zoom | default: 9 -%}
+{%- assign map_fit = include.fit | default: 'true' -%}
+{%- assign map_center = include.center | default: '' | strip -%}
+{%- assign map_center_lat = include.center_lat | default: '' | strip -%}
+{%- assign map_center_lng = include.center_lng | default: '' | strip -%}
+{%- assign map_center_name = include.center_name | default: '' -%}
+{%- assign map_pins = include.pins | default: '' -%}
+{%- assign map_width_raw = include.width | default: '' | strip -%}
+{%- assign map_height_raw = include.height | default: '' | strip -%}
+
+{%- assign map_width_css = map_width_raw -%}
+{%- if map_width_css != '' and map_width_css contains 'px' == false and map_width_css contains '%' == false and map_width_css contains 'rem' == false and map_width_css contains 'em' == false and map_width_css contains 'vw' == false and map_width_css contains 'vh' == false and map_width_css contains 'ch' == false and map_width_css contains 'calc(' == false -%}
+  {%- assign map_width_css = map_width_css | append: 'px' -%}
+{%- endif -%}
+
+{%- assign map_height_css = map_height_raw | default: '420px' -%}
+{%- if map_height_css != '' and map_height_css contains 'px' == false and map_height_css contains '%' == false and map_height_css contains 'rem' == false and map_height_css contains 'em' == false and map_height_css contains 'vw' == false and map_height_css contains 'vh' == false and map_height_css contains 'ch' == false and map_height_css contains 'calc(' == false -%}
+  {%- assign map_height_css = map_height_css | append: 'px' -%}
+{%- endif -%}
+
+<section
+  class="afh-map"
+  data-map-widget
+  data-map-center="{{ map_center | escape }}"
+  data-map-center-lat="{{ map_center_lat | escape }}"
+  data-map-center-lng="{{ map_center_lng | escape }}"
+  data-map-center-name="{{ map_center_name | escape }}"
+  data-map-zoom="{{ map_zoom | escape }}"
+  data-map-pins="{{ map_pins | escape }}"
+  data-map-fit="{{ map_fit | escape }}"
+  style="--afh-map-height: {{ map_height_css | escape }};{% if map_width_css != '' %} --afh-map-width: {{ map_width_css | escape }};{% endif %}"
+>
+  <header class="afh-map__header{% if map_title == '' and map_description == '' %} is-empty{% endif %}">
+    <h2 class="afh-map__title">{{ map_title }}</h2>
+    <p class="afh-map__description">{{ map_description }}</p>
+  </header>
+
+  <div class="afh-map__frame">
+    <div class="afh-map__canvas" data-map-canvas role="img" aria-label="Interactive map"></div>
+  </div>
+</section>

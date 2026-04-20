@@ -1,0 +1,92 @@
+:root {
+  --afh-map-bg: var(--surface-muted);
+  --afh-map-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
+  --afh-map-shadow: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.afh-map {
+  margin: 1.4rem 0.35rem;
+  color: var(--text);
+  background: var(--afh-map-bg);
+  border: 1px solid var(--afh-map-border);
+  border-radius: 1rem;
+  box-shadow: var(--afh-map-shadow);
+  padding: 0.55rem;
+}
+
+.afh-map__header {
+  margin: 0 0 0.45rem;
+}
+
+.afh-map__header.is-empty {
+  display: none;
+}
+
+.post-content .afh-map__title {
+  margin-top: 0;
+}
+
+.afh-map__title {
+  margin: 0;
+  line-height: 1.15;
+}
+
+.afh-map__description {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.afh-map__frame {
+  width: min(100%, var(--afh-map-width, 100%));
+  margin-inline: auto;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: transparent;
+}
+
+.afh-map__canvas {
+  width: 100%;
+  height: var(--afh-map-height, 420px);
+  min-height: 220px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.afh-map__canvas .leaflet-container {
+  width: 100%;
+  height: 100%;
+  max-width: none !important;
+  margin: 0;
+  border-radius: 0 !important;
+}
+
+// Force Leaflet internals to ignore broad post-content img styles.
+.afh-map__canvas img,
+.afh-map__canvas .leaflet-pane,
+.afh-map__canvas .leaflet-layer,
+.afh-map__canvas .leaflet-tile {
+  max-width: none !important;
+  border-radius: 0 !important;
+}
+
+.afh-map__canvas.is-unavailable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  min-height: 220px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 88%, #000);
+}
+
+.afh-map__canvas .leaflet-control-zoom,
+.afh-map__canvas .leaflet-control-attribution {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.afh-map__canvas .leaflet-popup-content-wrapper,
+.afh-map__canvas .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--text);
+}
