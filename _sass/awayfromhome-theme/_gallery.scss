@@ -1,0 +1,347 @@
+// Gallery widget variables can be overridden by site owners.
+:root {
+  --afh-gallery-bg: color-mix(in srgb, var(--surface) 92%, #000);
+  --afh-gallery-card-bg: color-mix(in srgb, var(--surface-elevated) 92%, #000);
+  --afh-gallery-text: var(--text);
+  --afh-gallery-muted: var(--muted);
+  --afh-gallery-accent: var(--accent);
+  --afh-gallery-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
+  --afh-gallery-overlay: rgba(8, 10, 14, 0.9);
+  --afh-gallery-button-bg: color-mix(in srgb, var(--surface) 74%, #fff 26%);
+  --afh-gallery-button-text: color-mix(in srgb, var(--text) 92%, #000 8%);
+  --afh-gallery-button-border: color-mix(in srgb, var(--border) 80%, #fff 20%);
+  --afh-gallery-button-overlay-bg: rgba(255, 255, 255, 0.2);
+  --afh-gallery-caption-title: color-mix(in srgb, var(--text) 90%, #000 10%);
+  --afh-gallery-caption-description: color-mix(in srgb, var(--text) 76%, var(--muted) 24%);
+  --afh-gallery-caption-meta: color-mix(in srgb, var(--muted) 85%, var(--text) 15%);
+}
+
+html[data-theme="dark"] .afh-gallery {
+  --afh-gallery-button-bg: rgba(13, 21, 34, 0.56);
+  --afh-gallery-button-text: #f3f8ff;
+  --afh-gallery-button-border: rgba(255, 255, 255, 0.4);
+  --afh-gallery-button-overlay-bg: rgba(14, 22, 35, 0.22);
+  --afh-gallery-caption-title: color-mix(in srgb, #fff 92%, var(--text) 8%);
+  --afh-gallery-caption-description: color-mix(in srgb, #fff 82%, var(--muted) 18%);
+  --afh-gallery-caption-meta: color-mix(in srgb, #fff 60%, var(--muted) 40%);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .afh-gallery {
+    --afh-gallery-button-bg: rgba(13, 21, 34, 0.56);
+    --afh-gallery-button-text: #f3f8ff;
+    --afh-gallery-button-border: rgba(255, 255, 255, 0.4);
+    --afh-gallery-button-overlay-bg: rgba(14, 22, 35, 0.22);
+    --afh-gallery-caption-title: color-mix(in srgb, #fff 92%, var(--text) 8%);
+    --afh-gallery-caption-description: color-mix(in srgb, #fff 82%, var(--muted) 18%);
+    --afh-gallery-caption-meta: color-mix(in srgb, #fff 60%, var(--muted) 40%);
+  }
+}
+
+.afh-gallery {
+  margin: 1.4rem 0.35rem;
+  color: var(--afh-gallery-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--afh-gallery-border);
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 0.55rem;
+}
+
+.afh-gallery__header {
+  margin: 0 0 0.45rem;
+}
+
+.afh-gallery__header.is-empty {
+  display: none;
+}
+
+.afh-gallery__title {
+  margin: 0;
+  line-height: 1.15;
+}
+
+// Override generic post heading spacing for gallery title.
+.post-content .afh-gallery__title {
+  margin-top: 0;
+}
+
+.afh-gallery__description {
+  margin: 0.2rem 0 0;
+  color: var(--afh-gallery-muted);
+}
+
+.afh-gallery__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.6rem;
+}
+
+// Keep gallery list grid free from post list indentation.
+.post-content .afh-gallery__grid {
+  padding-left: 0;
+}
+
+.afh-gallery--single .afh-gallery__grid {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: min(100%, 56rem);
+  margin-inline: auto;
+}
+
+.afh-gallery__item {
+  margin: 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.16);
+}
+
+.afh-gallery__link {
+  display: block;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  transition: filter $motion-base;
+}
+
+.afh-gallery__link:hover,
+.afh-gallery__link:focus-visible {
+  box-shadow: none;
+}
+
+.afh-gallery__thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+  object-fit: cover;
+  transition: transform $motion-base, filter $motion-base;
+  filter: none;
+}
+
+// Prevent generic post image spacing from affecting gallery media.
+.post-content .afh-gallery__thumb,
+.post-content .afh-gallery__image {
+  margin: 0;
+}
+
+.afh-gallery__link:hover .afh-gallery__thumb,
+.afh-gallery__link:focus-visible .afh-gallery__thumb {
+  transform: scale(1.05);
+  filter: brightness(1.02);
+}
+
+// Keep gallery media radius controlled, not the generic .post-content media rule.
+.post-content .afh-gallery__link,
+.post-content .afh-gallery__thumb,
+.post-content .afh-gallery__picture {
+  border-radius: 0.75rem;
+}
+
+.afh-gallery--single .afh-gallery__item {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.afh-gallery--single .afh-gallery__link {
+  border: 0;
+  box-shadow: none;
+}
+
+.afh-gallery--single .afh-gallery__link:hover,
+.afh-gallery--single .afh-gallery__link:focus-visible {
+  transform: none;
+}
+
+.afh-gallery--single .afh-gallery__thumb {
+  aspect-ratio: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  background: transparent;
+}
+
+.afh-gallery__notice {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  background: var(--afh-gallery-card-bg);
+  border: 1px dashed var(--afh-gallery-border);
+  border-radius: 0.75rem;
+  color: var(--afh-gallery-muted);
+}
+
+.afh-gallery__lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem;
+  background: var(--afh-gallery-overlay);
+}
+
+.afh-gallery__lightbox.is-hidden {
+  display: none;
+}
+
+.afh-gallery__figure {
+  margin: 0;
+  position: relative;
+  width: min(97vw, 1320px);
+  max-width: min(97vw, 1320px);
+  max-height: calc(100vh - 1.4rem);
+  background: var(--afh-gallery-bg);
+  border: 1px solid color-mix(in srgb, var(--afh-gallery-border) 85%, transparent);
+  border-radius: 1rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  padding: 0.35rem;
+}
+
+.afh-gallery__picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  overflow: hidden;
+  overflow: clip;
+  border: 0;
+  background: transparent;
+  border-radius: 0.75rem;
+  clip-path: inset(0 round 0.75rem);
+}
+
+.afh-gallery__picture > .afh-gallery__image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 78vh;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+  border-radius: 0.75rem;
+}
+
+.afh-gallery__caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 0.65rem;
+  margin-top: 0.35rem;
+  color: var(--afh-gallery-caption-description);
+  padding: 0 0.1rem 0.05rem;
+}
+
+.afh-gallery__caption-title {
+  grid-column: 1;
+  margin: 0;
+  font-weight: 700;
+  color: var(--afh-gallery-caption-title);
+}
+
+.afh-gallery__caption-description {
+  grid-column: 1 / -1;
+  margin: 0.35rem 0 0;
+  color: var(--afh-gallery-caption-description);
+}
+
+.afh-gallery__caption-meta {
+  grid-column: 2;
+  margin: 0;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--afh-gallery-caption-meta);
+  font-size: 0.88rem;
+}
+
+.afh-gallery__close,
+.afh-gallery__nav {
+  appearance: none;
+  border: 1px solid var(--afh-gallery-button-border);
+  border-radius: $radius-pill;
+  background: var(--afh-gallery-button-overlay-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--afh-gallery-button-text);
+  padding: 0.5rem 0.95rem;
+  cursor: pointer;
+  font: inherit;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.afh-gallery__close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 2.3rem;
+  height: 2.3rem;
+  padding: 0;
+  z-index: 5;
+}
+
+.afh-gallery__nav--prev,
+.afh-gallery__nav--next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.afh-gallery__nav--prev {
+  left: 0.5rem;
+}
+
+.afh-gallery__nav--next {
+  right: 0.5rem;
+}
+
+.afh-gallery__nav:hover,
+.afh-gallery__close:hover,
+.afh-gallery__nav:focus-visible,
+.afh-gallery__close:focus-visible {
+  border-color: var(--afh-gallery-accent);
+}
+
+.afh-gallery--single .afh-gallery__nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .afh-gallery__lightbox {
+    padding: 0.35rem;
+  }
+
+  .afh-gallery__nav--prev,
+  .afh-gallery__nav--next {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.3rem;
+  }
+
+  .afh-gallery__nav--prev {
+    left: 0.3rem;
+  }
+
+  .afh-gallery__nav--next {
+    right: 0.3rem;
+  }
+
+  .afh-gallery__figure {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 0.8rem);
+  }
+}
