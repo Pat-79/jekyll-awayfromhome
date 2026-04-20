@@ -120,7 +120,8 @@ function initSearchWidget(widget) {
 
     await engine.load(version);
 
-    render(engine.search(query));
+    const results = await engine.search(query);
+    render(results);
     syncQueryParam(query);
   }, 120);
 

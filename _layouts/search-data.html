@@ -127,7 +127,7 @@ permalink: /assets/data/search-data.json
     {%- assign safe_excerpt = stripped_excerpt | truncatewords: 28 -%}
   {%- endif -%}
   {%- for word in unique_words -%}
-    {%- capture entry -%}{"word": {{ word | jsonify }}, "url": {{ doc.url | jsonify }}, "title": {{ safe_title | jsonify }}, "excerpt": {{ safe_excerpt | jsonify }}, "image": {{ safe_image | jsonify }}}{%- endcapture -%}
+    {%- capture entry -%}{"w": {{ word | jsonify }}, "u": {{ doc.url | jsonify }}, "t": {{ safe_title | jsonify }}, "e": {{ safe_excerpt | jsonify }}, "i": {{ safe_image | jsonify }}}{%- endcapture -%}
     {%- assign entries = entries | push: entry -%}
   {%- endfor -%}
 {%- endfor -%}
