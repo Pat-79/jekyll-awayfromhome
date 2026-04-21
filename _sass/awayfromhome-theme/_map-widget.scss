@@ -90,6 +90,7 @@
 .afh-map__canvas .leaflet-pane,
 .afh-map__canvas .leaflet-layer,
 .afh-map__canvas .leaflet-tile {
+  margin: 0;
   max-width: none !important;
   border-radius: 0 !important;
 }
