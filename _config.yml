@@ -92,7 +92,7 @@ video_widget:
   lazy: true
   privacy_mode: true
   referrer_policy: strict-origin-when-cross-origin
-  poster:
+  poster: /assets/images/default-hero.svg
 
 
 # Exclude from processing.
