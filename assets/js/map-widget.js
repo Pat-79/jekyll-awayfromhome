@@ -73,6 +73,24 @@
       .filter(Boolean);
   }
 
+  function parseInteger(value, fallbackValue) {
+    var parsed = Number.parseInt(String(value || '').trim(), 10);
+    return Number.isFinite(parsed) ? parsed : fallbackValue;
+  }
+
+  function parseBoolean(value) {
+    var normalized = String(value || '').trim().toLowerCase();
+    if (!normalized) return null;
+    if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') return true;
+    if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off') return false;
+    return null;
+  }
+
+  function resolveBooleanOption(value, fallbackValue) {
+    var parsed = parseBoolean(value);
+    return parsed === null ? fallbackValue : parsed;
+  }
+
   function createMap(root) {
     var canvas = root.querySelector('[data-map-canvas]');
     if (!canvas) return;
@@ -95,17 +113,47 @@
 
     var fitPins = String(root.dataset.mapFit || 'true').toLowerCase() !== 'false';
     var pins = parsePins(root.dataset.mapPins);
+    var locked = resolveBooleanOption(root.dataset.mapLocked, false);
+    var scrollWheelZoom = resolveBooleanOption(root.dataset.mapScrollWheelZoom, false);
+    var dragging = resolveBooleanOption(root.dataset.mapDragging, !locked);
+    var touchZoom = resolveBooleanOption(root.dataset.mapTouchZoom, !locked);
+    var doubleClickZoom = resolveBooleanOption(root.dataset.mapDoubleClickZoom, !locked);
+    var boxZoom = resolveBooleanOption(root.dataset.mapBoxZoom, !locked);
+    var keyboard = resolveBooleanOption(root.dataset.mapKeyboard, !locked);
 
     var map = window.L.map(canvas, {
       center: [center.lat, center.lng],
       zoom: zoom,
-      scrollWheelZoom: false
+      scrollWheelZoom: scrollWheelZoom,
+      dragging: dragging,
+      touchZoom: touchZoom,
+      doubleClickZoom: doubleClickZoom,
+      boxZoom: boxZoom,
+      keyboard: keyboard
     });
 
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    var tileUrl = String(root.dataset.mapTileUrl || '').trim() || 'https://{s}.openstreetmap.org/{z}/{x}/{y}.png';
+    var tileAttribution = String(root.dataset.mapTileAttribution || '').trim() || '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    var tileSubdomains = String(root.dataset.mapTileSubdomains || '').trim() || 'tile';
+    var tileMaxZoom = parseInteger(root.dataset.mapTileMaxZoom, 19);
+    var tileReferrerPolicy = String(root.dataset.mapTileReferrerPolicy || '').trim();
+    var tileCrossOrigin = String(root.dataset.mapTileCrossOrigin || '').trim();
+
+    var tileOptions = {
+      maxZoom: tileMaxZoom,
+      attribution: tileAttribution,
+      subdomains: tileSubdomains
+    };
+
+    if (tileReferrerPolicy) {
+      tileOptions.referrerPolicy = tileReferrerPolicy;
+    }
+
+    if (tileCrossOrigin) {
+      tileOptions.crossOrigin = tileCrossOrigin;
+    }
+
+    window.L.tileLayer(tileUrl, tileOptions).addTo(map);
 
     var bounds = window.L.latLngBounds([]);
 

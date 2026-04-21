@@ -2,35 +2,6 @@
   @page {
     margin: 12mm;
   }
-
-  /* 1. Force the root and body to be white */
-  html, body {
-    background-color: #fff !important;
-    color: #000 !important;
-    background-image: none !important;
-      
-  /* 2. Target the specific dark footer/brand sections */
-  /* Replace these classes with the ones actually used in your blog */
-  footer, 
-  .footer, 
-  .brand-bg, 
-  [style*="--color-brand"] {
-    background-color: transparent !important;
-    background: none !important;
-    color: #000 !important;
-    border-top: 1px solid #eee; /* Adds a clean line instead of a dark block */
-      
-  /* 3. Tell the browser to prioritize legibility over "exact" colors */
-  * {
-    -webkit-print-color-adjust: economy !important;
-    print-color-adjust: economy !important;
-    text-shadow: none !important;
-    box-shadow: none !important;
-      
-  /* 4. Hide unnecessary web-only elements like social buttons or "back to top" */
-  .social-icons, .scroll-top-btn, .nav-menu {
-    display: none !important;
-   }
    
   :root,
   html[data-theme="dark"] {

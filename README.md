@@ -144,11 +144,61 @@ home_landing:
   image: /assets/images/default-hero.svg              # Static image (last fallback)
   latest_posts_limit: 6                               # Posts shown in the homepage grid
 
+# ── Map widget defaults ────────────────────────────────────────────────────────
+map_widget:
+  tile_url: https://{s}.openstreetmap.org/{z}/{x}/{y}.png
+  tile_attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  tile_subdomains: tile
+  tile_max_zoom: 19
+  locked: false
+  scroll_wheel_zoom: false
+  dragging:
+  touch_zoom:
+  double_click_zoom:
+  box_zoom:
+  keyboard:
+  tile_referrer_policy: strict-origin-when-cross-origin
+  tile_cross_origin:
+
 # ── Plugins ────────────────────────────────────────────────────────────────────
 plugins:
   - jekyll-remote-theme
   - jekyll-feed
 ```
+
+You can override any map setting per include call, and include-level values always win over `map_widget` defaults.
+
+```liquid
+{% include map-widget.html
+  center="46.0569,14.5058"
+  tile_url="https://tile.openstreetmap.de/{z}/{x}/{y}.png"
+  tile_attribution='&copy; OpenStreetMap contributors, OSM DE'
+  tile_referrer_policy="strict-origin-when-cross-origin"
+%}
+```
+
+To render only the map itself with no widget padding, border, shadow, or header wrapper, add `bare="true"`:
+
+```liquid
+{% include map-widget.html
+  center="46.0569,14.5058"
+  width="320px"
+  height="220px"
+  bare="true"
+%}
+```
+
+To lock the map against drag, touch, double-click, box-zoom, and keyboard interactions while still keeping Leaflet controls visible, add `locked="true"`:
+
+```liquid
+{% include map-widget.html
+  center="46.0569,14.5058"
+  height="220px"
+  locked="true"
+%}
+```
+
+You can also override individual interaction modes per widget or in `map_widget`, using `scroll_wheel_zoom`, `dragging`, `touch_zoom`, `double_click_zoom`, `box_zoom`, and `keyboard`.
 
 ### Supported Social Media Platforms
 

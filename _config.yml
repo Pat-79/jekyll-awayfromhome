@@ -62,6 +62,22 @@ home_landing:
   #hls_url: /assets/streams/sample_stream.m3u8
   hls_url: https://pat-79.github.io/assets/streams/sample/sample_stream.m3u8
 
+map_widget:
+  tile_url: https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}
+  #tile_url: https://{s}.openstreetmap.org/{z}/{x}/{y}.png
+  tile_attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  tile_subdomains:
+  tile_max_zoom: 19
+  locked: false
+  scroll_wheel_zoom: false
+  dragging:
+  touch_zoom:
+  double_click_zoom:
+  box_zoom:
+  keyboard:
+  tile_referrer_policy: strict-origin-when-cross-origin
+  tile_cross_origin:
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.

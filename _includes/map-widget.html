@@ -9,6 +9,20 @@
 {%- assign map_pins = include.pins | default: '' -%}
 {%- assign map_width_raw = include.width | default: '' | strip -%}
 {%- assign map_height_raw = include.height | default: '' | strip -%}
+{%- assign map_bare = include.bare | default: '' | downcase | strip -%}
+{%- assign map_locked = include.locked | default: site.map_widget.locked | default: '' | downcase | strip -%}
+{%- assign map_scroll_wheel_zoom = include.scroll_wheel_zoom | default: site.map_widget.scroll_wheel_zoom | default: '' | downcase | strip -%}
+{%- assign map_dragging = include.dragging | default: site.map_widget.dragging | default: '' | downcase | strip -%}
+{%- assign map_touch_zoom = include.touch_zoom | default: site.map_widget.touch_zoom | default: '' | downcase | strip -%}
+{%- assign map_double_click_zoom = include.double_click_zoom | default: site.map_widget.double_click_zoom | default: '' | downcase | strip -%}
+{%- assign map_box_zoom = include.box_zoom | default: site.map_widget.box_zoom | default: '' | downcase | strip -%}
+{%- assign map_keyboard = include.keyboard | default: site.map_widget.keyboard | default: '' | downcase | strip -%}
+{%- assign map_tile_url = include.tile_url | default: site.map_widget.tile_url | default: 'https://{s}.openstreetmap.org/{z}/{x}/{y}.png' -%}
+{%- assign map_tile_attribution = include.tile_attribution | default: site.map_widget.tile_attribution | default: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' -%}
+{%- assign map_tile_subdomains = include.tile_subdomains | default: site.map_widget.tile_subdomains | default: 'tile' -%}
+{%- assign map_tile_max_zoom = include.tile_max_zoom | default: site.map_widget.tile_max_zoom | default: 19 -%}
+{%- assign map_tile_referrer_policy = include.tile_referrer_policy | default: site.map_widget.tile_referrer_policy | default: 'strict-origin-when-cross-origin' -%}
+{%- assign map_tile_cross_origin = include.tile_cross_origin | default: site.map_widget.tile_cross_origin | default: '' -%}
 
 {%- assign map_width_css = map_width_raw -%}
 {%- if map_width_css != '' and map_width_css contains 'px' == false and map_width_css contains '%' == false and map_width_css contains 'rem' == false and map_width_css contains 'em' == false and map_width_css contains 'vw' == false and map_width_css contains 'vh' == false and map_width_css contains 'ch' == false and map_width_css contains 'calc(' == false -%}
@@ -21,7 +35,7 @@
 {%- endif -%}
 
 <section
-  class="afh-map"
+  class="afh-map{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} afh-map--bare{% endif %}"
   data-map-widget
   data-map-center="{{ map_center | escape }}"
   data-map-center-lat="{{ map_center_lat | escape }}"
@@ -30,9 +44,22 @@
   data-map-zoom="{{ map_zoom | escape }}"
   data-map-pins="{{ map_pins | escape }}"
   data-map-fit="{{ map_fit | escape }}"
+  data-map-locked="{{ map_locked | escape }}"
+  data-map-scroll-wheel-zoom="{{ map_scroll_wheel_zoom | escape }}"
+  data-map-dragging="{{ map_dragging | escape }}"
+  data-map-touch-zoom="{{ map_touch_zoom | escape }}"
+  data-map-double-click-zoom="{{ map_double_click_zoom | escape }}"
+  data-map-box-zoom="{{ map_box_zoom | escape }}"
+  data-map-keyboard="{{ map_keyboard | escape }}"
+  data-map-tile-url="{{ map_tile_url | escape }}"
+  data-map-tile-attribution="{{ map_tile_attribution | escape }}"
+  data-map-tile-subdomains="{{ map_tile_subdomains | escape }}"
+  data-map-tile-max-zoom="{{ map_tile_max_zoom | escape }}"
+  data-map-tile-referrer-policy="{{ map_tile_referrer_policy | escape }}"
+  data-map-tile-cross-origin="{{ map_tile_cross_origin | escape }}"
   style="--afh-map-height: {{ map_height_css | escape }};{% if map_width_css != '' %} --afh-map-width: {{ map_width_css | escape }};{% endif %}"
 >
-  <header class="afh-map__header{% if map_title == '' and map_description == '' %} is-empty{% endif %}">
+  <header class="afh-map__header{% if map_title == '' and map_description == '' %} is-empty{% endif %}{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} is-hidden{% endif %}">
     <h2 class="afh-map__title">{{ map_title }}</h2>
     <p class="afh-map__description">{{ map_description }}</p>
   </header>

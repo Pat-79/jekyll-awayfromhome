@@ -4,8 +4,15 @@
   --afh-map-shadow: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
+.afh-map__canvas{
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
 .afh-map {
   margin: 1.4rem 0.35rem;
+  width: min(100%, var(--afh-map-width, 100%));
+  margin-inline: auto;
   color: var(--text);
   background: var(--afh-map-bg);
   border: 1px solid var(--afh-map-border);
@@ -19,6 +26,10 @@
 }
 
 .afh-map__header.is-empty {
+  display: none;
+}
+
+.afh-map__header.is-hidden {
   display: none;
 }
 
@@ -37,11 +48,23 @@
 }
 
 .afh-map__frame {
-  width: min(100%, var(--afh-map-width, 100%));
-  margin-inline: auto;
+  width: 100%;
   border-radius: 0.5rem;
   overflow: hidden;
   background: transparent;
+}
+
+.afh-map--bare {
+  margin: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.afh-map--bare .afh-map__frame {
+  border-radius: 0;
 }
 
 .afh-map__canvas {
