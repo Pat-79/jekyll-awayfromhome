@@ -11,6 +11,7 @@ A demo website is available at [demo.awayfromhome.nl](https://demo.awayfromhome.
 ## Features
 
 - **Full-screen landing hero** — HLS live/VOD stream, YouTube embed, or static image as the homepage background, with chapter-weighted random seek
+- **Inline video widget** — lightweight HLS, YouTube, and Vimeo embeds with shared options and lazy loading
 - **Light / Dark / Auto theme** — persistent user preference stored in `localStorage`, no flash on load
 - **Client-side search** — full-text search engine with a JSON index built at compile time; no external service required
 - **SEO ready** — Open Graph, Twitter Card, and JSON-LD structured data included on every page
@@ -160,6 +161,23 @@ map_widget:
   tile_referrer_policy: strict-origin-when-cross-origin
   tile_cross_origin:
 
+# ── Video widget defaults ──────────────────────────────────────────────────────
+video_widget:
+  width:
+  height:
+  aspect_ratio: 16:9
+  bare: false
+  autoplay: false
+  muted: false
+  loop: false
+  controls: true
+  playsinline: true
+  preload: metadata
+  lazy: true
+  privacy_mode: true
+  referrer_policy: strict-origin-when-cross-origin
+  poster:
+
 # ── Plugins ────────────────────────────────────────────────────────────────────
 plugins:
   - jekyll-remote-theme
@@ -199,6 +217,43 @@ To lock the map against drag, touch, double-click, box-zoom, and keyboard intera
 ```
 
 You can also override individual interaction modes per widget or in `map_widget`, using `scroll_wheel_zoom`, `dragging`, `touch_zoom`, `double_click_zoom`, `box_zoom`, and `keyboard`.
+
+The theme also includes a lightweight `video-widget.html` include for HLS, YouTube, and Vimeo. The widget uses native HTML5 video for HLS and only loads `hls.js` on pages that contain an HLS widget and need it.
+
+```liquid
+{% include video-widget.html
+  provider="hls"
+  src="/assets/streams/sample/sample_stream.m3u8"
+  poster="/assets/images/default-hero.svg"
+  width="100%"
+  aspect_ratio="16:9"
+  autoplay="false"
+  muted="false"
+  loop="false"
+  controls="true"
+%}
+```
+
+```liquid
+{% include video-widget.html
+  provider="youtube"
+  youtube_id="dQw4w9WgXcQ"
+  aspect_ratio="16:9"
+  controls="true"
+  privacy_mode="true"
+%}
+```
+
+```liquid
+{% include video-widget.html
+  provider="vimeo"
+  vimeo_id="76979871"
+  aspect_ratio="16:9"
+  controls="true"
+%}
+```
+
+Supported widget options are `provider`, `src`, `url`, `youtube_id`, `vimeo_id`, `title`, `description`, `player_title`, `poster`, `width`, `height`, `aspect_ratio`, `bare`, `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `preload`, `lazy`, `privacy_mode`, and `referrer_policy`. Include-level values override `video_widget` defaults.
 
 ### Supported Social Media Platforms
 

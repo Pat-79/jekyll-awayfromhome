@@ -1,0 +1,145 @@
+{%- assign video_title = include.title | default: '' -%}
+{%- assign video_description = include.description | default: '' -%}
+{%- assign video_provider = include.provider | default: '' | downcase | strip -%}
+{%- assign video_source_raw = include.src | default: include.url | default: '' | strip -%}
+{%- assign video_youtube_id = include.youtube_id | default: '' | strip -%}
+{%- assign video_vimeo_id = include.vimeo_id | default: '' | strip -%}
+{%- assign video_title_attr = include.player_title | default: video_title | default: 'Embedded video' -%}
+{%- assign video_width_raw = include.width | default: site.video_widget.width | default: '' | strip -%}
+{%- assign video_height_raw = include.height | default: site.video_widget.height | default: '' | strip -%}
+{%- assign video_ratio_raw = include.aspect_ratio | default: site.video_widget.aspect_ratio | default: '16:9' | strip -%}
+{%- assign video_bare = include.bare | default: site.video_widget.bare | default: 'false' | downcase | strip -%}
+{%- assign video_autoplay = include.autoplay | default: site.video_widget.autoplay | default: 'false' | downcase | strip -%}
+{%- assign video_loop = include.loop | default: site.video_widget.loop | default: 'false' | downcase | strip -%}
+{%- assign video_muted = include.muted | default: site.video_widget.muted | default: 'false' | downcase | strip -%}
+{%- assign video_controls = include.controls | default: site.video_widget.controls | default: 'true' | downcase | strip -%}
+{%- assign video_playsinline = include.playsinline | default: site.video_widget.playsinline | default: 'true' | downcase | strip -%}
+{%- assign video_preload = include.preload | default: site.video_widget.preload | default: 'metadata' | strip -%}
+{%- assign video_lazy = include.lazy | default: site.video_widget.lazy | default: 'true' | downcase | strip -%}
+{%- assign video_privacy_mode = include.privacy_mode | default: site.video_widget.privacy_mode | default: 'true' | downcase | strip -%}
+{%- assign video_referrer_policy = include.referrer_policy | default: site.video_widget.referrer_policy | default: 'strict-origin-when-cross-origin' | strip -%}
+{%- assign video_poster_raw = include.poster | default: site.video_widget.poster | default: '' | strip -%}
+
+{%- if video_provider == '' -%}
+  {%- if video_youtube_id != '' -%}
+    {%- assign video_provider = 'youtube' -%}
+  {%- elsif video_vimeo_id != '' -%}
+    {%- assign video_provider = 'vimeo' -%}
+  {%- elsif video_source_raw contains 'youtu.be/' or video_source_raw contains 'youtube.com/' -%}
+    {%- assign video_provider = 'youtube' -%}
+  {%- elsif video_source_raw contains 'vimeo.com/' -%}
+    {%- assign video_provider = 'vimeo' -%}
+  {%- elsif video_source_raw != '' -%}
+    {%- assign video_provider = 'hls' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if video_provider == 'youtube' and video_youtube_id == '' and video_source_raw != '' -%}
+  {%- if video_source_raw contains 'youtu.be/' -%}
+    {%- assign video_youtube_id = video_source_raw | split: 'youtu.be/' | last | split: '?' | first | split: '&' | first | split: '/' | first -%}
+  {%- elsif video_source_raw contains 'youtube.com/watch' and video_source_raw contains 'v=' -%}
+    {%- assign video_youtube_id = video_source_raw | split: 'v=' | last | split: '&' | first -%}
+  {%- elsif video_source_raw contains 'youtube.com/embed/' -%}
+    {%- assign video_youtube_id = video_source_raw | split: 'youtube.com/embed/' | last | split: '?' | first | split: '&' | first | split: '/' | first -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if video_provider == 'vimeo' and video_vimeo_id == '' and video_source_raw != '' -%}
+  {%- if video_source_raw contains 'player.vimeo.com/video/' -%}
+    {%- assign video_vimeo_id = video_source_raw | split: 'player.vimeo.com/video/' | last | split: '?' | first | split: '&' | first | split: '/' | first -%}
+  {%- elsif video_source_raw contains 'vimeo.com/' -%}
+    {%- assign video_vimeo_id = video_source_raw | split: 'vimeo.com/' | last | split: '?' | first | split: '&' | first | split: '/' | last -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign video_source = video_source_raw -%}
+{%- if video_provider == 'hls' and video_source != '' and video_source contains '://' == false -%}
+  {%- assign video_source = video_source | relative_url -%}
+{%- endif -%}
+
+{%- assign video_poster = video_poster_raw -%}
+{%- if video_poster != '' and video_poster contains '://' == false -%}
+  {%- assign video_poster = video_poster | relative_url -%}
+{%- endif -%}
+
+{%- assign video_width_css = video_width_raw -%}
+{%- if video_width_css != '' and video_width_css contains 'px' == false and video_width_css contains '%' == false and video_width_css contains 'rem' == false and video_width_css contains 'em' == false and video_width_css contains 'vw' == false and video_width_css contains 'vh' == false and video_width_css contains 'ch' == false and video_width_css contains 'calc(' == false -%}
+  {%- assign video_width_css = video_width_css | append: 'px' -%}
+{%- endif -%}
+
+{%- assign video_height_css = video_height_raw -%}
+{%- if video_height_css != '' and video_height_css contains 'px' == false and video_height_css contains '%' == false and video_height_css contains 'rem' == false and video_height_css contains 'em' == false and video_height_css contains 'vw' == false and video_height_css contains 'vh' == false and video_height_css contains 'ch' == false and video_height_css contains 'calc(' == false -%}
+  {%- assign video_height_css = video_height_css | append: 'px' -%}
+{%- endif -%}
+
+{%- assign video_ratio_css = video_ratio_raw | replace: ':', ' / ' -%}
+{%- assign video_loading = 'lazy' -%}
+{%- if video_lazy == 'false' or video_lazy == '0' or video_lazy == 'no' or video_lazy == 'off' or video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' -%}
+  {%- assign video_loading = 'eager' -%}
+{%- endif -%}
+
+{%- assign is_bare_video = false -%}
+{%- if video_bare == 'true' or video_bare == '1' or video_bare == 'yes' -%}
+  {%- assign is_bare_video = true -%}
+{%- endif -%}
+{%- assign is_fixed_height_video = false -%}
+{%- if video_height_css != '' -%}
+  {%- assign is_fixed_height_video = true -%}
+{%- endif -%}
+
+{%- assign youtube_host = 'https://www.youtube.com' -%}
+{%- if video_privacy_mode != 'false' and video_privacy_mode != '0' and video_privacy_mode != 'no' and video_privacy_mode != 'off' -%}
+  {%- assign youtube_host = 'https://www.youtube-nocookie.com' -%}
+{%- endif -%}
+
+<section
+  class="afh-video{% if is_bare_video %} afh-video--bare{% endif %}{% if is_fixed_height_video %} afh-video--fixed-height{% endif %}"
+  data-video-widget
+  style="--afh-video-ratio: {{ video_ratio_css | escape }};{% if video_width_css != '' %} --afh-video-width: {{ video_width_css | escape }};{% endif %}{% if video_height_css != '' %} --afh-video-height: {{ video_height_css | escape }};{% endif %}"
+>
+  <header class="afh-video__header{% if video_title == '' and video_description == '' %} is-empty{% endif %}{% if is_bare_video %} is-hidden{% endif %}">
+    <h2 class="afh-video__title">{{ video_title }}</h2>
+    <p class="afh-video__description">{{ video_description }}</p>
+  </header>
+
+  <div class="afh-video__frame">
+    {%- if video_provider == 'hls' and video_source != '' -%}
+      <video
+        class="afh-video__media afh-video__media--video"
+        data-video-provider="hls"
+        data-video-hls-src="{{ video_source | escape }}"
+        data-video-autoplay="{{ video_autoplay | escape }}"
+        title="{{ video_title_attr | escape }}"
+        {% if video_controls != 'false' and video_controls != '0' and video_controls != 'no' and video_controls != 'off' %}controls{% endif %}
+        {% if video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' %}autoplay{% endif %}
+        {% if video_loop == 'true' or video_loop == '1' or video_loop == 'yes' %}loop{% endif %}
+        {% if video_muted == 'true' or video_muted == '1' or video_muted == 'yes' %}muted{% endif %}
+        {% if video_playsinline != 'false' and video_playsinline != '0' and video_playsinline != 'no' and video_playsinline != 'off' %}playsinline{% endif %}
+        preload="{{ video_preload | escape }}"
+        {% if video_poster != '' %}poster="{{ video_poster | escape }}"{% endif %}
+      ></video>
+    {%- elsif video_provider == 'youtube' and video_youtube_id != '' -%}
+      <iframe
+        class="afh-video__media afh-video__media--iframe"
+        src="{{ youtube_host }}/embed/{{ video_youtube_id }}?autoplay={% if video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' %}1{% else %}0{% endif %}&mute={% if video_muted == 'true' or video_muted == '1' or video_muted == 'yes' %}1{% else %}0{% endif %}&controls={% if video_controls != 'false' and video_controls != '0' and video_controls != 'no' and video_controls != 'off' %}1{% else %}0{% endif %}&loop={% if video_loop == 'true' or video_loop == '1' or video_loop == 'yes' %}1&playlist={{ video_youtube_id }}{% else %}0{% endif %}&playsinline={% if video_playsinline != 'false' and video_playsinline != '0' and video_playsinline != 'no' and video_playsinline != 'off' %}1{% else %}0{% endif %}&rel=0&modestbranding=1"
+        title="{{ video_title_attr | escape }}"
+        loading="{{ video_loading }}"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+        referrerpolicy="{{ video_referrer_policy | escape }}"
+      ></iframe>
+    {%- elsif video_provider == 'vimeo' and video_vimeo_id != '' -%}
+      <iframe
+        class="afh-video__media afh-video__media--iframe"
+        src="https://player.vimeo.com/video/{{ video_vimeo_id }}?autoplay={% if video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' %}1{% else %}0{% endif %}&muted={% if video_muted == 'true' or video_muted == '1' or video_muted == 'yes' %}1{% else %}0{% endif %}&loop={% if video_loop == 'true' or video_loop == '1' or video_loop == 'yes' %}1{% else %}0{% endif %}&controls={% if video_controls != 'false' and video_controls != '0' and video_controls != 'no' and video_controls != 'off' %}1{% else %}0{% endif %}&autopause=0&playsinline={% if video_playsinline != 'false' and video_playsinline != '0' and video_playsinline != 'no' and video_playsinline != 'off' %}1{% else %}0{% endif %}{% if video_privacy_mode != 'false' and video_privacy_mode != '0' and video_privacy_mode != 'no' and video_privacy_mode != 'off' %}&dnt=1{% endif %}"
+        title="{{ video_title_attr | escape }}"
+        loading="{{ video_loading }}"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+        referrerpolicy="{{ video_referrer_policy | escape }}"
+      ></iframe>
+    {%- else -%}
+      <div class="afh-video__fallback">Video widget requires a valid provider and source.</div>
+    {%- endif -%}
+  </div>
+</section>

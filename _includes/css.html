@@ -2,11 +2,15 @@
 {%- assign page_content = page.content | default: '' -%}
 {%- assign has_gallery_widget = false -%}
 {%- assign has_map_widget = false -%}
+{%- assign has_video_widget = false -%}
 {%- if page_content contains 'include gallery-widget.html' or page_content contains 'data-gallery' -%}
 	{%- assign has_gallery_widget = true -%}
 {%- endif -%}
 {%- if page_content contains 'include map-widget.html' or page_content contains 'data-map-widget' -%}
 	{%- assign has_map_widget = true -%}
+{%- endif -%}
+{%- if page_content contains 'include video-widget.html' or page_content contains 'data-video-widget' -%}
+	{%- assign has_video_widget = true -%}
 {%- endif -%}
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ css_version }}">
@@ -18,4 +22,7 @@
 {%- endif -%}
 {%- if has_map_widget -%}
 <link rel="stylesheet" href="{{ '/assets/css/map-widget.css' | relative_url }}?v={{ css_version }}">
+{%- endif -%}
+{%- if has_video_widget -%}
+<link rel="stylesheet" href="{{ '/assets/css/video-widget.css' | relative_url }}?v={{ css_version }}">
 {%- endif -%}

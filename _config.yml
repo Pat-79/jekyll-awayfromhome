@@ -78,6 +78,22 @@ map_widget:
   tile_referrer_policy: strict-origin-when-cross-origin
   tile_cross_origin:
 
+video_widget:
+  width:
+  height:
+  aspect_ratio: 16:9
+  bare: false
+  autoplay: false
+  muted: false
+  loop: false
+  controls: true
+  playsinline: true
+  preload: metadata
+  lazy: true
+  privacy_mode: true
+  referrer_policy: strict-origin-when-cross-origin
+  poster:
+
 
 # Exclude from processing.
 # The following items will not be processed, by default.
