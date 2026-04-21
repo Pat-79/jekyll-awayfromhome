@@ -7,29 +7,28 @@
 {%- if page_content contains 'include map-widget.html' or page_content contains 'data-map-widget' -%}
 	{%- assign has_map_widget = true -%}
 {%- endif -%}
-
 <script src="{{ '/assets/js/theme.js' | relative_url }}" defer></script>
-{% if has_gallery_widget %}
+{%- if has_gallery_widget -%}
 <script src="{{ '/assets/js/gallery-widget.js' | relative_url }}" defer></script>
-{% endif %}
-{% if has_map_widget %}
+{%- endif -%}
+{%- if has_map_widget -%}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 <script src="{{ '/assets/js/map-widget.js' | relative_url }}" defer></script>
-{% endif %}
+{%- endif -%}
 <script type="module" src="{{ '/assets/js/search-widget.js' | relative_url }}" defer></script>
-{% if page.layout == 'home' %}
+{%- if page.layout == 'home' -%}
 <script src="{{ '/assets/js/home-landing.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/print-links.js' | relative_url }}" defer></script>
-{% endif %}
-{% if page.layout == 'post' or page.layout == 'page' %}
+{%- endif -%}
+{%- if page.layout == 'post' or page.layout == 'page' -%}
 <script src="{{ '/assets/js/print-links.js' | relative_url }}" defer></script>
-{% endif %}
-{% if page.layout == 'post' %}
+{%- endif -%}
+{%- if page.layout == 'post' -%}
 <script src="{{ '/assets/js/post-snap.js' | relative_url }}" defer></script>
-{% endif %}
-{% if page.layout == 'tag-index' %}
+{%- endif -%}
+{%- if page.layout == 'tag-index' -%}
 <script src="{{ '/assets/js/tag-index.js' | relative_url }}" defer></script>
-{% endif %}
-{% if page.layout == 'entity-index' %}
+{%- endif -%}
+{%- if page.layout == 'entity-index' -%}
 <script src="{{ '/assets/js/entity-index.js' | relative_url }}" defer></script>
-{% endif %}
+{%- endif -%}
