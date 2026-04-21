@@ -6,7 +6,7 @@
 
 .afh-video {
   margin: 1.4rem 0.35rem;
-  width: min(100%, var(--afh-video-width, 100%));
+  //width: min(100%, var(--afh-video-width, 100%));
   margin-inline: auto;
   color: var(--text);
   background: var(--afh-video-bg);
@@ -14,6 +14,8 @@
   border-radius: 1rem;
   box-shadow: var(--afh-video-shadow);
   padding: 0.55rem;
+  max-width: var(--afh-video-max-width);
+  max-height: var(--afh-video-max-height);
 }
 
 .afh-video__header {

@@ -77,10 +77,14 @@ map_widget:
   keyboard:
   tile_referrer_policy: strict-origin-when-cross-origin
   tile_cross_origin:
+  max_width:
+  max_height:
 
 video_widget:
   width:
   height:
+  max_width:
+  max_height:
   aspect_ratio: 16:9
   bare: false
   autoplay: false
@@ -94,6 +98,9 @@ video_widget:
   referrer_policy: strict-origin-when-cross-origin
   poster: /assets/images/default-hero.svg
 
+gallery_widget:
+  max_width:
+  max_height:
 
 # Exclude from processing.
 # The following items will not be processed, by default.

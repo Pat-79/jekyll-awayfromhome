@@ -7,6 +7,8 @@
 {%- assign video_title_attr = include.player_title | default: video_title | default: 'Embedded video' -%}
 {%- assign video_width_raw = include.width | default: site.video_widget.width | default: '' | strip -%}
 {%- assign video_height_raw = include.height | default: site.video_widget.height | default: '' | strip -%}
+{%- assign video_max_width_raw = include.max_width | default: site.video_widget.max_width | default: '' | strip -%}
+{%- assign video_max_height_raw = include.max_height | default: site.video_widget.max_height | default: '' | strip -%}
 {%- assign video_ratio_raw = include.aspect_ratio | default: site.video_widget.aspect_ratio | default: '16:9' | strip -%}
 {%- assign video_bare = include.bare | default: site.video_widget.bare | default: 'false' | downcase | strip -%}
 {%- assign video_autoplay = include.autoplay | default: site.video_widget.autoplay | default: 'false' | downcase | strip -%}
@@ -72,6 +74,16 @@
   {%- assign video_height_css = video_height_css | append: 'px' -%}
 {%- endif -%}
 
+{%- assign video_max_width_css = video_max_width_raw -%}
+{%- if video_max_width_css != '' and video_max_width_css contains 'px' == false and video_max_width_css contains '%' == false and video_max_width_css contains 'rem' == false and video_max_width_css contains 'em' == false and video_max_width_css contains 'vw' == false and video_max_width_css contains 'vh' == false and video_max_width_css contains 'ch' == false and video_max_width_css contains 'calc(' == false -%}
+  {%- assign video_max_width_css = video_max_width_css | append: 'px' -%}
+{%- endif -%}
+
+{%- assign video_max_height_css = video_max_height_raw -%}
+{%- if video_max_height_css != '' and video_max_height_css contains 'px' == false and video_max_height_css contains '%' == false and video_max_height_css contains 'rem' == false and video_max_height_css contains 'em' == false and video_max_height_css contains 'vw' == false and video_max_height_css contains 'vh' == false and video_max_height_css contains 'ch' == false and video_max_height_css contains 'calc(' == false -%}
+  {%- assign video_max_height_css = video_max_height_css | append: 'px' -%}
+{%- endif -%}
+
 {%- assign video_ratio_css = video_ratio_raw | replace: ':', ' / ' -%}
 {%- assign video_loading = 'lazy' -%}
 {%- if video_lazy == 'false' or video_lazy == '0' or video_lazy == 'no' or video_lazy == 'off' or video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' -%}
@@ -95,7 +107,7 @@
 <section
   class="afh-video{% if is_bare_video %} afh-video--bare{% endif %}{% if is_fixed_height_video %} afh-video--fixed-height{% endif %}"
   data-video-widget
-  style="--afh-video-ratio: {{ video_ratio_css | escape }};{% if video_width_css != '' %} --afh-video-width: {{ video_width_css | escape }};{% endif %}{% if video_height_css != '' %} --afh-video-height: {{ video_height_css | escape }};{% endif %}"
+  style="--afh-video-ratio: {{ video_ratio_css | escape }};{% if video_width_css != '' %} --afh-video-width: {{ video_width_css | escape }};{% endif %}{% if video_height_css != '' %} --afh-video-height: {{ video_height_css | escape }};{% endif %}{% if video_max_width_css != '' %} --afh-video-max-width: {{ video_max_width_css | escape }};{% endif %}{% if video_max_height_css != '' %} --afh-video-max-height: {{ video_max_height_css | escape }};{% endif %}"
 >
   <header class="afh-video__header{% if video_title == '' and video_description == '' %} is-empty{% endif %}{% if is_bare_video %} is-hidden{% endif %}">
     <h2 class="afh-video__title">{{ video_title }}</h2>

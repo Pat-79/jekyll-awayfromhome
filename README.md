@@ -160,11 +160,15 @@ map_widget:
   keyboard:
   tile_referrer_policy: strict-origin-when-cross-origin
   tile_cross_origin:
+  max_width:                                          # Optional max width constraint (e.g., "600px", "80%")
+  max_height:                                         # Optional max height constraint (e.g., "400px")
 
 # ── Video widget defaults ──────────────────────────────────────────────────────
 video_widget:
-  width:
-  height:
+  width:                                              # Optional width constraint (e.g., "640px", "90%")
+  height:                                             # Optional height constraint (e.g., "360px")
+  max_width:                                          # Optional max width constraint (e.g., "800px")
+  max_height:                                         # Optional max height constraint (e.g., "600px")
   aspect_ratio: 16:9
   bare: false
   autoplay: false
@@ -177,6 +181,11 @@ video_widget:
   privacy_mode: true
   referrer_policy: strict-origin-when-cross-origin
   poster:
+
+# ── Gallery widget defaults ────────────────────────────────────────────────────
+gallery_widget:
+  max_width:                                          # Optional max width constraint (e.g., "1200px")
+  max_height:                                         # Optional max height constraint (e.g., "800px")
 
 # ── Plugins ────────────────────────────────────────────────────────────────────
 plugins:
@@ -218,6 +227,16 @@ To lock the map against drag, touch, double-click, box-zoom, and keyboard intera
 
 You can also override individual interaction modes per widget or in `map_widget`, using `scroll_wheel_zoom`, `dragging`, `touch_zoom`, `double_click_zoom`, `box_zoom`, and `keyboard`.
 
+To constrain the map widget's maximum dimensions, use `max_width` and `max_height` (supports `px`, `%`, `rem`, `em`, `vw`, `vh`, `ch`, and `calc()` expressions):
+
+```liquid
+{% include map-widget.html
+  center="46.0569,14.5058"
+  max_width="800px"
+  max_height="600px"
+%}
+```
+
 The theme also includes a lightweight `video-widget.html` include for HLS, YouTube, and Vimeo. The widget uses native HTML5 video for HLS and only loads `hls.js` on pages that contain an HLS widget and need it.
 
 ```liquid
@@ -253,7 +272,7 @@ The theme also includes a lightweight `video-widget.html` include for HLS, YouTu
 %}
 ```
 
-Supported widget options are `provider`, `src`, `url`, `youtube_id`, `vimeo_id`, `title`, `description`, `player_title`, `poster`, `width`, `height`, `aspect_ratio`, `bare`, `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `preload`, `lazy`, `privacy_mode`, and `referrer_policy`. Include-level values override `video_widget` defaults.
+Supported widget options are `provider`, `src`, `url`, `youtube_id`, `vimeo_id`, `title`, `description`, `player_title`, `poster`, `width`, `height`, `max_width`, `max_height`, `aspect_ratio`, `bare`, `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `preload`, `lazy`, `privacy_mode`, and `referrer_policy`. Include-level values override `video_widget` defaults.
 
 ### Supported Social Media Platforms
 

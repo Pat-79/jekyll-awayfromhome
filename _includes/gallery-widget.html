@@ -16,6 +16,8 @@
   {%- assign gallery_description = include.description | default: '' -%}
   {%- assign gallery_alt_prefix = include.alt_prefix | default: 'Gallery image' -%}
   {%- assign gallery_notice = include.empty_text | default: 'No images found for this gallery.' -%}
+  {%- assign gallery_max_width_raw = include.max_width | default: site.gallery_widget.max_width | default: '' | strip -%}
+  {%- assign gallery_max_height_raw = include.max_height | default: site.gallery_widget.max_height | default: '' | strip -%}
   {%- assign image_exts = ',.jpg,.jpeg,.png,.webp,.gif,.avif,' -%}
   {%- assign all_static_paths = site.static_files | map: 'path' | join: '||' -%}
   {%- assign base_images = '' | split: '' -%}
@@ -33,6 +35,16 @@
 
   {%- assign base_images = base_images | sort -%}
 
+  {%- assign gallery_max_width_css = gallery_max_width_raw -%}
+  {%- if gallery_max_width_css != '' and gallery_max_width_css contains 'px' == false and gallery_max_width_css contains '%' == false and gallery_max_width_css contains 'rem' == false and gallery_max_width_css contains 'em' == false and gallery_max_width_css contains 'vw' == false and gallery_max_width_css contains 'vh' == false and gallery_max_width_css contains 'ch' == false and gallery_max_width_css contains 'calc(' == false -%}
+    {%- assign gallery_max_width_css = gallery_max_width_css | append: 'px' -%}
+  {%- endif -%}
+
+  {%- assign gallery_max_height_css = gallery_max_height_raw -%}
+  {%- if gallery_max_height_css != '' and gallery_max_height_css contains 'px' == false and gallery_max_height_css contains '%' == false and gallery_max_height_css contains 'rem' == false and gallery_max_height_css contains 'em' == false and gallery_max_height_css contains 'vw' == false and gallery_max_height_css contains 'vh' == false and gallery_max_height_css contains 'ch' == false and gallery_max_height_css contains 'calc(' == false -%}
+    {%- assign gallery_max_height_css = gallery_max_height_css | append: 'px' -%}
+  {%- endif -%}
+
   <section
     class="afh-gallery"
     data-gallery
@@ -40,6 +52,7 @@
     data-gallery-dir="{{ gallery_dir }}"
     data-gallery-name="{{ gallery_title | escape }}"
     data-gallery-description="{{ gallery_description | escape }}"
+    style="{% if gallery_max_width_css != '' %}--afh-gallery-max-width: {{ gallery_max_width_css | escape }};{% endif %}{% if gallery_max_height_css != '' %}--afh-gallery-max-height: {{ gallery_max_height_css | escape }};{% endif %}"
   >
     <header class="afh-gallery__header{% if gallery_title == '' and gallery_description == '' %} is-empty{% endif %}" data-gallery-header>
       <h2 class="afh-gallery__title" data-gallery-title>{{ gallery_title }}</h2>

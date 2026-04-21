@@ -9,6 +9,8 @@
 {%- assign map_pins = include.pins | default: '' -%}
 {%- assign map_width_raw = include.width | default: '' | strip -%}
 {%- assign map_height_raw = include.height | default: '' | strip -%}
+{%- assign map_max_width_raw = include.max_width | default: site.map_widget.max_width | default: '' | strip -%}
+{%- assign map_max_height_raw = include.max_height | default: site.map_widget.max_height | default: '' | strip -%}
 {%- assign map_bare = include.bare | default: '' | downcase | strip -%}
 {%- assign map_locked = include.locked | default: site.map_widget.locked | default: '' | downcase | strip -%}
 {%- assign map_scroll_wheel_zoom = include.scroll_wheel_zoom | default: site.map_widget.scroll_wheel_zoom | default: '' | downcase | strip -%}
@@ -34,6 +36,16 @@
   {%- assign map_height_css = map_height_css | append: 'px' -%}
 {%- endif -%}
 
+{%- assign map_max_width_css = map_max_width_raw -%}
+{%- if map_max_width_css != '' and map_max_width_css contains 'px' == false and map_max_width_css contains '%' == false and map_max_width_css contains 'rem' == false and map_max_width_css contains 'em' == false and map_max_width_css contains 'vw' == false and map_max_width_css contains 'vh' == false and map_max_width_css contains 'ch' == false and map_max_width_css contains 'calc(' == false -%}
+  {%- assign map_max_width_css = map_max_width_css | append: 'px' -%}
+{%- endif -%}
+
+{%- assign map_max_height_css = map_max_height_raw -%}
+{%- if map_max_height_css != '' and map_max_height_css contains 'px' == false and map_max_height_css contains '%' == false and map_max_height_css contains 'rem' == false and map_max_height_css contains 'em' == false and map_max_height_css contains 'vw' == false and map_max_height_css contains 'vh' == false and map_max_height_css contains 'ch' == false and map_max_height_css contains 'calc(' == false -%}
+  {%- assign map_max_height_css = map_max_height_css | append: 'px' -%}
+{%- endif -%}
+
 <section
   class="afh-map{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} afh-map--bare{% endif %}"
   data-map-widget
@@ -57,7 +69,7 @@
   data-map-tile-max-zoom="{{ map_tile_max_zoom | escape }}"
   data-map-tile-referrer-policy="{{ map_tile_referrer_policy | escape }}"
   data-map-tile-cross-origin="{{ map_tile_cross_origin | escape }}"
-  style="--afh-map-height: {{ map_height_css | escape }};{% if map_width_css != '' %} --afh-map-width: {{ map_width_css | escape }};{% endif %}"
+  style="--afh-map-height: {{ map_height_css | escape }};{% if map_width_css != '' %} --afh-map-width: {{ map_width_css | escape }};{% endif %}{% if map_max_width_css != '' %} --afh-map-max-width: {{ map_max_width_css | escape }};{% endif %}{% if map_max_height_css != '' %} --afh-map-max-height: {{ map_max_height_css | escape }};{% endif %}"
 >
   <header class="afh-map__header{% if map_title == '' and map_description == '' %} is-empty{% endif %}{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} is-hidden{% endif %}">
     <h2 class="afh-map__title">{{ map_title }}</h2>

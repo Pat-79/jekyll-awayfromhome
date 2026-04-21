@@ -11,7 +11,7 @@
 
 .afh-map {
   margin: 1.4rem 0.35rem;
-  width: min(100%, var(--afh-map-width, 100%));
+  //width: min(100%, var(--afh-map-width, 100%));
   margin-inline: auto;
   color: var(--text);
   background: var(--afh-map-bg);
@@ -19,6 +19,8 @@
   border-radius: 1rem;
   box-shadow: var(--afh-map-shadow);
   padding: 0.55rem;
+  max-width: var(--afh-map-max-width);
+  max-height: var(--afh-map-max-height);
 }
 
 .afh-map__header {
