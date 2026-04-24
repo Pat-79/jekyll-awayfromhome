@@ -82,7 +82,7 @@ function initSearchWidget(widget) {
       const hasImage = Boolean(entry.image);
       const itemClass = hasImage ? 'search-widget__item search-widget__item--with-thumb' : 'search-widget__item';
       const media = hasImage
-        ? `<img class="search-widget__thumb" src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async" />`
+        ? `<div class="search-widget__thumb-wrap"><img class="search-widget__thumb" src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async" /></div>`
         : '';
 
       return `<li class="${itemClass}" data-url="${entry.url}">
