@@ -1,0 +1,83 @@
+---
+layout: page
+---
+
+{%- assign archive_intro = page.archive_intro | default: site.archive_page.intro | default: 'Browse posts by year, month, and day.' -%}
+{%- assign archive_excerpt_words = page.archive_excerpt_words | default: site.archive_page.excerpt_words | default: 30 -%}
+{%- assign archive_per_page = page.archive_per_page | default: site.archive_page.per_page | default: 10 -%}
+
+<section class="page-section">
+  <div class="container">
+    {% unless page.image %}
+      <h1>{{ page.title | default: 'Archive' }}</h1>
+    {% endunless %}
+    {% if archive_intro and archive_intro != '' %}
+      <p>{{ archive_intro }}</p>
+    {% endif %}
+
+    <div class="entity-filter-group archive-controls" data-archive-controls>
+      <p class="entity-filter-group__title">Archive Filters</p>
+      <div class="archive-controls__row">
+        <label class="archive-controls__field">
+          <span class="archive-controls__label">Year</span>
+          <select class="archive-controls__select" data-archive-year>
+            <option value="">All years</option>
+          </select>
+        </label>
+
+        <label class="archive-controls__field">
+          <span class="archive-controls__label">Month</span>
+          <select class="archive-controls__select" data-archive-month>
+            <option value="">All months</option>
+          </select>
+        </label>
+
+        <label class="archive-controls__field">
+          <span class="archive-controls__label">Day</span>
+          <select class="archive-controls__select" data-archive-day>
+            <option value="">All days</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="archive-controls__actions">
+        <button class="blog-pagination__btn" type="button" data-archive-reset>Clear Filters</button>
+      </div>
+    </div>
+
+    <p class="archive-status" data-archive-status aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="page-section page-section--spaced" id="archive-results">
+  <div class="container story-list" data-archive-list data-archive-per-page="{{ archive_per_page }}">
+    {%- for post in site.posts -%}
+      {%- assign post_image = post.image | default: site.default_post_image -%}
+      <a
+        class="story-card story-card--blog"
+        href="{{ post.url | relative_url }}"
+        data-archive-item
+        data-archive-year="{{ post.date | date: '%Y' }}"
+        data-archive-month="{{ post.date | date: '%-m' }}"
+        data-archive-day="{{ post.date | date: '%-d' }}"
+      >
+        <div class="story-card__media">
+          <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="story-card__body">
+          <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.excerpt | strip_html | truncatewords: archive_excerpt_words }}</p>
+        </div>
+      </a>
+    {%- endfor -%}
+
+    <p class="entity-filter-group__empty archive-empty" data-archive-empty hidden>No posts found for the selected date criteria.</p>
+
+    <nav class="blog-pagination blog-pagination--hidden" data-archive-pagination aria-label="Archive pagination">
+      <button class="blog-pagination__btn" data-archive-prev aria-label="Previous page">Previous</button>
+      <span class="blog-pagination__meta" data-archive-page-meta></span>
+      <button class="blog-pagination__btn" data-archive-next aria-label="Next page">Next</button>
+    </nav>
+  </div>
+</section>

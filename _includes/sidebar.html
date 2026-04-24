@@ -55,8 +55,9 @@
         {%- unless archive_months contains month_key -%}
           {%- assign archive_months = archive_months | push: month_key -%}
           {%- assign archive_label = post.date | date: '%B %Y' -%}
-          {%- assign archive_path = post.date | date: '%Y/%m' -%}
-          {%- assign archive_url = '/' | append: archive_path -%}
+          {%- assign archive_year = post.date | date: '%Y' -%}
+          {%- assign archive_month = post.date | date: '%m' -%}
+          {%- assign archive_url = '/archive/?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
           <li><a href="{{ archive_url | relative_url }}" data-drawer-link>{{ archive_label }}</a></li>
         {%- endunless -%}
       {%- endfor -%}
