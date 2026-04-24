@@ -133,7 +133,8 @@
     {%- elsif video_provider == 'youtube' and video_youtube_id != '' -%}
       <iframe
         class="afh-video__media afh-video__media--iframe"
-        src="{{ youtube_host }}/embed/{{ video_youtube_id }}?autoplay={% if video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' %}1{% else %}0{% endif %}&mute={% if video_muted == 'true' or video_muted == '1' or video_muted == 'yes' %}1{% else %}0{% endif %}&controls={% if video_controls != 'false' and video_controls != '0' and video_controls != 'no' and video_controls != 'off' %}1{% else %}0{% endif %}&loop={% if video_loop == 'true' or video_loop == '1' or video_loop == 'yes' %}1&playlist={{ video_youtube_id }}{% else %}0{% endif %}&playsinline={% if video_playsinline != 'false' and video_playsinline != '0' and video_playsinline != 'no' and video_playsinline != 'off' %}1{% else %}0{% endif %}&rel=0&modestbranding=1"
+        data-video-provider="youtube"
+        src="{{ youtube_host }}/embed/{{ video_youtube_id }}?autoplay={% if video_autoplay == 'true' or video_autoplay == '1' or video_autoplay == 'yes' %}1{% else %}0{% endif %}&mute={% if video_muted == 'true' or video_muted == '1' or video_muted == 'yes' %}1{% else %}0{% endif %}&controls={% if video_controls != 'false' and video_controls != '0' and video_controls != 'no' and video_controls != 'off' %}1{% else %}0{% endif %}&loop={% if video_loop == 'true' or video_loop == '1' or video_loop == 'yes' %}1&playlist={{ video_youtube_id }}{% else %}0{% endif %}&playsinline={% if video_playsinline != 'false' and video_playsinline != '0' and video_playsinline != 'no' and video_playsinline != 'off' %}1{% else %}0{% endif %}&rel=0&modestbranding=1&enablejsapi=1"
         title="{{ video_title_attr | escape }}"
         loading="{{ video_loading }}"
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
