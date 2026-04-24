@@ -25,6 +25,10 @@ function generatePrintLinksSection() {
 
   linkElements.forEach((link) => {
     const href = link.getAttribute('href');
+    // Skip gallery widget links (image controls, not document references).
+    if (link.classList.contains('afh-gallery__link') || link.closest('.afh-gallery')) {
+      return;
+    }
     // Skip anchor-only links and javascript: links
     if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !seen.has(href)) {
       seen.add(href);
