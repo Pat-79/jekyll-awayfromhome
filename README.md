@@ -12,6 +12,7 @@ A demo website is available at [demo.awayfromhome.nl](https://demo.awayfromhome.
 
 - **Full-screen landing hero** — HLS live/VOD stream, YouTube embed, or static image as the homepage background, with chapter-weighted random seek
 - **Inline video widget** — lightweight HLS, YouTube, and Vimeo embeds with shared options and lazy loading
+- **Archive page + sidebar archive modes** — querystring-driven archive filtering with year/month/day and configurable drawer archive views
 - **Light / Dark / Auto theme** — persistent user preference stored in `localStorage`, no flash on load
 - **Client-side search** — full-text search engine with a JSON index built at compile time; no external service required
 - **SEO ready** — Open Graph, Twitter Card, and JSON-LD structured data included on every page
@@ -186,6 +187,15 @@ video_widget:
 gallery_widget:
   max_width:                                          # Optional max width constraint (e.g., "1200px")
   max_height:                                         # Optional max height constraint (e.g., "800px")
+  show_image_caption: false                           # Show image caption in gallery lightbox
+  show_image_description: false                       # Show image description in gallery lightbox
+
+# ── Sidebar archive menu ──────────────────────────────────────────────────────
+sidebar:
+  archive:
+    enabled: true                                     # Show or hide the ARCHIVE section in the drawer
+    mode: year-month-tree                             # 'year' | 'month-year' | 'year-month-tree'
+    show_post_counts: false                           # Show post counts next to year/month labels
 
 # ── Plugins ────────────────────────────────────────────────────────────────────
 plugins:
@@ -317,6 +327,9 @@ jekyll-awayfromhome/
 │   ├── sidebar.html              # Slide-in drawer / sidebar
 │   ├── author-card.html          # Post author byline
 │   ├── post-hero.html            # Hero banner for posts
+│   ├── map-widget.html           # Map widget include (Leaflet)
+│   ├── gallery-widget.html       # Image gallery include
+│   ├── video-widget.html         # Inline video include (HLS/YouTube/Vimeo)
 │   ├── search-widget.html        # Inline search input with dropdown results
 │   ├── social-links.html         # Social media icon row
 │   ├── tag-cloud.html            # Compact tag cloud snippet
@@ -335,6 +348,7 @@ jekyll-awayfromhome/
 │   ├── page.html                 # Generic prose page (About, etc.)
 │   ├── post.html                 # Blog post with hero, author card, tags
 │   ├── blog.html                 # Reverse-chronological post archive
+│   ├── archive.html              # Querystring-driven archive page
 │   ├── entity-index.html         # Filterable browse / category page
 │   ├── search.html               # Full-page search interface
 │   ├── search-data.html          # Generates /assets/data/search-data.json
@@ -362,9 +376,16 @@ jekyll-awayfromhome/
 │   │   ├── search.js             # Search engine: index loading and querying
 │   │   ├── search-widget.js      # Search UI: input, dropdown, keyboard nav
 │   │   ├── home-landing.js       # Hero player: HLS, chapter-based random seek
+│   │   ├── archive.js            # Archive page filters + pagination
+│   │   ├── blog-pagination.js    # Blog page client-side pagination
 │   │   ├── post-snap.js          # Post-page scroll-snap behaviour
 │   │   ├── entity-index.js       # Browse page live filtering
-│   │   └── tag-index.js          # Tag index live filtering
+│   │   ├── tag-index.js          # Tag index live filtering
+│   │   ├── map-widget.js         # Leaflet map widget runtime
+│   │   ├── gallery-widget.js     # Gallery widget runtime
+│   │   ├── video-widget.js       # Video widget runtime
+│   │   ├── print-links.js        # Print link table generator
+│   │   └── search-worker.js      # Search index worker
 │   ├── data/
 │   │   ├── search-data.md        # Liquid template → outputs search-data.json
 │   │   └── home-landing-chapters.json  # Chapter markers for HLS hero
@@ -393,6 +414,7 @@ Set the layout in any page or post's front matter with `layout:`.
 | `page` | Standard content page (About, contact, landing pages). |
 | `post` | Blog post. Includes a hero banner, author card, tags, and post body. |
 | `blog` | Post archive listed in reverse-chronological order. |
+| `archive` | Filterable archive page with year/month/day selectors and pagination. |
 | `entity-index` | Filterable browse/category index. |
 | `search` | Full-page search interface with query input and results. |
 | `tag-cloud` | Visual tag cloud weighted by post count. |
@@ -425,6 +447,51 @@ title: About
 permalink: /about/
 ---
 ```
+
+---
+
+## Archive
+
+The `archive` layout provides a filterable, paginated post archive driven by URL query parameters.
+
+### Create an archive page
+
+Create `archive.md` in your site:
+
+```yaml
+---
+layout: archive
+title: Archive
+permalink: /archive/
+---
+```
+
+### Query parameters
+
+- `year` — filter by year (for example: `/archive/?year=2026`)
+- `month` — filter by month within a year (for example: `/archive/?year=2026&month=04`)
+- `day` — filter by exact day (for example: `/archive/?year=2026&month=04&day=19`)
+- `page` — pagination state (for example: `/archive/?year=2026&page=2`)
+
+The page keeps filters, pagination, and URL state synchronized, so links from the sidebar archive menu open directly to matching filtered results.
+
+### Sidebar archive modes
+
+Configure the drawer ARCHIVE section in `_config.yml`:
+
+```yaml
+sidebar:
+  archive:
+    enabled: true
+    mode: year-month-tree      # 'year' | 'month-year' | 'year-month-tree'
+    show_post_counts: false
+```
+
+- `year`: one entry per year
+- `month-year`: one entry per month (for example: April 2026)
+- `year-month-tree`: collapsible years with nested months
+
+When `show_post_counts: true`, the drawer shows counts for both years and months.
 
 ---
 
