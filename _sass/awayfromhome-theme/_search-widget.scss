@@ -47,7 +47,7 @@
   background: var(--search-results-bg, var(--surface));
   border: 1px solid var(--border);
   border-radius: var(--radius-large);
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.24), var(--shadow-soft);
+  box-shadow: $shadow-search-results, var(--shadow-soft);
 }
 
 .search-widget__results:empty {
@@ -213,7 +213,7 @@
   border: 1px solid;
   border-radius: $radius-pill;
   background: color-mix(in srgb, $frost-bg-soft 84%, transparent);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  box-shadow: $shadow-search-header-control;
   transition:
     background $motion-fast ease,
     border-color $motion-fast ease,
@@ -259,7 +259,7 @@ body:not(.is-header-solid):not(.menu-open) .search-widget--header:focus-within .
   background: color-mix(in srgb, $frost-bg-strong 78%, transparent);
   box-shadow:
     0 0 0 2px color-mix(in srgb, $frost-border-strong 46%, transparent),
-    0 10px 26px rgba(0, 0, 0, 0.22);
+    $shadow-share-toast;
 }
 
 // Home page inline search — only shown on narrow screens where header search is hidden

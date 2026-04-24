@@ -193,17 +193,24 @@
   margin-top: 0.35rem;
 }
 
-.post-content img,
-.post-content iframe,
-.post-content .leaflet-container,
-.post-content figure {
+// max-width applies to all images (prevents overflow).
+.post-content img {
   max-width: 100%;
-  margin: 2rem 0;
-  border-radius: var(--radius-large);
 }
 
-.post-content iframe,
-.post-content .leaflet-container {
+// Spacing and radius only for bare content images (no class = not a widget image).
+// Widget images (gallery thumbs, video media, map tiles) all carry a class and
+// manage their own margin/radius, so they are correctly excluded here.
+.post-content img:not([class]),
+.post-content > iframe,
+.post-content > .leaflet-container,
+.post-content > figure {
+  margin: 2rem 0;
+  border-radius: $widget-media-radius;
+}
+
+.post-content > iframe,
+.post-content > .leaflet-container {
   width: 100%;
 }
 
@@ -234,30 +241,8 @@
   --code-operator: #354c62;
   --code-error: #b2394a;
   --code-added: #2e7a4a;
-}
 
-html[data-theme="dark"] .post-content {
-  --code-inline-bg: color-mix(in srgb, var(--surface) 78%, #0f2b39 22%);
-  --code-inline-border: color-mix(in srgb, var(--border) 78%, transparent);
-  --code-inline-text: #cae8ff;
-
-  --code-block-bg: color-mix(in srgb, var(--surface) 72%, #061722 28%);
-  --code-block-border: color-mix(in srgb, var(--border) 78%, transparent);
-  --code-block-text: #eaf6ff;
-  --code-block-sheen: rgba(255, 255, 255, 0.06);
-
-  --code-comment: #8fa9b6;
-  --code-keyword: #93d8ff;
-  --code-string: #8de8d6;
-  --code-name: #c0d6ff;
-  --code-number: #ffd79a;
-  --code-operator: #f2f8ff;
-  --code-error: #ffb4bc;
-  --code-added: #93f2b5;
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) .post-content {
+  @include when-dark {
     --code-inline-bg: color-mix(in srgb, var(--surface) 78%, #0f2b39 22%);
     --code-inline-border: color-mix(in srgb, var(--border) 78%, transparent);
     --code-inline-text: #cae8ff;
@@ -571,10 +556,5 @@ html[data-theme="dark"] .post-content {
     font-size: 1.06rem;
   }
 
-  .post-content img,
-  .post-content iframe,
-  .post-content .leaflet-container,
-  .post-content figure {
-    border-radius: var(--radius-small);
-  }
+  // Widget media radius is already compact; no further reduction needed on small screens.
 }

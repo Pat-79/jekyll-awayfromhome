@@ -1,12 +1,13 @@
 // Gallery widget variables can be overridden by site owners.
 :root {
   --afh-gallery-bg: color-mix(in srgb, var(--surface) 92%, #000);
-  --afh-gallery-card-bg: color-mix(in srgb, var(--surface-elevated) 92%, #000);
+  --afh-gallery-card-bg: color-mix(in srgb, var(--surface) 92%, #000);
   --afh-gallery-text: var(--text);
   --afh-gallery-muted: var(--muted);
   --afh-gallery-accent: var(--accent);
   --afh-gallery-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
   --afh-gallery-overlay: rgba(8, 10, 14, 0.9);
+  --afh-gallery-shadow: #{$shadow-widget};
   --afh-gallery-button-bg: color-mix(in srgb, var(--surface) 74%, #fff 26%);
   --afh-gallery-button-text: color-mix(in srgb, var(--text) 92%, #000 8%);
   --afh-gallery-button-border: color-mix(in srgb, var(--border) 80%, #fff 20%);
@@ -16,18 +17,18 @@
   --afh-gallery-caption-meta: color-mix(in srgb, var(--muted) 85%, var(--text) 15%);
 }
 
-html[data-theme="dark"] .afh-gallery {
-  --afh-gallery-button-bg: rgba(13, 21, 34, 0.56);
-  --afh-gallery-button-text: #f3f8ff;
-  --afh-gallery-button-border: rgba(255, 255, 255, 0.4);
-  --afh-gallery-button-overlay-bg: rgba(14, 22, 35, 0.22);
-  --afh-gallery-caption-title: color-mix(in srgb, #fff 92%, var(--text) 8%);
-  --afh-gallery-caption-description: color-mix(in srgb, #fff 82%, var(--muted) 18%);
-  --afh-gallery-caption-meta: color-mix(in srgb, #fff 60%, var(--muted) 40%);
-}
+.afh-gallery {
+  margin: $widget-margin-block $widget-margin-inline;
+  color: var(--afh-gallery-text);
+  background: var(--surface-muted);
+  border: 1px solid var(--afh-gallery-border);
+  border-radius: var(--radius-small);
+  box-shadow: var(--afh-gallery-shadow);
+  padding: $widget-padding;
+  max-width: var(--afh-gallery-max-width);
+  max-height: var(--afh-gallery-max-height);
 
-@media (prefers-color-scheme: dark) {
-  html:not([data-theme="light"]) .afh-gallery {
+  @include when-dark {
     --afh-gallery-button-bg: rgba(13, 21, 34, 0.56);
     --afh-gallery-button-text: #f3f8ff;
     --afh-gallery-button-border: rgba(255, 255, 255, 0.4);
@@ -38,20 +39,8 @@ html[data-theme="dark"] .afh-gallery {
   }
 }
 
-.afh-gallery {
-  margin: 1.4rem 0.35rem;
-  color: var(--afh-gallery-text);
-  background: var(--surface-muted);
-  border: 1px solid var(--afh-gallery-border);
-  border-radius: 1rem;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
-  padding: 0.55rem;
-  max-width: var(--afh-gallery-max-width);
-  max-height: var(--afh-gallery-max-height);
-}
-
 .afh-gallery__header {
-  margin: 0 0 0.45rem;
+  margin: 0 0 $widget-header-margin-bottom;
 }
 
 .afh-gallery__header.is-empty {
@@ -95,8 +84,8 @@ html[data-theme="dark"] .afh-gallery {
 
 .afh-gallery__item {
   margin: 0;
-  border-radius: 0.75rem;
-  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.16);
+  border-radius: $widget-media-radius;
+  box-shadow: $shadow-gallery-item;
 }
 
 .afh-gallery__link {
@@ -121,23 +110,10 @@ html[data-theme="dark"] .afh-gallery {
   filter: none;
 }
 
-// Prevent generic post image spacing from affecting gallery media.
-.post-content .afh-gallery__thumb,
-.post-content .afh-gallery__image {
-  margin: 0;
-}
-
 .afh-gallery__link:hover .afh-gallery__thumb,
 .afh-gallery__link:focus-visible .afh-gallery__thumb {
   transform: scale(1.05);
   filter: brightness(1.02);
-}
-
-// Keep gallery media radius controlled, not the generic .post-content media rule.
-.post-content .afh-gallery__link,
-.post-content .afh-gallery__thumb,
-.post-content .afh-gallery__picture {
-  border-radius: 0.75rem;
 }
 
 .afh-gallery--single .afh-gallery__item {
@@ -159,17 +135,17 @@ html[data-theme="dark"] .afh-gallery {
 
 .afh-gallery--single .afh-gallery__thumb {
   aspect-ratio: auto;
-  max-height: 70vh;
+  max-height: $gallery-single-max-height;
   object-fit: contain;
   background: transparent;
 }
 
 .afh-gallery__notice {
   margin: 0;
-  padding: 0.85rem 1rem;
+  padding: $widget-notice-padding-y $widget-notice-padding-x;
   background: var(--afh-gallery-card-bg);
   border: 1px dashed var(--afh-gallery-border);
-  border-radius: 0.75rem;
+  border-radius: $widget-media-radius;
   color: var(--afh-gallery-muted);
 }
 
@@ -180,7 +156,7 @@ html[data-theme="dark"] .afh-gallery {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.7rem;
+  padding: $gallery-lightbox-padding;
   background: var(--afh-gallery-overlay);
 }
 
@@ -191,13 +167,13 @@ html[data-theme="dark"] .afh-gallery {
 .afh-gallery__figure {
   margin: 0;
   position: relative;
-  width: min(97vw, 1320px);
-  max-width: min(97vw, 1320px);
+  width: min(97vw, #{$gallery-lightbox-figure-max-width});
+  max-width: min(97vw, #{$gallery-lightbox-figure-max-width});
   max-height: calc(100vh - 1.4rem);
   background: var(--afh-gallery-bg);
   border: 1px solid color-mix(in srgb, var(--afh-gallery-border) 85%, transparent);
-  border-radius: 1rem;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-small);
+  box-shadow: $shadow-gallery-lightbox;
   padding: 0.35rem;
 }
 
@@ -210,19 +186,19 @@ html[data-theme="dark"] .afh-gallery {
   overflow: clip;
   border: 0;
   background: transparent;
-  border-radius: 0.75rem;
-  clip-path: inset(0 round 0.75rem);
+  border-radius: $widget-media-radius;
+  clip-path: inset(0 round #{$widget-media-radius});
 }
 
 .afh-gallery__picture > .afh-gallery__image {
   display: block;
   width: auto;
   max-width: 100%;
-  max-height: 78vh;
+  max-height: $gallery-lightbox-image-max-height;
   object-fit: contain;
   object-position: center;
   background: transparent;
-  border-radius: 0.75rem;
+  border-radius: $widget-media-radius;
 }
 
 .afh-gallery__caption {
@@ -290,13 +266,13 @@ html[data-theme="dark"] .afh-gallery {
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: $gallery-nav-size;
+  height: $gallery-nav-size;
   padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.65rem;
+  font-size: $gallery-nav-font-size;
   font-weight: 700;
   line-height: 1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
@@ -328,9 +304,9 @@ html[data-theme="dark"] .afh-gallery {
 
   .afh-gallery__nav--prev,
   .afh-gallery__nav--next {
-    width: 2rem;
-    height: 2rem;
-    font-size: 1.3rem;
+    width: $gallery-nav-size-mobile;
+    height: $gallery-nav-size-mobile;
+    font-size: $gallery-nav-font-size-mobile;
   }
 
   .afh-gallery__nav--prev {

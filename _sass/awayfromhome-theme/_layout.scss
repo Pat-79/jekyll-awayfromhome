@@ -39,7 +39,7 @@
   left: 0;
   right: 0;
   z-index: 40;
-  padding: 0.5rem 0;
+  padding: $header-padding-block 0;
   background: transparent;
   transform: translateX(0);
   
@@ -57,7 +57,7 @@ body.menu-open .site-header {
   background: color-mix(in srgb, var(--header-bg-scrolled) 96%, $color-black);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); // Safari support
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 0 var(--border);
+  box-shadow: $shadow-header-solid;
 }
 
 /// Inner container for header content (logo, menu button)
@@ -65,7 +65,7 @@ body.menu-open .site-header {
 .site-header__inner {
   box-sizing: border-box;
   width: 100%;
-  min-height: 2.8rem; // Default height
+  min-height: $header-inner-height; // Default height
   padding-inline: clamp(0.65rem, 2.2vw, 1.6rem); // Responsive padding
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto; // Brand, flexible space for right-aligned search, menu
@@ -84,7 +84,7 @@ body.menu-open .site-header {
 /// or when menu is open (prevents overlap)
 body.is-scrolled .site-header__inner,
 body.menu-open .site-header__inner {
-  min-height: 2.5rem;
+  min-height: $header-inner-height-compact;
 }
 
 // ============================================================================
@@ -206,16 +206,16 @@ body.menu-open .menu-toggle {
 
 /// Container for three animated bars
 .menu-toggle__bars {
-  width: 22px;
+  width: $menu-bars-width;
   display: grid;
-  gap: 4px;
+  gap: $menu-bar-gap;
 }
 
 /// Individual hamburger bar - 2px height
 /// Each bar has unique animation (5.791s, 9.23s, 7.31s) for organic effect
 .menu-toggle__bar {
   display: block;
-  height: 2px;
+  height: $menu-bar-height;
   margin-left: auto;
   border-radius: $radius-pill;
   background: currentColor;
@@ -226,12 +226,12 @@ body.menu-open .menu-toggle {
 /// Top and bottom bars - 20px width
 .menu-toggle__bar--top,
 .menu-toggle__bar--bottom {
-  width: 20px;
+  width: $menu-bar-width-long;
 }
 
 /// Middle bar - 14px width (off-center for visual balance)
 .menu-toggle__bar--middle {
-  width: 14px;
+  width: $menu-bar-width-short;
 }
 
 /// Continuous animations with staggered timings for each bar
@@ -257,8 +257,8 @@ body.menu-open .menu-toggle__bar {
 
 /// Top bar rotates up and to the right
 body.menu-open .menu-toggle__bar--top {
-  width: 18px;
-  transform: translateY(6px) rotate(45deg);
+  width: $menu-bar-width-open;
+  transform: translateY($menu-bar-open-offset) rotate(45deg);
 }
 
 /// Middle bar fades out
@@ -268,8 +268,8 @@ body.menu-open .menu-toggle__bar--middle {
 
 /// Bottom bar rotates down and to the left
 body.menu-open .menu-toggle__bar--bottom {
-  width: 18px;
-  transform: translateY(-6px) rotate(-45deg);
+  width: $menu-bar-width-open;
+  transform: translateY(calc(-1 * #{$menu-bar-open-offset})) rotate(-45deg);
 }
 
 // ============================================================================
@@ -308,7 +308,7 @@ body.menu-open .menu-toggle__bar--bottom {
   transition: transform $motion-base ease, visibility 0s linear $motion-base;
   
   // Subtle shadow when revealed
-  box-shadow: -18px 0 48px rgba(0, 0, 0, 0.28);
+  box-shadow: $shadow-drawer;
 }
 
 /// Inner padding for drawer content - accounts for sticky header
@@ -324,7 +324,7 @@ body.menu-open .menu-toggle__bar--bottom {
   position: fixed;
   inset: 0;
   z-index: 10;
-  background: rgba(5, 8, 12, 0.38);
+  background: $backdrop-menu;
   opacity: 0;
   pointer-events: none;
   transition: opacity $motion-base ease;
@@ -619,7 +619,7 @@ body.menu-open .site-body {
   border: 2px solid var(--border);
   border-radius: var(--radius-large);
   background: var(--surface);
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -677,7 +677,7 @@ body.menu-open .site-body {
 
 .entity-filter-group__empty {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -790,7 +790,6 @@ body.menu-open .site-body {
   display: grid;
   grid-template-columns: repeat(var(--social-wrap-columns, 4), $control-size);
   gap: 0.8rem;
-  //justify-content: center;
   justify-items: center;
   align-content: center;
   margin-inline: auto;
@@ -1031,8 +1030,6 @@ body:not(.layout-post) .page-content > :last-child {
 
 .landing-hero__overlay {
   background:
-    //radial-gradient(circle at 50% 45%, $landing-hero-radial-start, $landing-hero-radial-mid 58%, $landing-hero-radial-end),
-    //linear-gradient(180deg, $landing-hero-linear-start 0%, $landing-hero-linear-end 100%);
     linear-gradient(180deg, $landing-hero-linear-start 0%, $landing-hero-linear-end 100%);
 }
 
@@ -1143,8 +1140,6 @@ body:not(.layout-post) .page-content > :last-child {
   margin-top: 1.25rem;
 }
 
-/// Reusable card styles for intro cards, story cards, and page copy
-.intro-card,
 // ============================================================================
 // BLOG: Client-side pagination controls
 // ============================================================================
@@ -1173,7 +1168,7 @@ body:not(.layout-post) .page-content > :last-child {
   padding: 0.5rem 1.25rem;
   border-radius: $radius-pill;
   border: 2px solid var(--border);
-  background: var(--card-bg);
+  background: var(--surface);
   color: var(--text);
   cursor: pointer;
   transition: background $motion-base, border-color $motion-base, opacity $motion-base;
@@ -1192,11 +1187,13 @@ body:not(.layout-post) .page-content > :last-child {
 
 .blog-pagination__meta {
   font-size: 0.875rem;
-  color: var(--text-muted);
+  color: var(--muted);
   min-width: 7rem;
   text-align: center;
 }
 
+/// Reusable card styles for intro cards, story cards, and page copy
+.intro-card,
 .story-card,
 .page-copy {
   border: 1px solid var(--border);
@@ -1456,19 +1453,6 @@ body:not(.layout-post) .page-content > :last-child {
 
   .menu-drawer__top-controls {
     left: 1rem;
-  }
-
-  .theme-switch--drawer-top {
-    gap: 0.25rem;
-  }
-
-  .theme-switch--drawer-top .theme-switch__option {
-    width: $control-size-mobile;
-    height: $control-size-mobile;
-  }
-
-  .share-toast {
-    font-size: 0.82rem;
   }
 
   .theme-switch--drawer-top {

@@ -29,6 +29,42 @@ $control-size-mobile: 2rem !default;
 $icon-size-control: 1rem !default;
 $icon-size-social: 2rem !default;
 
+// Header and navigation geometry
+// Keeps header/menu dimensions consistent across layout and animation states.
+$header-padding-block: 0.5rem !default;
+$header-inner-height: 2.8rem !default;
+$header-inner-height-compact: 2.5rem !default;
+$menu-bars-width: 22px !default;
+$menu-bar-gap: 4px !default;
+$menu-bar-height: 2px !default;
+$menu-bar-width-long: 20px !default;
+$menu-bar-width-short: 14px !default;
+$menu-bar-width-open: 18px !default;
+$menu-bar-open-offset: 6px !default;
+
+// Reusable content/widget spacing
+// Shared card/widget proportions used by gallery/map/video widgets.
+$widget-margin-block: 1.4rem !default;
+$widget-margin-inline: 0.35rem !default;
+$widget-padding: 0.55rem !default;
+$widget-header-margin-bottom: 0.45rem !default;
+$widget-frame-radius: 0.5rem !default;
+$widget-media-radius: 0.75rem !default;
+$widget-fallback-padding: 1rem !default;
+$widget-notice-padding-y: 0.85rem !default;
+$widget-notice-padding-x: 1rem !default;
+
+// Gallery-specific geometry
+// Centralize lightbox sizing so future edits are one-touch.
+$gallery-lightbox-padding: 0.7rem !default;
+$gallery-lightbox-figure-max-width: 1320px !default;
+$gallery-lightbox-image-max-height: 78vh !default;
+$gallery-single-max-height: 70vh !default;
+$gallery-nav-size: 2.5rem !default;
+$gallery-nav-size-mobile: 2rem !default;
+$gallery-nav-font-size: 1.65rem !default;
+$gallery-nav-font-size-mobile: 1.3rem !default;
+
 // Motion timing scale
 // Reuse these for transitions and animations to keep timing consistent.
 $motion-fast: 160ms !default;
@@ -60,6 +96,18 @@ $frost-border-soft: rgba(255, 255, 255, 0.14) !default;
 $frost-border-strong: rgba(255, 255, 255, 0.22) !default;
 $frost-fill-soft: rgba(255, 255, 255, 0.06) !default;
 $elevation-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !default;
+
+// Common shadow/effect tokens
+// Non-theme palette effects (depth/backdrop) reused by multiple components.
+$shadow-header-solid: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 0 var(--border) !default;
+$shadow-drawer: -18px 0 48px rgba(0, 0, 0, 0.28) !default;
+$backdrop-menu: rgba(5, 8, 12, 0.38) !default;
+$shadow-widget: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06) !default;
+$shadow-gallery-item: 0 7px 16px rgba(0, 0, 0, 0.16) !default;
+$shadow-gallery-lightbox: 0 12px 24px rgba(0, 0, 0, 0.25) !default;
+$shadow-share-toast: 0 10px 26px rgba(0, 0, 0, 0.22) !default;
+$shadow-search-results: 0 20px 44px rgba(0, 0, 0, 0.24) !default;
+$shadow-search-header-control: 0 6px 16px rgba(0, 0, 0, 0.16) !default;
 
 // On-image legibility tokens
 // Text and shadow values intended for content shown over photos/hero images.
@@ -129,3 +177,18 @@ $dark-drawer-text: #f4f8fb !default;
 $dark-drawer-muted: rgba(244, 248, 251, 0.66) !default;
 $dark-hero-overlay: rgba(5, 10, 16, 0.58) !default;
 $dark-shadow: 0 26px 70px rgba(0, 0, 0, 0.28) !default;
+
+// Dark-mode helper mixin.
+// Wraps @content in both the explicit data-theme attribute selector and the
+// OS-level prefers-color-scheme media query, so dark overrides only need to
+// be written once. Must be used inside a selector — & is required.
+@mixin when-dark {
+  html[data-theme="dark"] & {
+    @content;
+  }
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme="light"]) & {
+      @content;
+    }
+  }
+}

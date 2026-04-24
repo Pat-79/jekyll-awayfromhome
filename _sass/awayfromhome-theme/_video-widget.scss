@@ -1,25 +1,24 @@
 :root {
   --afh-video-bg: var(--surface-muted);
   --afh-video-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
-  --afh-video-shadow: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  --afh-video-shadow: #{$shadow-widget};
 }
 
 .afh-video {
-  margin: 1.4rem 0.35rem;
-  //width: min(100%, var(--afh-video-width, 100%));
+  margin: $widget-margin-block $widget-margin-inline;
   margin-inline: auto;
   color: var(--text);
   background: var(--afh-video-bg);
   border: 1px solid var(--afh-video-border);
-  border-radius: 1rem;
+  border-radius: var(--radius-small);
   box-shadow: var(--afh-video-shadow);
-  padding: 0.55rem;
+  padding: $widget-padding;
   max-width: var(--afh-video-max-width);
   max-height: var(--afh-video-max-height);
 }
 
 .afh-video__header {
-  margin: 0 0 0.45rem;
+  margin: 0 0 $widget-header-margin-bottom;
 }
 
 .afh-video__header.is-empty,
@@ -45,7 +44,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: var(--afh-video-ratio, 16 / 9);
-  border-radius: 0.5rem;
+  border-radius: $widget-frame-radius;
   overflow: hidden;
   background: #000;
 }
@@ -63,11 +62,18 @@
 }
 
 .afh-video__media {
-  margin: 0 !important;
-  max-width: none !important;
+  margin: 0;
+  max-width: none;
   border: 0;
-  border-radius: 0 !important;
+  border-radius: 0;
   background: #000;
+}
+
+// Override generic post-content img spacing/radius without needing !important.
+.post-content .afh-video__media {
+  margin: 0;
+  max-width: none;
+  border-radius: 0;
 }
 
 .afh-video__media--video {
@@ -78,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: $widget-fallback-padding;
   color: var(--muted);
   background: color-mix(in srgb, var(--surface) 88%, #000);
 }
