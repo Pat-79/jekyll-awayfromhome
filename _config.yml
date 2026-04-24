@@ -135,3 +135,11 @@ social_links:
   #  url: https://twitter.com/
   #- platform: linkedin
   #  url: https://www.linkedin.com/
+
+sidebar:
+  archive:
+    enabled: true
+    # Supported: 'year' | 'month-year' | 'year-month-tree'
+    # mode: month-year
+    mode: year-month-tree
+    show_post_counts: true

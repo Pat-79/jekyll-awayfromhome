@@ -16,6 +16,34 @@
 </div>
 
 <div class="menu-panel">
+  {%- assign sidebar_archive_enabled_raw = 'true' -%}
+  {%- if site.sidebar and site.sidebar.archive and site.sidebar.archive.enabled != nil -%}
+    {%- assign sidebar_archive_enabled_raw = site.sidebar.archive.enabled -%}
+  {%- endif -%}
+  {%- assign sidebar_archive_enabled_raw = sidebar_archive_enabled_raw | downcase | strip -%}
+  {%- assign sidebar_archive_enabled = true -%}
+  {%- if sidebar_archive_enabled_raw == 'false' or sidebar_archive_enabled_raw == '0' or sidebar_archive_enabled_raw == 'no' or sidebar_archive_enabled_raw == 'off' -%}
+    {%- assign sidebar_archive_enabled = false -%}
+  {%- endif -%}
+
+  {%- assign sidebar_archive_mode = 'month-year' -%}
+  {%- if site.sidebar and site.sidebar.archive and site.sidebar.archive.mode != nil -%}
+    {%- assign sidebar_archive_mode = site.sidebar.archive.mode | downcase | strip -%}
+  {%- endif -%}
+  {%- unless sidebar_archive_mode == 'year' or sidebar_archive_mode == 'month-year' or sidebar_archive_mode == 'year-month-tree' -%}
+    {%- assign sidebar_archive_mode = 'month-year' -%}
+  {%- endunless -%}
+
+  {%- assign sidebar_archive_show_counts_raw = 'false' -%}
+  {%- if site.sidebar and site.sidebar.archive and site.sidebar.archive.show_post_counts != nil -%}
+    {%- assign sidebar_archive_show_counts_raw = site.sidebar.archive.show_post_counts -%}
+  {%- endif -%}
+  {%- assign sidebar_archive_show_counts_raw = sidebar_archive_show_counts_raw | downcase | strip -%}
+  {%- assign sidebar_archive_show_counts = false -%}
+  {%- if sidebar_archive_show_counts_raw == 'true' or sidebar_archive_show_counts_raw == '1' or sidebar_archive_show_counts_raw == 'yes' or sidebar_archive_show_counts_raw == 'on' -%}
+    {%- assign sidebar_archive_show_counts = true -%}
+  {%- endif -%}
+
   <section class="menu-section">
     <h2>NAVIGATE</h2>
     <nav aria-label="Drawer navigation">
@@ -44,23 +72,105 @@
     <h2>SOCIAL MEDIA</h2>
     {%- include social-links.html class_name='social-links social-links--drawer' %}
   </section>
+  {%- if sidebar_archive_enabled -%}
+    <section class="menu-section">
+      <h2>ARCHIVE</h2>
+      <ul class="menu-list">
+        {%- assign archive_keys = '' | split: '' -%}
+        {%- assign archive_year_keys = '' | split: '' -%}
+        {%- assign archive_month_keys = '' | split: '' -%}
+        {%- for post in site.posts -%}
+          {%- assign archive_key = '' -%}
+          {%- assign archive_label = '' -%}
+          {%- assign archive_url = '' -%}
 
-
-  <section class="menu-section">
-    <h2>ARCHIVE</h2>
-    <ul class="menu-list">
-      {%- assign archive_months = '' | split: '' -%}
-      {%- for post in site.posts -%}
-        {%- assign month_key = post.date | date: '%Y-%m' -%}
-        {%- unless archive_months contains month_key -%}
-          {%- assign archive_months = archive_months | push: month_key -%}
-          {%- assign archive_label = post.date | date: '%B %Y' -%}
-          {%- assign archive_year = post.date | date: '%Y' -%}
-          {%- assign archive_month = post.date | date: '%m' -%}
-          {%- assign archive_url = '/archive/?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
-          <li><a href="{{ archive_url | relative_url }}" data-drawer-link>{{ archive_label }}</a></li>
-        {%- endunless -%}
-      {%- endfor -%}
-    </ul>
-  </section>
+          {%- if sidebar_archive_mode == 'year' -%}
+            {%- assign archive_key = post.date | date: '%Y' -%}
+            {%- assign archive_label = archive_key -%}
+            {%- assign archive_url = '/archive/?year=' | append: archive_key -%}
+            {%- unless archive_keys contains archive_key -%}
+              {%- assign archive_keys = archive_keys | push: archive_key -%}
+              {%- assign archive_count = 0 -%}
+              {%- if sidebar_archive_show_counts -%}
+                {%- for count_post in site.posts -%}
+                  {%- assign count_year = count_post.date | date: '%Y' -%}
+                  {%- if count_year == archive_key -%}
+                    {%- assign archive_count = archive_count | plus: 1 -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              <li><a href="{{ archive_url | relative_url }}" data-drawer-link>{{ archive_label }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_count }})</span>{% endif %}</a></li>
+            {%- endunless -%}
+          {%- elsif sidebar_archive_mode == 'month-year' -%}
+            {%- assign archive_key = post.date | date: '%Y-%m' -%}
+            {%- assign archive_label = post.date | date: '%B %Y' -%}
+            {%- assign archive_year = post.date | date: '%Y' -%}
+            {%- assign archive_month = post.date | date: '%m' -%}
+            {%- assign archive_url = '/archive/?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
+            {%- unless archive_keys contains archive_key -%}
+              {%- assign archive_keys = archive_keys | push: archive_key -%}
+              {%- assign archive_count = 0 -%}
+              {%- if sidebar_archive_show_counts -%}
+                {%- for count_post in site.posts -%}
+                  {%- assign count_month_key = count_post.date | date: '%Y-%m' -%}
+                  {%- if count_month_key == archive_key -%}
+                    {%- assign archive_count = archive_count | plus: 1 -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              <li><a href="{{ archive_url | relative_url }}" data-drawer-link>{{ archive_label }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_count }})</span>{% endif %}</a></li>
+            {%- endunless -%}
+          {%- else -%}
+            {%- assign archive_year = post.date | date: '%Y' -%}
+            {%- unless archive_year_keys contains archive_year -%}
+              {%- assign archive_year_keys = archive_year_keys | push: archive_year -%}
+              {%- assign archive_year_count = 0 -%}
+              {%- if sidebar_archive_show_counts -%}
+                {%- for count_post in site.posts -%}
+                  {%- assign count_year = count_post.date | date: '%Y' -%}
+                  {%- if count_year == archive_year -%}
+                    {%- assign archive_year_count = archive_year_count | plus: 1 -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+              <li class="archive-tree__year">
+                <details class="archive-tree__details">
+                  <summary class="archive-tree__summary">
+                    <span class="archive-tree__glyph" aria-hidden="true"></span>
+                    <span class="archive-tree__year-label">{{ archive_year }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_year_count }})</span>{% endif %}</span>
+                  </summary>
+                  <ul class="menu-list archive-tree__months">
+                    {%- assign archive_month_keys = '' | split: '' -%}
+                    {%- for year_post in site.posts -%}
+                      {%- assign year_post_year = year_post.date | date: '%Y' -%}
+                      {%- if year_post_year == archive_year -%}
+                        {%- assign archive_month = year_post.date | date: '%m' -%}
+                        {%- assign archive_month_name = year_post.date | date: '%B' -%}
+                        {%- assign archive_month_key = archive_year | append: '-' | append: archive_month -%}
+                        {%- assign archive_month_url = '/archive/?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
+                        {%- unless archive_month_keys contains archive_month_key -%}
+                          {%- assign archive_month_keys = archive_month_keys | push: archive_month_key -%}
+                          {%- assign archive_month_count = 0 -%}
+                          {%- if sidebar_archive_show_counts -%}
+                            {%- for month_count_post in site.posts -%}
+                              {%- assign month_count_year = month_count_post.date | date: '%Y' -%}
+                              {%- assign month_count_month = month_count_post.date | date: '%m' -%}
+                              {%- if month_count_year == archive_year and month_count_month == archive_month -%}
+                                {%- assign archive_month_count = archive_month_count | plus: 1 -%}
+                              {%- endif -%}
+                            {%- endfor -%}
+                          {%- endif -%}
+                          <li><a href="{{ archive_month_url | relative_url }}" data-drawer-link>{{ archive_month_name }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_month_count }})</span>{% endif %}</a></li>
+                        {%- endunless -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </ul>
+                </details>
+              </li>
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </section>
+  {%- endif -%}
 </div>
