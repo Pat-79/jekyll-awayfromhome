@@ -101,6 +101,8 @@ video_widget:
 gallery_widget:
   max_width:
   max_height:
+  show_image_caption: false
+  show_image_description: false
 
 # Exclude from processing.
 # The following items will not be processed, by default.

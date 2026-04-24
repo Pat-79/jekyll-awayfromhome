@@ -15,6 +15,16 @@
     return value;
   }
 
+  function parseBooleanDataset(value, fallback) {
+    if (value === null || value === undefined || value === '') {
+      return fallback;
+    }
+    var normalized = String(value).trim().toLowerCase();
+    if (normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on') return true;
+    if (normalized === '0' || normalized === 'false' || normalized === 'no' || normalized === 'off') return false;
+    return fallback;
+  }
+
   function setHeader(root, name, description) {
     var header = root.querySelector('[data-gallery-header]');
     var nameEl = root.querySelector('[data-gallery-title]');
@@ -161,6 +171,9 @@
     if (root.dataset.galleryReady === '1') return;
 
     var dir = normalizeDir(root.dataset.galleryDir || '');
+    var hasGalleryJson = parseBooleanDataset(root.getAttribute('data-gallery-has-json'), true);
+    var showImageCaption = parseBooleanDataset(root.getAttribute('data-gallery-show-image-caption'), true);
+    var showImageDescription = parseBooleanDataset(root.getAttribute('data-gallery-show-image-description'), true);
     var links = Array.prototype.slice.call(root.querySelectorAll('[data-gallery-open]'));
     if (!links.length) return;
 
@@ -201,9 +214,10 @@
       var description = link.dataset.galleryDescription || '';
       var fallbackTitle = toFilename(link.dataset.galleryBase || link.getAttribute('href')).replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
 
-      captionTitle.textContent = title || fallbackTitle;
-      captionDescription.textContent = description || '';
-      captionDescription.hidden = !description;
+      captionTitle.textContent = showImageCaption ? (title || fallbackTitle) : '';
+      captionTitle.hidden = !showImageCaption;
+      captionDescription.textContent = showImageDescription ? (description || '') : '';
+      captionDescription.hidden = !showImageDescription || !description;
       counter.textContent = (currentIndex + 1) + ' / ' + links.length;
     }
 
@@ -293,7 +307,7 @@
     updateSingleState();
     root.dataset.galleryReady = '1';
 
-    if (dir) {
+    if (dir && hasGalleryJson) {
       var jsonUrl = dir + 'gallery.json';
       fetch(jsonUrl, { cache: 'no-store' })
         .then(function (response) {

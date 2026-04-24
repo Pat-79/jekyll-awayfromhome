@@ -14,12 +14,37 @@
   {%- assign gallery_id = include.id | default: gallery_dir | slugify -%}
   {%- assign gallery_title = include.title | default: '' -%}
   {%- assign gallery_description = include.description | default: '' -%}
+  {%- assign gallery_show_image_description_raw = 'true' -%}
+  {%- if site.gallery_widget and site.gallery_widget.show_image_description != nil -%}
+    {%- assign gallery_show_image_description_raw = site.gallery_widget.show_image_description -%}
+  {%- endif -%}
+  {%- if include.show_image_description != nil -%}
+    {%- assign gallery_show_image_description_raw = include.show_image_description -%}
+  {%- endif -%}
+  {%- assign gallery_show_image_description_raw = gallery_show_image_description_raw | downcase | strip -%}
+  {%- assign gallery_show_image_description = true -%}
+  {%- if gallery_show_image_description_raw == 'false' or gallery_show_image_description_raw == '0' or gallery_show_image_description_raw == 'no' or gallery_show_image_description_raw == 'off' -%}
+    {%- assign gallery_show_image_description = false -%}
+  {%- endif -%}
+  {%- assign gallery_show_image_caption_raw = 'true' -%}
+  {%- if site.gallery_widget and site.gallery_widget.show_image_caption != nil -%}
+    {%- assign gallery_show_image_caption_raw = site.gallery_widget.show_image_caption -%}
+  {%- endif -%}
+  {%- if include.show_image_caption != nil -%}
+    {%- assign gallery_show_image_caption_raw = include.show_image_caption -%}
+  {%- endif -%}
+  {%- assign gallery_show_image_caption_raw = gallery_show_image_caption_raw | downcase | strip -%}
+  {%- assign gallery_show_image_caption = true -%}
+  {%- if gallery_show_image_caption_raw == 'false' or gallery_show_image_caption_raw == '0' or gallery_show_image_caption_raw == 'no' or gallery_show_image_caption_raw == 'off' -%}
+    {%- assign gallery_show_image_caption = false -%}
+  {%- endif -%}
   {%- assign gallery_alt_prefix = include.alt_prefix | default: 'Gallery image' -%}
   {%- assign gallery_notice = include.empty_text | default: 'No images found for this gallery.' -%}
   {%- assign gallery_max_width_raw = include.max_width | default: site.gallery_widget.max_width | default: '' | strip -%}
   {%- assign gallery_max_height_raw = include.max_height | default: site.gallery_widget.max_height | default: '' | strip -%}
   {%- assign image_exts = ',.jpg,.jpeg,.png,.webp,.gif,.avif,' -%}
   {%- assign all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+  {%- assign all_static_paths = '||' | append: all_static_paths | append: '||' -%}
   {%- assign base_images = '' | split: '' -%}
 
   {%- for file in site.static_files -%}
@@ -46,11 +71,21 @@
   {%- endif -%}
 
   {%- capture gallery_inline_style -%}{%- if gallery_max_width_css != '' -%}--afh-gallery-max-width: {{ gallery_max_width_css | escape }};{%- endif -%}{%- if gallery_max_height_css != '' -%}--afh-gallery-max-height: {{ gallery_max_height_css | escape }};{%- endif -%}{%- endcapture -%}
+  {%- assign gallery_json_path = gallery_dir | append: 'gallery.json' -%}
+  {%- assign gallery_has_json = false -%}
+  {%- for file in site.static_files -%}
+    {%- if file.path == gallery_json_path -%}
+      {%- assign gallery_has_json = true -%}
+    {%- endif -%}
+  {%- endfor -%}
   <section
     class="afh-gallery"
     data-gallery
     data-gallery-id="{{ gallery_id }}"
     data-gallery-dir="{{ gallery_dir }}"
+    data-gallery-has-json="{% if gallery_has_json %}1{% else %}0{% endif %}"
+    data-gallery-show-image-caption="{% if gallery_show_image_caption %}1{% else %}0{% endif %}"
+    data-gallery-show-image-description="{% if gallery_show_image_description %}1{% else %}0{% endif %}"
     data-gallery-name="{{ gallery_title | escape }}"
     data-gallery-description="{{ gallery_description | escape }}"
     style="{{ gallery_inline_style }}"
@@ -77,12 +112,17 @@
           {%- assign medium_url = '' -%}
           {%- assign large_url = '' -%}
           {%- assign full_url = '' -%}
+          {%- assign thumb_marker = '||' | append: thumb_path | append: '||' -%}
+          {%- assign small_marker = '||' | append: small_path | append: '||' -%}
+          {%- assign medium_marker = '||' | append: medium_path | append: '||' -%}
+          {%- assign large_marker = '||' | append: large_path | append: '||' -%}
+          {%- assign full_marker = '||' | append: full_path | append: '||' -%}
 
-          {%- if all_static_paths contains thumb_path -%}{%- assign thumb_url = thumb_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains small_path -%}{%- assign small_url = small_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains medium_path -%}{%- assign medium_url = medium_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains large_path -%}{%- assign large_url = large_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains full_path -%}{%- assign full_url = full_path | relative_url -%}{%- endif -%}
+          {%- if all_static_paths contains thumb_marker -%}{%- assign thumb_url = thumb_path | relative_url -%}{%- endif -%}
+          {%- if all_static_paths contains small_marker -%}{%- assign small_url = small_path | relative_url -%}{%- endif -%}
+          {%- if all_static_paths contains medium_marker -%}{%- assign medium_url = medium_path | relative_url -%}{%- endif -%}
+          {%- if all_static_paths contains large_marker -%}{%- assign large_url = large_path | relative_url -%}{%- endif -%}
+          {%- if all_static_paths contains full_marker -%}{%- assign full_url = full_path | relative_url -%}{%- endif -%}
 
           {%- assign preview_url = thumb_url -%}
           {%- if preview_url == '' and small_url != '' -%}{%- assign preview_url = small_url -%}{%- endif -%}
@@ -102,11 +142,11 @@
               data-gallery-description=""
               data-gallery-alt="{{ gallery_alt_prefix | append: ': ' | append: display_name | escape }}"
               data-gallery-base="{{ base_url }}"
-              data-gallery-thumb="{{ thumb_url }}"
-              data-gallery-small="{{ small_url }}"
-              data-gallery-medium="{{ medium_url }}"
-              data-gallery-large="{{ large_url }}"
-              data-gallery-full="{{ full_url }}"
+              {% if thumb_url != '' %}data-gallery-thumb="{{ thumb_url }}"{% endif %}
+              {% if small_url != '' %}data-gallery-small="{{ small_url }}"{% endif %}
+              {% if medium_url != '' %}data-gallery-medium="{{ medium_url }}"{% endif %}
+              {% if large_url != '' %}data-gallery-large="{{ large_url }}"{% endif %}
+              {% if full_url != '' %}data-gallery-full="{{ full_url }}"{% endif %}
             >
               <img
                 class="afh-gallery__thumb"
