@@ -985,9 +985,16 @@ body.menu-open .site-body {
 }
 
 /// Footer text color - light on dark background
-.site-footer,
+.site-footer {
+  color: color-mix(in srgb, $footer-text 50%, transparent);
+}
+
 .site-footer a {
-  color: $footer-text;
+  color: inherit;
+}
+
+.site-footer * {
+  color: inherit;
 }
 
 /// Footer brand link styling
@@ -1007,8 +1014,20 @@ body.menu-open .site-body {
 
 /// Disclaimer text - more muted color
 .site-footer__note {
-  color: $footer-text-muted;
   text-align: center;
+}
+
+.site-footer .social-link {
+  color: inherit;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.site-footer .social-link:hover,
+.site-footer .social-link:focus-visible,
+.site-footer .social-link--share.is-copied,
+.site-footer .social-link--share.is-copy-failed {
+  color: inherit;
+  background: color-mix(in srgb, currentColor 22%, transparent);
 }
 
 .site-footer__note p {
