@@ -21,6 +21,21 @@ $radius-small: 1rem !default;
 $radius-large: 1.75rem !default;
 $radius-pill: 999px !default;
 
+// Header layout configuration
+// Controls which side the drawer opens from, where the brand and search sit,
+// and how drawer content is aligned. Accepts 'start'/'end' (CSS logical,
+// RTL-aware) or 'left'/'right' (physical, always fixed regardless of text
+// direction). Brand and search also accept 'center'. Avoid placing brand and
+// drawer on the same side — that configuration is not supported.
+//$header-drawer-side: end !default;    // 'start'|'end'|'left'|'right'
+//$header-brand-slot: start !default;   // 'start'|'end'|'left'|'right'|'center'
+//$header-search-slot: end !default;    // 'start'|'end'|'left'|'right'|'center'
+//$drawer-text-align: inherit !default; // 'inherit'|'start'|'end'|'left'|'right'|'center'
+$header-drawer-side: end !default;    // 'start'|'end'|'left'|'right'
+$header-brand-slot: start !default;   // 'start'|'end'|'left'|'right'|'center'
+$header-search-slot: end !default;    // 'start'|'end'|'left'|'right'|'center'
+$drawer-text-align: inherit !default; // 'inherit'|'start'|'end'|'left'|'right'|'center'
+
 // Shared control sizing
 // Common dimensions for icon buttons and control icons.
 $control-size: 2.5rem !default;

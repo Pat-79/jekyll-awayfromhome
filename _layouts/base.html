@@ -1,5 +1,15 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: 'en' }}">
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign _lang_base = _page_lang | split: '-' | first | downcase -%}
+{%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+{%- if page.dir -%}
+  {%- assign _dir = page.dir -%}
+{%- elsif _rtl_langs contains _lang_base -%}
+  {%- assign _dir = 'rtl' -%}
+{%- else -%}
+  {%- assign _dir = 'ltr' -%}
+{%- endif -%}
+<html lang="{{ _page_lang }}" dir="{{ _dir }}">
 {% include head.html %}
 <body class="layout-{{ page.layout | default: 'default' }}{% if page.image and page.layout != 'post' %} has-page-image{% endif %}{% if page.url == '/' %} home-landing{% endif %}">
 <a class="skip-link" href="#main-content">Skip to main content</a>
