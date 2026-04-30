@@ -39,7 +39,7 @@ function generatePrintLinksSection() {
     }
   });
 
-  console.log('[print-links] Found', links.length, 'unique links');
+  //console.log('[print-links] Found', links.length, 'unique links');
 
   // Only generate section if there are links
   if (links.length === 0) {
@@ -126,36 +126,36 @@ function generatePrintLinksSection() {
   
   if (postBodyInner) {
     postBodyInner.parentElement.appendChild(linksSection);
-    console.log('[print-links] Section appended after post-body__inner');
+    //console.log('[print-links] Section appended after post-body__inner');
   } else if (postBody) {
     postBody.appendChild(linksSection);
-    console.log('[print-links] Section appended to post-body');
+    //console.log('[print-links] Section appended to post-body');
   } else {
     // For other layouts, append after the content element
     contentElement.parentElement.appendChild(linksSection);
-    console.log('[print-links] Section appended after main content');
+    //console.log('[print-links] Section appended after main content');
   }
 }
 
 // Generate on page load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('[print-links] DOMContentLoaded event');
+    //console.log('[print-links] DOMContentLoaded event');
     generatePrintLinksSection();
   });
 } else {
-  console.log('[print-links] DOM already loaded, generating immediately');
+  //console.log('[print-links] DOM already loaded, generating immediately');
   generatePrintLinksSection();
 }
 
 // Regenerate before print (in case content has changed dynamically)
 window.addEventListener('beforeprint', () => {
-  console.log('[print-links] beforeprint event triggered');
+  //console.log('[print-links] beforeprint event triggered');
   generatePrintLinksSection();
 });
 
 // Also generate on window load as fallback
 window.addEventListener('load', () => {
-  console.log('[print-links] window load event');
+  //console.log('[print-links] window load event');
   generatePrintLinksSection();
 });
