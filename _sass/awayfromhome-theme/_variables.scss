@@ -27,10 +27,6 @@ $radius-pill: 999px !default;
 // RTL-aware) or 'left'/'right' (physical, always fixed regardless of text
 // direction). Brand and search also accept 'center'. Avoid placing brand and
 // drawer on the same side — that configuration is not supported.
-//$header-drawer-side: end !default;    // 'start'|'end'|'left'|'right'
-//$header-brand-slot: start !default;   // 'start'|'end'|'left'|'right'|'center'
-//$header-search-slot: end !default;    // 'start'|'end'|'left'|'right'|'center'
-//$drawer-text-align: inherit !default; // 'inherit'|'start'|'end'|'left'|'right'|'center'
 $header-drawer-side: end !default;    // 'start'|'end'|'left'|'right'
 $header-brand-slot: start !default;   // 'start'|'end'|'left'|'right'|'center'
 $header-search-slot: end !default;    // 'start'|'end'|'left'|'right'|'center'
