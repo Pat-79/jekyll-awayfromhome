@@ -280,6 +280,39 @@
   }
 
   /**
+   * Share the current page using the Web Share API when available,
+   * falling back to copying the URL to the clipboard.
+   * @returns {Promise<'shared'|'copied'|'cancelled'|'failed'>}
+   *   'shared'    – native share sheet opened and the user completed a share
+   *   'cancelled' – native share sheet opened but the user dismissed it
+   *   'copied'    – URL written to clipboard (no Web Share API available)
+   *   'failed'    – clipboard copy also failed
+   */
+  function sharePage() {
+    var url = window.location.href;
+    var title = document.title;
+
+    if (navigator.share) {
+      return navigator.share({ title: title, url: url }).then(function () {
+        return "shared";
+      }).catch(function (error) {
+        // AbortError means the user dismissed the sheet — not an actual error.
+        if (error && error.name === "AbortError") {
+          return "cancelled";
+        }
+        // Any other error: fall back to clipboard copy.
+        return copyPageUrl().then(function (copied) {
+          return copied ? "copied" : "failed";
+        });
+      });
+    }
+
+    return copyPageUrl().then(function (copied) {
+      return copied ? "copied" : "failed";
+    });
+  }
+
+  /**
    * Copy current page URL to clipboard.
    * @returns {Promise<boolean>} true when copied successfully, false otherwise
    */
@@ -313,14 +346,18 @@
     }
   }
 
-  function announceShareResult(button, copied) {
+  function announceShareResult(button, result) {
+    // User simply dismissed the native share sheet — no feedback needed.
+    if (result === "cancelled") return;
+
     var srLabel = button.querySelector(".sr-only");
-    var defaultLabel = "Copy page link";
-    var resultLabel = copied ? "Link copied" : "Could not copy link";
+    var defaultLabel = button.getAttribute("data-share-label") || "Share";
+    var success = result === "shared" || result === "copied";
+    var resultLabel = success ? "Shared!" : "Could not share";
 
     button.setAttribute("aria-label", resultLabel);
     button.title = resultLabel;
-    button.classList.add(copied ? "is-copied" : "is-copy-failed");
+    button.classList.add(success ? "is-copied" : "is-copy-failed");
 
     if (srLabel) {
       srLabel.textContent = resultLabel;
@@ -328,14 +365,19 @@
 
     window.setTimeout(function () {
       button.setAttribute("aria-label", defaultLabel);
-      button.title = "Share";
+      button.title = defaultLabel;
       button.classList.remove("is-copied", "is-copy-failed");
       if (srLabel) {
         srLabel.textContent = defaultLabel;
       }
     }, 1600);
 
-    showShareToast(copied ? "URL copied to clipboard" : "Could not copy URL");
+    // Native share has its own confirmation UI — only show a toast for clipboard.
+    if (result === "copied") {
+      showShareToast("URL copied to clipboard");
+    } else if (result === "failed") {
+      showShareToast("Could not copy URL");
+    }
   }
 
   function showShareToast(message) {
@@ -380,8 +422,8 @@
   if (shareButtons && shareButtons.length > 0) {
     shareButtons.forEach(function (button) {
       button.addEventListener("click", function () {
-        copyPageUrl().then(function (copied) {
-          announceShareResult(button, copied);
+        sharePage().then(function (result) {
+          announceShareResult(button, result);
         });
       });
     });
