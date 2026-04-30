@@ -178,6 +178,12 @@ $dark-drawer-muted: rgba(244, 248, 251, 0.66) !default;
 $dark-hero-overlay: rgba(5, 10, 16, 0.58) !default;
 $dark-shadow: 0 26px 70px rgba(0, 0, 0, 0.28) !default;
 
+// Search term highlight
+// Background tint applied to <mark class="afh-search-highlight"> elements
+// injected by search-highlight.js when a visitor lands from search results.
+$highlight-light: rgba(163, 150, 6, 0.35) !default;  // accent-tinted, light mode
+$highlight-dark:  rgba(222, 206, 33, 0.35) !default;  // accent-tinted, dark mode
+
 // Dark-mode helper mixin.
 // Wraps @content in both the explicit data-theme attribute selector and the
 // OS-level prefers-color-scheme media query, so dark overrides only need to

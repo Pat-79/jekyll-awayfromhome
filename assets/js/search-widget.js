@@ -30,6 +30,14 @@ function toBool(value) {
   return value !== 'false';
 }
 
+function saveHighlightTerms(query) {
+  try {
+    if (query && query.trim()) {
+      localStorage.setItem('afh-highlight-terms', query.trim());
+    }
+  } catch (e) {}
+}
+
 function initSearchWidget(widget) {
   const input = widget.querySelector('[data-search-input]');
   const resultsBox = widget.querySelector('[data-search-results]');
@@ -156,6 +164,7 @@ function initSearchWidget(widget) {
 
     if (event.key === 'Enter' && active >= 0) {
       event.preventDefault();
+      saveHighlightTerms(input.value);
       window.location = results[active].url;
     }
   });
@@ -163,6 +172,7 @@ function initSearchWidget(widget) {
   resultsBox.addEventListener('click', (event) => {
     const item = event.target.closest('.search-widget__item');
     if (!item) return;
+    saveHighlightTerms(input.value);
     window.location = item.dataset.url;
   });
 

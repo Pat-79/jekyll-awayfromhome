@@ -48,6 +48,7 @@
   --hero-overlay: #{$light-hero-overlay};
   --shadow-soft: #{$light-shadow};
   --search-results-bg: color-mix(in srgb, var(--surface) 74%, var(--text));
+  --highlight-bg: #{$highlight-light};
 }
 
 html[data-theme="dark"] {
@@ -70,6 +71,7 @@ html[data-theme="dark"] {
   --hero-overlay: #{$dark-hero-overlay};
   --shadow-soft: #{$dark-shadow};
   --search-results-bg: color-mix(in srgb, var(--surface) 84%, #fff);
+  --highlight-bg: #{$highlight-dark};
 }
 
 @media (prefers-color-scheme: dark) {
@@ -93,6 +95,7 @@ html[data-theme="dark"] {
     --hero-overlay: #{$dark-hero-overlay};
     --shadow-soft: #{$dark-shadow};
     --search-results-bg: color-mix(in srgb, var(--surface) 84%, #fff);
+    --highlight-bg: #{$highlight-dark};
   }
 }
 
@@ -249,4 +252,16 @@ button {
 // Hide print-only sections on screen
 .print-links-section {
   display: none;
+}
+
+// Search-result term highlights injected by search-highlight.js.
+// Color is set via --highlight-bg; override $highlight-light / $highlight-dark
+// in your own SCSS to change the tint.
+mark.afh-search-highlight {
+  background: var(--highlight-bg);
+  color: inherit;
+  border-radius: 0.2em;
+  padding: 0.05em 0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
