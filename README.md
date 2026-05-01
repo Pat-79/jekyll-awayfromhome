@@ -665,7 +665,7 @@ The theme includes a client-side full-text search engine. No external service, A
 
 ### How it works
 
-1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes common English stopwords, and emits a weighted inverted-keyword index as `/assets/data/search-data.json`.
+1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes language-specific stopwords (read from `_data/i18n/<lang>.yml` per document), and emits a weighted inverted-keyword index as `/assets/data/search-data.json`.
 
 2. **Runtime caching** — On first visit, `search.js` fetches `search-data.json` and stores it in `localStorage` for 24 hours, keyed by a build-time version hash. Subsequent searches in the same browser use the cached index without a network request.
 
@@ -694,10 +694,116 @@ Do not delete `assets/data/search-data.md` — it is the Liquid template that ge
 - All posts in `_posts/`
 - All pages with a layout (except `error`, `none`, and asset files)
 - Post and page titles, tags, categories, excerpts, and body content
+- Pages excluded via `sitemap: false` front matter are not indexed
 
 ---
 
-## Home Landing Hero
+## Multilingual Support
+
+The theme includes a built-in multilingual system supporting any number of languages, automatic browser-preference detection, and per-language UI strings.
+
+### How it works
+
+1. **UI strings** — Each language has a YAML file in `_data/i18n/` (e.g. `en.yml`, `nl.yml`). All templates resolve strings via `{% assign t = site.data.i18n[page.lang] | default: site.data.i18n.en %}`.
+
+2. **`afh-page-meta`** — A JSON blob injected into every page by `base.html`, containing `currentLang`, `defaultLang`, a `translations` map (language code → URL for this page's translations), and the full `i18n` object. All client-side scripts read from this.
+
+3. **Language detection** — On first visit (no explicit preference stored), `lang-persist.js` detects the best matching language using:
+   - `navigator.languages` — browser language list (BCP 47); exact match first, then base language (`nl-BE` → `nl`, `en-US` → `en`)
+   - Timezone hint — `Intl.DateTimeFormat().resolvedOptions().timeZone` mapped to a language code as a weak tiebreaker
+   - The detected language is **not** saved to storage; detection re-runs on every visit until the user makes an explicit choice.
+
+4. **Explicit preference** — When the user picks a language from the dropdown, `localStorage('afh-lang')` is set and always takes priority over detection.
+
+5. **RTL support** — Languages in the RTL list (`ar`, `he`, `fa`, `ur`, and others) automatically receive `dir="rtl"` on `<html>`.
+
+6. **Fallback content** — With `lang_fallback: true` in `_config.yml`, posts that have no translation in the current language appear in listing pages using the original language as a fallback.
+
+### Configuring languages
+
+In `_config.yml`:
+
+```yaml
+lang: en            # default site language
+lang_fallback: true # show default-lang posts on translated pages that lack a translation
+
+languages:
+  - code: en
+    name: English
+    native: English
+    flag: "🇬🇧"
+  - code: nl
+    name: Dutch
+    native: Nederlands
+    flag: "🇳🇱"
+  - code: de
+    name: German
+    native: Deutsch
+    flag: "🇩🇪"
+  - code: ar
+    name: Arabic
+    native: العربية
+    flag: "🇸🇦"
+
+defaults:
+  - scope: { path: "nl" }
+    values:
+      lang: nl
+  - scope: { path: "_posts/nl", type: "posts" }
+    values:
+      lang: nl
+      permalink: "/nl/blog/:slug/"
+```
+
+### Adding a new language
+
+1. Add the language to `_config.yml` `languages:` list and `defaults:` scopes.
+2. Create `_data/i18n/<code>.yml` with all UI string keys — copy `en.yml` as a starting template.
+3. Create a `<code>/` directory with translated page files — copy `ar/` as a template, updating `lang:`, `title:`, `permalink:`, and page content.
+4. Optionally add translated posts to `_posts/<code>/` with matching `ref:` front matter.
+
+### Translating posts and pages
+
+Use `lang` and `ref` front matter to link translations of the same content:
+
+```yaml
+# English post (_posts/2026-04-19-my-post.markdown)
+---
+layout: post
+lang: en
+ref: my-post-slug
+title: "My Post"
+---
+
+# Dutch translation (_posts/nl/2026-04-19-my-post.markdown)
+---
+layout: post
+lang: nl
+ref: my-post-slug   # same ref ties translations together
+title: "Mijn bericht"
+---
+```
+
+The `ref` field enables:
+- The language switcher to link directly to each translated version
+- Search results to show the current-language version instead of duplicates
+- Browse and tag pages to avoid listing the same post in multiple languages
+
+### i18n file structure
+
+Each `_data/i18n/<lang>.yml` must contain these top-level sections: `site`, `nav`, `ui`, `drawer`, `theme`, `archive`, `blog`, `browse`, `search`, `tags`, `footer`.
+
+The `search` section has two keys used by the client-side highlighter:
+
+```yaml
+search:
+  word_regex: "[A-Za-zÀ-ÖØ-öø-ÿ0-9''\\-]+"  # token pattern for Latin scripts
+  stopwords: "a,the,and,..."                  # comma-separated words to exclude
+```
+
+For non-Latin scripts, provide a matching Unicode range. The current-language regex is combined with the default-language regex at runtime so mixed-script content is highlighted correctly.
+
+---
 
 The `home` layout renders a full-screen hero at the top of the page. Three video sources are tried in order:
 
