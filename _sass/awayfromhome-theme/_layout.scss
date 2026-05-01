@@ -1148,21 +1148,8 @@ body.menu-open .site-body {
 .menu-drawer__top-controls {
   position: absolute;
   top: 0.8rem;
-  // Theme controls sit on the inner (page-facing) edge of the drawer.
-  // Physical values use fixed sides; logical values use inset-inline-* for RTL awareness.
-  @if $header-drawer-side == left {
-    right: 1.5rem;
-    left: auto;
-  } @else if $header-drawer-side == right {
-    left: 1.5rem;
-    right: auto;
-  } @else if $_drawer-is-start {
-    inset-inline-end: 1.5rem;   // inner edge: end side of a start-positioned drawer
-    inset-inline-start: auto;
-  } @else {
-    inset-inline-start: 1.5rem; // inner edge: start side of an end-positioned drawer
-    inset-inline-end: auto;
-  }
+  inset-inline-start: 1.5rem;
+  inset-inline-end: 1.5rem;
   z-index: 1;
 }
 
@@ -1203,6 +1190,66 @@ body.menu-open .site-body {
   background: var(--accent);
   color: $color-accent-ink;
   border-color: var(--accent);
+}
+
+// ============================================================================
+// LANGUAGE SELECT: Native <select> combobox alongside theme toggle
+// ============================================================================
+
+.menu-drawer__top-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.lang-select {
+  height: $control-size-compact;
+  padding-block: 0;
+  padding-inline-start: 0.6rem;
+  padding-inline-end: 0.5rem;
+  margin-inline-start: auto;
+  appearance: none;
+  -webkit-appearance: none;
+  background: $frost-bg-strong;
+  border: 1px solid $frost-border-soft;
+  border-radius: $radius-pill;
+  color: $color-white;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: $elevation-shadow;
+  transition: border-color $motion-fast ease;
+
+  // Style the dropdown arrow via a background SVG so it stays white
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ffffff99'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  padding-inline-end: 1.6rem;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--accent) 68%, $color-white);
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
+  }
+
+  option {
+    background: #1a1a2e;
+    color: $color-white;
+    font-family: system-ui, sans-serif;
+    font-size: 1rem;
+  }
+
+  [dir="rtl"] & {
+    background-position: left 0.55rem center;
+  }
 }
 
 // ============================================================================
@@ -1912,19 +1959,8 @@ body:not(.layout-post) .page-content > :last-child {
   }
 
   .menu-drawer__top-controls {
-    @if $header-drawer-side == left {
-      right: 1rem;
-      left: auto;
-    } @else if $header-drawer-side == right {
-      left: 1rem;
-      right: auto;
-    } @else if $_drawer-is-start {
-      inset-inline-end: 1rem;
-      inset-inline-start: auto;
-    } @else {
-      inset-inline-start: 1rem;
-      inset-inline-end: auto;
-    }
+    inset-inline-start: 1rem;
+    inset-inline-end: 1rem;
   }
 
   .theme-switch--drawer-top {

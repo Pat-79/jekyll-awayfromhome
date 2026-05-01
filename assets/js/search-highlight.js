@@ -14,11 +14,50 @@
 
   if (!query) return;
 
-  // Same stopword list as search-data.html / search-worker.js
-  const STOPWORDS = new Set(
-    'a,about,above,after,again,against,all,also,am,an,and,any,are,around,as,at,be,because,been,before,being,below,between,both,but,by,can,could,day,days,did,do,does,doing,down,during,each,few,first,for,from,further,had,has,have,having,he,her,here,hers,herself,him,himself,his,how,i,if,in,into,is,it,its,itself,just,last,like,more,most,my,myself,no,nor,not,now,of,off,on,once,one,only,or,other,our,ours,ourselves,out,over,own,really,same,she,should,so,some,such,than,that,the,their,theirs,them,themselves,then,there,these,they,this,those,through,to,too,under,until,up,very,was,we,well,were,what,when,where,which,while,who,whom,why,will,with,without,would,you,your,yours,yourself,yourselves'
-      .split(',')
-  );
+  // ── Language-specific config from afh-page-meta ──────────────────────────────
+  // word_regex: pattern matching a single "word" token (no capturing group, no flags)
+  // stopwords:  comma-separated list of words to exclude from highlighting
+
+  const FALLBACK_WORD_REGEX = "[A-Za-zÀ-ÖØ-öø-ÿ0-9''\-]+";
+  const FALLBACK_STOPWORDS  = 'a,about,above,after,again,against,all,also,am,an,and,any,are,around,as,at,be,because,been,before,being,below,between,both,but,by,can,could,day,days,did,do,does,doing,down,during,each,few,first,for,from,further,had,has,have,having,he,her,here,hers,herself,him,himself,his,how,i,if,in,into,is,it,its,itself,just,last,like,more,most,my,myself,no,nor,not,now,of,off,on,once,one,only,or,other,our,ours,ourselves,out,over,own,really,same,she,should,so,some,such,than,that,the,their,theirs,them,themselves,then,there,these,they,this,those,through,to,too,under,until,up,very,was,we,well,were,what,when,where,which,while,who,whom,why,will,with,without,would,you,your,yours,yourself,yourselves';
+
+  let wordRegexStr = FALLBACK_WORD_REGEX;
+  let stopwordsStr = FALLBACK_STOPWORDS;
+
+  const metaEl = document.getElementById('afh-page-meta');
+  if (metaEl) {
+    try {
+      const meta = JSON.parse(metaEl.textContent);
+      const lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
+      const defaultLang = (meta && meta.defaultLang) || 'en';
+      const langI18n    = meta.i18n && (meta.i18n[lang]        || meta.i18n['en']);
+      const defaultI18n = meta.i18n && (meta.i18n[defaultLang] || meta.i18n['en']);
+
+      if (langI18n && langI18n.search) {
+        if (langI18n.search.word_regex) wordRegexStr = langI18n.search.word_regex;
+        if (langI18n.search.stopwords) stopwordsStr = langI18n.search.stopwords;
+      }
+
+      // Also include the default language's word pattern so that content in the
+      // default language embedded in a translated page is tokenised correctly.
+      if (defaultI18n && defaultI18n.search && defaultI18n.search.word_regex) {
+        const defaultRegexStr = defaultI18n.search.word_regex;
+        if (defaultRegexStr !== wordRegexStr) {
+          wordRegexStr = wordRegexStr + '|' + defaultRegexStr;
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Build the split regex: capturing group keeps matched tokens in the result array.
+  let wordRegex;
+  try {
+    wordRegex = new RegExp('(' + wordRegexStr + ')');
+  } catch (e) {
+    wordRegex = new RegExp('(' + FALLBACK_WORD_REGEX + ')');
+  }
+
+  const STOPWORDS = new Set(stopwordsStr.split(',').map((s) => s.trim()).filter(Boolean));
 
   // Parse + filter query terms (same rules: length > 2, not a stopword)
   const terms = [...new Set(query.toLowerCase().trim().split(/\s+/).filter(Boolean))].filter(
@@ -106,9 +145,8 @@
   // Split text into alternating non-word / word segments and wrap matches.
   // Returns null when nothing matched (avoids unnecessary DOM mutations).
   function buildHighlightedHtml(text) {
-    // Capture sequences of word characters (letters incl. accented + digits + apostrophes).
-    // Odd-indexed parts are word segments; even-indexed parts are separators.
-    const parts = text.split(/([A-Za-zÀ-ÖØ-öø-ÿ0-9''\-]+)/);
+    // wordRegex has a capturing group so split() keeps matched tokens at odd indices.
+    const parts = text.split(wordRegex);
     let hasMatch = false;
     let result = '';
 

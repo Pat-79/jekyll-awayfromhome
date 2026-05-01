@@ -1,6 +1,8 @@
 ---
 layout: base
 ---
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 
 {%- assign landing_video_url = page.landing_video_url | default: page.landing_video | default: site.home_landing.video_url -%}
 {%- assign landing_video_id = page.landing_youtube_id | default: site.home_landing.youtube_id -%}
@@ -72,7 +74,7 @@ layout: base
 
   <div class="container landing-hero__content">
     <h1 class="landing-hero__title">{{ site.brand.title | default: site.title }}</h1>
-    <p class="landing-hero__tagline">{{ site.description }}</p>
+    <p class="landing-hero__tagline">{{ t.site.description | default: site.description }}</p>
   </div>
 
   <a class="landing-hero__scroll" href="#home-main" data-home-scroll aria-label="Scroll to latest posts">
@@ -82,7 +84,7 @@ layout: base
 
 <section class="page-section home-search-bar" aria-label="Site search" data-home-scroll-target>
   <div class="container">
-    {% include search-widget.html id='home-search' limit=8 placeholder='Search stories...' sync_query=false %}
+    {% include search-widget.html id='home-search' limit=8 placeholder=t.ui.search_placeholder sync_query=false %}
   </div>
 </section>
 
@@ -106,36 +108,66 @@ layout: base
 <section class="page-section page-section--spaced" id="home-main" data-home-main>
   <div class="container story-list" data-blog-list data-blog-per-page="{{ home_per_page }}">
     <div class="home-section-head">
-      <h2>Latest Posts</h2>
+      <h2>{{ t.ui.latest_posts | default: 'Latest Posts' }}</h2>
     </div>
-    {%- if latest_posts_limit and latest_posts_limit != '' -%}
-      {%- assign home_posts = site.posts | slice: 0, latest_posts_limit -%}
-    {%- else -%}
-      {%- assign home_posts = site.posts -%}
+    {%- assign _default_lang = site.lang | default: 'en' -%}
+    {%- assign _fallback = site.lang_fallback | default: false -%}
+    {%- assign lang_posts = '' | split: '' -%}
+    {%- assign _seen_refs = '' | split: '' -%}
+    {%- for _p in site.posts -%}
+      {%- assign _p_lang = _p.lang | default: _default_lang -%}
+      {%- if _p_lang == _page_lang -%}
+        {%- assign lang_posts = lang_posts | push: _p -%}
+        {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if _fallback and _page_lang != _default_lang -%}
+      {%- for _p in site.posts -%}
+        {%- assign _p_lang = _p.lang | default: _default_lang -%}
+        {%- if _p_lang == _default_lang -%}
+          {%- if _p.ref and _p.ref != '' -%}
+            {%- unless _seen_refs contains _p.ref -%}{%- assign lang_posts = lang_posts | push: _p -%}{%- endunless -%}
+          {%- else -%}
+            {%- assign lang_posts = lang_posts | push: _p -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign lang_posts = lang_posts | sort: 'date' | reverse -%}
     {%- endif -%}
+    {%- if latest_posts_limit and latest_posts_limit != '' -%}
+      {%- assign home_posts = lang_posts | slice: 0, latest_posts_limit -%}
+    {%- else -%}
+      {%- assign home_posts = lang_posts -%}
+    {%- endif -%}
+    {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
     {%- for post in home_posts -%}
       {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
       {%- assign post_word_count = post.content | strip_html | number_of_words -%}
       {%- assign post_image = post.image | default: site.default_post_image -%}
-      <a class="story-card" href="{{ post.url | relative_url }}" data-blog-item>
+      {%- assign _post_lang = post.lang | default: _default_lang -%}
+      {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
+      {%- assign _post_dir = 'ltr' -%}
+      {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
+      {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
+      <a class="story-card" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}" data-blog-item>
         <div class="story-card__media">
           <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
         </div>
         <div class="story-card__body">
-          <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
+          <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
           <h2>{{ post.title }}</h2>
           <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
           {%- if post_word_count > 60 -%}
-            <p class="story-card__read-more">Read more...</p>
+            <p class="story-card__read-more">{{ t.ui.read_more | default: 'Read more...' }}</p>
           {%- endif -%}
         </div>
       </a>
     {%- endfor -%}
 
-    <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination aria-label="Home posts pagination">
-      <button class="blog-pagination__btn" data-blog-prev aria-label="Previous page">Previous</button>
+    <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination data-pagination-format="{{ t.blog.page_of }}" aria-label="Home posts pagination">
+      <button class="blog-pagination__btn" data-blog-prev aria-label="{{ t.ui.previous | default: 'Previous' }}">{{ t.ui.previous | default: 'Previous' }}</button>
       <span class="blog-pagination__meta" data-blog-page-meta></span>
-      <button class="blog-pagination__btn" data-blog-next aria-label="Next page">Next</button>
+      <button class="blog-pagination__btn" data-blog-next aria-label="{{ t.ui.next | default: 'Next' }}">{{ t.ui.next | default: 'Next' }}</button>
     </nav>
   </div>
 </section>

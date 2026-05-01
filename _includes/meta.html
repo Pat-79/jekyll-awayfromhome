@@ -1,9 +1,13 @@
 {%- assign favicon_path = site.favicon | default: site.brand.logo | default: '/assets/images/logo-mark.svg' -%}
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign _t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+{%- assign _site_title = _t.site.title | default: site.title -%}
+{%- assign _site_description = _t.site.description | default: site.description -%}
 <!-- SEO & Social Media Meta Tags -->
-{%- assign page_title = page.title | default: site.title -%}
-{%- assign page_description = page.excerpt | default: page.description | default: site.description | strip_html | normalize_whitespace | truncatewords: 30 | escape -%}
+{%- assign page_title = page.title | default: _site_title -%}
+{%- assign page_description = page.excerpt | default: page.description | default: _site_description | strip_html | normalize_whitespace | truncatewords: 30 | escape -%}
 {%- assign page_url = page.url | default: '/' | absolute_url -%}
-{%- assign site_name = site.title | default: site.brand.title -%}
+{%- assign site_name = _site_title -%}
 {%- assign author_name = page.author.name | default: page.author | default: site.author.name -%}
 {%- assign page_category = page.category | default: page.categories | first -%}
 {%- assign twitter_site = site.twitter_username | default: site.twitter.site | default: site.social.twitter -%}
@@ -38,10 +42,31 @@
 <!-- Document -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+<title>{% if page.title %}{{ page.title }} | {% endif %}{{ _site_title }}</title>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="{{ favicon_path | relative_url }}">
 <link rel="shortcut icon" href="{{ favicon_path | relative_url }}">
+<!-- Hreflang alternate links for multilingual content -->
+{%- if site.languages and site.languages.size > 1 -%}
+  {%- assign _all_content = site.posts | concat: site.pages -%}
+  {%- assign _ref_translations = '' | split: '' -%}
+  {%- if page.ref and page.ref != '' -%}
+    {%- assign _ref_translations = _all_content | where: "ref", page.ref -%}
+  {%- endif -%}
+  {%- for _lang in site.languages -%}
+    {%- assign _lang_matches = _ref_translations | where: "lang", _lang.code -%}
+    {%- assign _lang_match = _lang_matches | first -%}
+    {%- if _lang_match -%}
+      {%- assign _alt_url = _lang_match.url | absolute_url -%}
+    {%- elsif _lang.code == site.lang -%}
+      {%- assign _alt_url = '/' | absolute_url -%}
+    {%- else -%}
+      {%- assign _alt_url = '/' | append: _lang.code | append: '/' | absolute_url -%}
+    {%- endif -%}
+<link rel="alternate" hreflang="{{ _lang.code }}" href="{{ _alt_url }}">
+  {%- endfor -%}
+<link rel="alternate" hreflang="x-default" href="{{ '/' | absolute_url }}">
+{%- endif -%}
 <!-- SEO & Search Engine Optimization -->
 <meta name="description" content="{{ page_description }}">
 <meta name="author" content="{{ author_name }}">
@@ -62,7 +87,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="{{ page_image_type }}">
-<meta property="og:locale" content="{{ site.lang | default: 'en_US' | replace: '-', '_' }}">
+<meta property="og:locale" content="{{ _page_lang | replace: '-', '_' }}">
 {%- if is_article -%}
   {%- if page.date -%}
 <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
@@ -100,7 +125,7 @@
   "name": {{ site_name | jsonify }},
   "url": {{ site.url | absolute_url | jsonify }},
   "logo": {{ site.brand.logo | relative_url | absolute_url | jsonify }},
-  "description": {{ site.description | jsonify }}
+  "description": {{ _site_description | jsonify }}
 }
 </script>
 <script type="application/ld+json">
@@ -117,7 +142,7 @@
   },
   "url": {{ page_url | jsonify }},
   "site_name": {{ site_name | jsonify }},
-  "inLanguage": {{ site.lang | default: 'en' | jsonify }}{%- if is_article -%}
+  "inLanguage": {{ _page_lang | jsonify }}{%- if is_article -%}
   ,"author": {
     "@type": "Person",
     "name": {{ author_name | jsonify }}
@@ -134,7 +159,7 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Home",
+      "name": {{ _t.ui.home_breadcrumb | default: "Home" | jsonify }},
       "item": {{ site.url | absolute_url | jsonify }}
     }{%- if page.url != '/' -%},
     {
@@ -146,3 +171,4 @@
   ]
 }
 </script>
+

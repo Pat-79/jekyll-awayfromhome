@@ -42,15 +42,37 @@
     return;
   }
 
+  // Read i18n strings from afh-page-meta. Fall back to data attributes, then hardcoded English.
+  var tagsI18n = {};
+  var metaEl = document.getElementById('afh-page-meta');
+  if (metaEl) {
+    try {
+      var meta = JSON.parse(metaEl.textContent);
+      var lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
+      var langI18n = meta.i18n && (meta.i18n[lang] || meta.i18n[meta.currentLang]);
+      if (langI18n && langI18n.tags) tagsI18n = langI18n.tags;
+    } catch (e) {}
+  }
+
+  var i18nShowingAll = tagsI18n.showing_all
+    || status.getAttribute('data-i18n-showing-all')
+    || "Showing posts for all tags.";
+  var i18nShowingTagged = tagsI18n.showing_tagged
+    || status.getAttribute('data-i18n-showing-tagged')
+    || 'Showing posts tagged "{label}".';
+  var i18nNotFound = tagsI18n.not_found
+    || status.getAttribute('data-i18n-not-found')
+    || "The requested tag does not exist.";
+
   if (showAll) {
     status.hidden = false;
-    status.textContent = "Showing posts for all tags.";
+    status.textContent = i18nShowingAll;
     return;
   }
 
   if (foundSection) {
     status.hidden = false;
-    status.textContent = 'Showing posts tagged "' + foundSection.getAttribute("data-tag-label") + '".';
+    status.textContent = i18nShowingTagged.replace('{label}', foundSection.getAttribute("data-tag-label"));
 
     window.requestAnimationFrame(function () {
       foundSection.scrollIntoView({ behavior: "auto", block: "start" });
@@ -59,5 +81,5 @@
   }
 
   status.hidden = false;
-  status.textContent = "The requested tag does not exist.";
+  status.textContent = i18nNotFound;
 }());

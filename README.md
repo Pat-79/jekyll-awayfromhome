@@ -1,3 +1,6 @@
+---
+sitemap: false
+---
 # jekyll-awayfromhome
 
 A modern, responsive Jekyll theme for personal websites and travel blogs, built for GitHub Pages. It features a full-screen video landing hero (HLS stream or YouTube), client-side full-text search, light/dark/auto theme switching, SEO meta tags, and a mobile-first layout — all without requiring a build pipeline or server-side plugins beyond what GitHub Pages already provides.

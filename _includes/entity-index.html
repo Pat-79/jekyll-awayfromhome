@@ -1,4 +1,31 @@
-{%- assign all_docs = site.posts | concat: site.pages -%}
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+{%- assign _default_lang = site.lang | default: 'en' -%}
+{%- assign _fallback = site.lang_fallback | default: false -%}
+{%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+{%- assign _all_docs_raw = site.posts | concat: site.pages -%}
+{%- assign _lang_docs = '' | split: '' -%}
+{%- assign _seen_refs_docs = '' | split: '' -%}
+{%- for _d in _all_docs_raw -%}
+  {%- assign _d_lang = _d.lang | default: _default_lang -%}
+  {%- if _d_lang == _page_lang -%}
+    {%- assign _lang_docs = _lang_docs | push: _d -%}
+    {%- if _d.ref and _d.ref != '' -%}{%- assign _seen_refs_docs = _seen_refs_docs | push: _d.ref -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if _fallback and _page_lang != _default_lang -%}
+  {%- for _d in _all_docs_raw -%}
+    {%- assign _d_lang = _d.lang | default: _default_lang -%}
+    {%- if _d_lang == _default_lang -%}
+      {%- if _d.ref and _d.ref != '' -%}
+        {%- unless _seen_refs_docs contains _d.ref -%}{%- assign _lang_docs = _lang_docs | push: _d -%}{%- endunless -%}
+      {%- else -%}
+        {%- assign _lang_docs = _lang_docs | push: _d -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign all_docs = _lang_docs -%}
 {%- assign entity_index_url = '/browse/' | relative_url -%}
 {%- assign entity_results_anchor = '#browse-results' -%}
 
@@ -87,18 +114,18 @@
     {% unless page.image %}
       <h1>{{ page.title | default: 'Browse' }}</h1>
     {% endunless %}
-    <p>{{ page.entity_posts_intro | default: 'Select a category below to filter posts and pages by author, category, or tag.' }}</p>
+    <p data-i18n="browse.intro">{{ page.entity_posts_intro | default: t.browse.intro | default: 'Select a category below to filter posts and pages by author, category, or tag.' }}</p>
 
     <div class="entity-type-selector">
-      <button class="entity-type-selector__button" data-entity-type-selector="author">Authors</button>
-      <button class="entity-type-selector__button" data-entity-type-selector="category">Categories</button>
-      <button class="entity-type-selector__button" data-entity-type-selector="tag">Tags</button>
+      <button class="entity-type-selector__button" data-entity-type-selector="author" data-i18n="browse.authors">{{ t.browse.authors | default: 'Authors' }}</button>
+      <button class="entity-type-selector__button" data-entity-type-selector="category" data-i18n="browse.categories">{{ t.browse.categories | default: 'Categories' }}</button>
+      <button class="entity-type-selector__button" data-entity-type-selector="tag" data-i18n="browse.tags">{{ t.browse.tags | default: 'Tags' }}</button>
     </div>
 
     <div class="entity-filter-groups">
 
       <div class="entity-filter-group" data-entity-filter-group="author">
-        <p class="entity-filter-group__title">Authors</p>
+        <p class="entity-filter-group__title">{{ t.browse.authors | default: 'Authors' }}</p>
         <div class="tag-cloud tag-cloud--scaled tag-cloud--page">
           {%- if author_entries and author_entries.size > 0 -%}
             {%- for author_entry in author_entries -%}
@@ -110,13 +137,13 @@
               </a>
             {%- endfor -%}
           {%- else -%}
-            <p class="entity-filter-group__empty">No authors available yet.</p>
+            <p class="entity-filter-group__empty">{{ t.browse.no_authors | default: 'No authors available yet.' }}</p>
           {%- endif -%}
         </div>
       </div>
 
       <div class="entity-filter-group" data-entity-filter-group="category">
-        <p class="entity-filter-group__title">Categories</p>
+        <p class="entity-filter-group__title">{{ t.browse.categories | default: 'Categories' }}</p>
         <div class="tag-cloud tag-cloud--scaled tag-cloud--page">
           {%- if category_entries and category_entries.size > 0 -%}
             {%- for category_entry in category_entries -%}
@@ -128,13 +155,13 @@
               </a>
             {%- endfor -%}
           {%- else -%}
-            <p class="entity-filter-group__empty">No categories available yet.</p>
+            <p class="entity-filter-group__empty">{{ t.browse.no_categories | default: 'No categories available yet.' }}</p>
           {%- endif -%}
         </div>
       </div>
 
       <div class="entity-filter-group" data-entity-filter-group="tag">
-        <p class="entity-filter-group__title">Tags</p>
+        <p class="entity-filter-group__title">{{ t.browse.tags | default: 'Tags' }}</p>
         <div class="tag-cloud tag-cloud--scaled tag-cloud--page">
           {%- if tag_entries and tag_entries.size > 0 -%}
             {%- for tag_entry in tag_entries -%}
@@ -146,18 +173,22 @@
               </a>
             {%- endfor -%}
           {%- else -%}
-            <p class="entity-filter-group__empty">No tags available yet.</p>
+            <p class="entity-filter-group__empty">{{ t.browse.no_tags | default: 'No tags available yet.' }}</p>
           {%- endif -%}
         </div>
       </div>
     </div>
 
-    <p class="entity-status" data-entity-status hidden></p>
+    <p class="entity-status" data-entity-status hidden
+      data-i18n-not-found="{{ t.browse.not_found_status | escape }}"
+      data-i18n-showing-author="{{ t.browse.showing_author | escape }}"
+      data-i18n-showing-tag="{{ t.browse.showing_tag | escape }}"
+      data-i18n-showing-category="{{ t.browse.showing_category | escape }}"></p>
   </div>
 </section>
 
 <section class="page-section" id="browse-results">
-  <div class="container entity-index" data-entity-posts-page>
+  <div class="container entity-index" data-entity-posts-page data-entity-per-page="{{ site.browse_page.per_page | default: 10 }}" data-pagination-format="{{ t.blog.page_of }}">
     {%- for author_entry in author_entries -%}
       {%- assign entry_parts = author_entry | split: '::' -%}
       {%- assign author_slug = entry_parts[0] -%}
@@ -183,9 +214,9 @@
 
       <div class="story-list entity-section" data-entity-section data-entity-type="author" data-entity-value="{{ author_slug }}" data-entity-label="{{ author_label }}" hidden>
         <div class="home-section-head">
-          <p class="entity-section__eyebrow">Author</p>
+          <p class="entity-section__eyebrow">{{ t.browse.eyebrow_author | default: 'Author' }}</p>
           <h2>{{ author_label }}</h2>
-          <p class="entity-section__summary">{{ author_match_count }} item{% if author_match_count != 1 %}s{% endif %}</p>
+          <p class="entity-section__summary">{%- if author_match_count == 1 -%}{{ t.browse.item_count_one | default: '1 item' }}{%- else -%}{%- assign _ic = t.browse.item_count | replace: '{count}', author_match_count -%}{{ _ic }}{%- endif -%}</p>
         </div>
 
         {%- for item in all_docs -%}
@@ -206,16 +237,21 @@
               {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
               {%- assign is_post = false -%}
               {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
-              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}">
+              {%- assign _item_lang = item.lang | default: _default_lang -%}
+              {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
+              {%- assign _item_dir = 'ltr' -%}
+              {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
+              {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
+              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
                   <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
                 </div>
                 <div class="story-card__body">
                   <p class="story-card__meta">
                     {%- if is_post and item.date -%}
-                      {{ item.date | date: '%B %-d, %Y' }}
+                      {%- include format-date.html date=item.date t=_item_t -%}
                     {%- else -%}
-                      Page
+                      {{ t.browse.page_label | default: 'Page' }}
                     {%- endif -%}
                     {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
                   </p>
@@ -225,6 +261,11 @@
               </a>
             {%- endif -%}
           {%- endfor -%}
+        <nav class="blog-pagination blog-pagination--hidden" data-entity-pagination aria-label="pagination">
+          <button class="blog-pagination__btn" data-entity-prev>{{ t.ui.previous | default: 'Previous' }}</button>
+          <span class="blog-pagination__meta" data-entity-page-meta></span>
+          <button class="blog-pagination__btn" data-entity-next>{{ t.ui.next | default: 'Next' }}</button>
+        </nav>
       </div>
     {%- endfor -%}
 
@@ -271,9 +312,9 @@
 
       <div class="story-list entity-section" data-entity-section data-entity-type="category" data-entity-value="{{ category_slug }}" data-entity-label="{{ category_label }}" hidden>
         <div class="home-section-head">
-          <p class="entity-section__eyebrow">Category</p>
+          <p class="entity-section__eyebrow">{{ t.browse.eyebrow_category | default: 'Category' }}</p>
           <h2>{{ category_label }}</h2>
-          <p class="entity-section__summary">{{ category_match_count }} item{% if category_match_count != 1 %}s{% endif %}</p>
+          <p class="entity-section__summary">{%- if category_match_count == 1 -%}{{ t.browse.item_count_one | default: '1 item' }}{%- else -%}{%- assign _ic = t.browse.item_count | replace: '{count}', category_match_count -%}{{ _ic }}{%- endif -%}</p>
         </div>
 
         {%- for item in all_docs -%}
@@ -313,16 +354,21 @@
               {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
               {%- assign is_post = false -%}
               {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
-              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}">
+              {%- assign _item_lang = item.lang | default: _default_lang -%}
+              {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
+              {%- assign _item_dir = 'ltr' -%}
+              {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
+              {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
+              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
                   <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
                 </div>
                 <div class="story-card__body">
                   <p class="story-card__meta">
                     {%- if is_post and item.date -%}
-                      {{ item.date | date: '%B %-d, %Y' }}
+                      {%- include format-date.html date=item.date t=_item_t -%}
                     {%- else -%}
-                      Page
+                      {{ t.browse.page_label | default: 'Page' }}
                     {%- endif -%}
                     {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
                   </p>
@@ -332,6 +378,11 @@
               </a>
             {%- endif -%}
           {%- endfor -%}
+        <nav class="blog-pagination blog-pagination--hidden" data-entity-pagination aria-label="pagination">
+          <button class="blog-pagination__btn" data-entity-prev>{{ t.ui.previous | default: 'Previous' }}</button>
+          <span class="blog-pagination__meta" data-entity-page-meta></span>
+          <button class="blog-pagination__btn" data-entity-next>{{ t.ui.next | default: 'Next' }}</button>
+        </nav>
       </div>
     {%- endfor -%}
 
@@ -378,9 +429,9 @@
 
       <div class="story-list entity-section" data-entity-section data-entity-type="tag" data-entity-value="{{ tag_slug }}" data-entity-label="{{ tag_label }}" hidden>
         <div class="home-section-head">
-          <p class="entity-section__eyebrow">Tag</p>
+          <p class="entity-section__eyebrow">{{ t.browse.eyebrow_tag | default: 'Tag' }}</p>
           <h2>{{ tag_label }}</h2>
-          <p class="entity-section__summary">{{ tag_match_count }} item{% if tag_match_count != 1 %}s{% endif %}</p>
+          <p class="entity-section__summary">{%- if tag_match_count == 1 -%}{{ t.browse.item_count_one | default: '1 item' }}{%- else -%}{%- assign _ic = t.browse.item_count | replace: '{count}', tag_match_count -%}{{ _ic }}{%- endif -%}</p>
         </div>
 
         {%- for item in all_docs -%}
@@ -420,16 +471,21 @@
               {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
               {%- assign is_post = false -%}
               {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
-              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}">
+              {%- assign _item_lang = item.lang | default: _default_lang -%}
+              {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
+              {%- assign _item_dir = 'ltr' -%}
+              {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
+              {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
+              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
                   <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
                 </div>
                 <div class="story-card__body">
                   <p class="story-card__meta">
                     {%- if is_post and item.date -%}
-                      {{ item.date | date: '%B %-d, %Y' }}
+                      {%- include format-date.html date=item.date t=_item_t -%}
                     {%- else -%}
-                      Page
+                      {{ t.browse.page_label | default: 'Page' }}
                     {%- endif -%}
                     {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
                   </p>
@@ -439,14 +495,19 @@
               </a>
             {%- endif -%}
           {%- endfor -%}
+        <nav class="blog-pagination blog-pagination--hidden" data-entity-pagination aria-label="pagination">
+          <button class="blog-pagination__btn" data-entity-prev>{{ t.ui.previous | default: 'Previous' }}</button>
+          <span class="blog-pagination__meta" data-entity-page-meta></span>
+          <button class="blog-pagination__btn" data-entity-next>{{ t.ui.next | default: 'Next' }}</button>
+        </nav>
       </div>
     {%- endfor -%}
 
     <div class="story-list">
       <section class="intro-card entity-section entity-section--missing" data-entity-not-found hidden>
-        <p class="entity-section__eyebrow">Filter</p>
-        <h2>Filter does not exist</h2>
-        <p class="entity-section__summary">Unable to show the requested author, category, or tag because it does not exist in this site.</p>
+        <p class="entity-section__eyebrow">{{ t.browse.not_found_eyebrow | default: 'Filter' }}</p>
+        <h2>{{ t.browse.not_found_title | default: 'Filter does not exist' }}</h2>
+        <p class="entity-section__summary">{{ t.browse.not_found_message | default: 'Unable to show the requested author, category, or tag because it does not exist in this site.' }}</p>
       </section>
     </div>
   </div>

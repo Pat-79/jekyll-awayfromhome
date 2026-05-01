@@ -12,9 +12,11 @@ class SearchEngine {
       const title = typeof entry.t === 'string' ? entry.t : '';
       const excerpt = typeof entry.e === 'string' ? entry.e : '';
       const image = typeof entry.i === 'string' ? entry.i : '';
+      const lang = typeof entry.l === 'string' ? entry.l : '';
+      const ref  = typeof entry.r === 'string' ? entry.r : '';
       if (!this.index[w]) this.index[w] = [];
       if (!this.index[w].some(e => e.url === entry.u)) {
-        this.index[w].push({ url: entry.u, title, excerpt, image });
+        this.index[w].push({ url: entry.u, title, excerpt, image, lang, ref });
       }
     });
     this.loaded = true;

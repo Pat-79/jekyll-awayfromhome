@@ -21,6 +21,86 @@
     root.querySelectorAll("[data-entity-section]")
   );
 
+  var entityPerPage = parseInt(root.getAttribute('data-entity-per-page'), 10) || 10;
+  var entityPageFormat = root.getAttribute('data-pagination-format') || 'Page {page} of {total}';
+
+  // Read i18n strings from afh-page-meta (same approach as archive.js).
+  // Fall back to data attributes on the status element, then to hardcoded English.
+  var browseI18n = {};
+  var metaEl = document.getElementById('afh-page-meta');
+  if (metaEl) {
+    try {
+      var meta = JSON.parse(metaEl.textContent);
+      var lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
+      var langI18n = meta.i18n && (meta.i18n[lang] || meta.i18n[meta.currentLang]);
+      if (langI18n && langI18n.browse) browseI18n = langI18n.browse;
+    } catch (e) {}
+  }
+
+  var i18nNotFound = browseI18n.not_found_status
+    || (status && status.getAttribute('data-i18n-not-found'))
+    || "The requested filter does not exist.";
+  var i18nShowingAuthor = browseI18n.showing_author
+    || (status && status.getAttribute('data-i18n-showing-author'))
+    || 'Showing posts and pages by "{label}".';
+  var i18nShowingTag = browseI18n.showing_tag
+    || (status && status.getAttribute('data-i18n-showing-tag'))
+    || 'Showing posts and pages tagged "{label}".';
+  var i18nShowingCategory = browseI18n.showing_category
+    || (status && status.getAttribute('data-i18n-showing-category'))
+    || 'Showing posts and pages in category "{label}".';
+
+  function formatEntityPageMeta(page, total) {
+    return entityPageFormat.replace('{page}', page).replace('{total}', total);
+  }
+
+  function paginateSection(section, page) {
+    var items = Array.prototype.slice.call(section.querySelectorAll('[data-entity-item]'));
+    var nav = section.querySelector('[data-entity-pagination]');
+    if (!items.length) return;
+
+    var totalPages = Math.max(1, Math.ceil(items.length / entityPerPage));
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+
+    var start = (page - 1) * entityPerPage;
+    var end = start + entityPerPage;
+
+    items.forEach(function (item, i) {
+      item.classList.toggle('is-pagination-hidden', i < start || i >= end);
+    });
+
+    section.setAttribute('data-entity-current-page', String(page));
+
+    if (!nav) return;
+
+    if (totalPages <= 1) {
+      nav.classList.add('blog-pagination--hidden');
+    } else {
+      nav.classList.remove('blog-pagination--hidden');
+      var prevBtn = nav.querySelector('[data-entity-prev]');
+      var nextBtn = nav.querySelector('[data-entity-next]');
+      var meta = nav.querySelector('[data-entity-page-meta]');
+      if (prevBtn) prevBtn.disabled = page <= 1;
+      if (nextBtn) nextBtn.disabled = page >= totalPages;
+      if (meta) meta.textContent = formatEntityPageMeta(page, totalPages);
+    }
+  }
+
+  root.addEventListener('click', function (e) {
+    var target = e.target;
+    var isPrev = target.hasAttribute('data-entity-prev');
+    var isNext = target.hasAttribute('data-entity-next');
+    if (!isPrev && !isNext) return;
+    var nav = target.parentNode;
+    var section = nav && nav.parentNode;
+    if (!section || !section.hasAttribute('data-entity-section')) return;
+    var currentPage = parseInt(section.getAttribute('data-entity-current-page'), 10) || 1;
+    paginateSection(section, isPrev ? currentPage - 1 : currentPage + 1);
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+
   var params = new URLSearchParams(window.location.search);
   var authorParam = params.get("author");
   var categoryParam = params.get("category");
@@ -152,16 +232,16 @@
     });
 
     if (!label) {
-      status.textContent = "The requested filter does not exist.";
+      status.textContent = i18nNotFound;
       return;
     }
 
     if (selectedType === "author") {
-      status.textContent = 'Showing posts and pages by "' + label + '".';
+      status.textContent = i18nShowingAuthor.replace('{label}', label);
     } else if (selectedType === "tag") {
-      status.textContent = 'Showing posts and pages tagged "' + label + '".';
+      status.textContent = i18nShowingTag.replace('{label}', label);
     } else if (selectedType === "category") {
-      status.textContent = 'Showing posts and pages in category "' + label + '".';
+      status.textContent = i18nShowingCategory.replace('{label}', label);
     }
   }
 
@@ -172,6 +252,10 @@
     var foundSection = updateResultsVisibility();
     updateFilterLinkStates();
     updateStatus();
+
+    if (foundSection) {
+      paginateSection(foundSection, 1);
+    }
 
     // Keep the entire results area hidden until a filter pill is selected.
     if (resultsSection) {

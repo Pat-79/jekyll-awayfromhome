@@ -35,7 +35,7 @@
       {%- assign size_bucket = font_size | minus: min_size | times: 5 | divided_by: size_range | plus: 1 -%}
       <a
         class="{{ include.chip_class | default: 'tag-chip tag-chip--cloud' }} tag-chip--size-{{ size_bucket }}"
-        href="{{ '/tags/' | relative_url }}?tag={{ tag_slug }}"
+        href="{{ _lang_prefix | append: '/tags/' | relative_url }}?tag={{ tag_slug }}"
         {% if include.drawer_link %}data-drawer-link{% endif %}
       >
         <span class="tag-chip__label">{{ tag_name }}</span>
@@ -46,5 +46,5 @@
     {%- endfor -%}
   </div>
 {%- else -%}
-  <p class="{{ include.empty_class | default: 'menu-note' }}">No tags yet.</p>
+  <p class="{{ include.empty_class | default: 'menu-note' }}">{{ t.tags.no_tags | default: 'No tags yet.' }}</p>
 {%- endif -%}

@@ -1,10 +1,33 @@
 ---
 layout: page
 ---
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 
 {%- assign archive_intro = page.archive_intro | default: site.archive_page.intro | default: 'Browse posts by year, month, and day.' -%}
 {%- assign archive_excerpt_words = page.archive_excerpt_words | default: site.archive_page.excerpt_words | default: 30 -%}
 {%- assign archive_per_page = page.archive_per_page | default: site.archive_page.per_page | default: 10 -%}
+
+{%- comment -%}Embed archive i18n strings for archive.js{%- endcomment -%}
+{%- assign _months_pieces = '' | split: '' -%}
+{%- for _m in t.archive.months -%}
+  {%- assign _mv = _m[1] | jsonify -%}
+  {%- assign _mp = '"' | append: _m[0] | append: '":' | append: _mv -%}
+  {%- assign _months_pieces = _months_pieces | push: _mp -%}
+{%- endfor -%}
+{%- assign _months_str = _months_pieces | join: ',' -%}
+{%- assign _months_json = '{' | append: _months_str | append: '}' -%}
+<script type="application/json" id="afh-archive-i18n">{
+  "all_years": {{ t.archive.all_years | default: 'All years' | jsonify }},
+  "all_months": {{ t.archive.all_months | default: 'All months' | jsonify }},
+  "all_days": {{ t.archive.all_days | default: 'All days' | jsonify }},
+  "months": {{ _months_json }},
+  "filtered_by": {{ t.archive.filtered_by | jsonify }},
+  "showing_all": {{ t.archive.showing_all | default: 'Showing all posts' | jsonify }},
+  "post_count_one": {{ t.archive.post_count_one | default: '1 post' | jsonify }},
+  "post_count": {{ t.archive.post_count | jsonify }},
+  "page_of": {{ t.archive.page_of | jsonify }}
+}</script>
 
 <section class="page-section">
   <div class="container">
@@ -16,32 +39,32 @@ layout: page
     {% endif %}
 
     <div class="entity-filter-group archive-controls" data-archive-controls>
-      <p class="entity-filter-group__title">Archive Filters</p>
+      <p class="entity-filter-group__title" data-i18n="archive.filters">{{ t.archive.filters | default: 'Archive Filters' }}</p>
       <div class="archive-controls__row">
         <label class="archive-controls__field">
-          <span class="archive-controls__label">Year</span>
+          <span class="archive-controls__label" data-i18n="archive.year">{{ t.archive.year | default: 'Year' }}</span>
           <select class="archive-controls__select" data-archive-year>
-            <option value="">All years</option>
+            <option value="" data-i18n="archive.all_years">{{ t.archive.all_years | default: 'All years' }}</option>
           </select>
         </label>
 
         <label class="archive-controls__field">
-          <span class="archive-controls__label">Month</span>
+          <span class="archive-controls__label" data-i18n="archive.month">{{ t.archive.month | default: 'Month' }}</span>
           <select class="archive-controls__select" data-archive-month>
-            <option value="">All months</option>
+            <option value="" data-i18n="archive.all_months">{{ t.archive.all_months | default: 'All months' }}</option>
           </select>
         </label>
 
         <label class="archive-controls__field">
-          <span class="archive-controls__label">Day</span>
+          <span class="archive-controls__label" data-i18n="archive.day">{{ t.archive.day | default: 'Day' }}</span>
           <select class="archive-controls__select" data-archive-day>
-            <option value="">All days</option>
+            <option value="" data-i18n="archive.all_days">{{ t.archive.all_days | default: 'All days' }}</option>
           </select>
         </label>
       </div>
 
       <div class="archive-controls__actions">
-        <button class="blog-pagination__btn" type="button" data-archive-reset>Clear Filters</button>
+        <button class="blog-pagination__btn" type="button" data-archive-reset data-i18n="archive.clear">{{ t.archive.clear | default: 'Clear Filters' }}</button>
       </div>
     </div>
 
@@ -51,11 +74,44 @@ layout: page
 
 <section class="page-section page-section--spaced" id="archive-results">
   <div class="container story-list" data-archive-list data-archive-per-page="{{ archive_per_page }}">
-    {%- for post in site.posts -%}
+    {%- assign _default_lang = site.lang | default: 'en' -%}
+    {%- assign _fallback = site.lang_fallback | default: false -%}
+    {%- assign lang_posts = '' | split: '' -%}
+    {%- assign _seen_refs = '' | split: '' -%}
+    {%- for _p in site.posts -%}
+      {%- assign _p_lang = _p.lang | default: _default_lang -%}
+      {%- if _p_lang == _page_lang -%}
+        {%- assign lang_posts = lang_posts | push: _p -%}
+        {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if _fallback and _page_lang != _default_lang -%}
+      {%- for _p in site.posts -%}
+        {%- assign _p_lang = _p.lang | default: _default_lang -%}
+        {%- if _p_lang == _default_lang -%}
+          {%- if _p.ref and _p.ref != '' -%}
+            {%- unless _seen_refs contains _p.ref -%}{%- assign lang_posts = lang_posts | push: _p -%}{%- endunless -%}
+          {%- else -%}
+            {%- assign lang_posts = lang_posts | push: _p -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign lang_posts = lang_posts | sort: 'date' | reverse -%}
+    {%- endif -%}
+    {%- assign _default_lang = site.lang | default: 'en' -%}
+    {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+    {%- for post in lang_posts -%}
       {%- assign post_image = post.image | default: site.default_post_image -%}
+      {%- assign _post_lang = post.lang | default: _default_lang -%}
+      {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
+      {%- assign _post_dir = 'ltr' -%}
+      {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
+      {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
       <a
         class="story-card story-card--blog"
         href="{{ post.url | relative_url }}"
+        lang="{{ _post_lang }}"
+        dir="{{ _post_dir }}"
         data-archive-item
         data-archive-year="{{ post.date | date: '%Y' }}"
         data-archive-month="{{ post.date | date: '%-m' }}"
@@ -65,19 +121,19 @@ layout: page
           <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
         </div>
         <div class="story-card__body">
-          <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
+          <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}</p>
           <h2>{{ post.title }}</h2>
           <p>{{ post.excerpt | strip_html | truncatewords: archive_excerpt_words }}</p>
         </div>
       </a>
     {%- endfor -%}
 
-    <p class="entity-filter-group__empty archive-empty" data-archive-empty hidden>No posts found for the selected date criteria.</p>
+    <p class="entity-filter-group__empty archive-empty" data-archive-empty hidden data-i18n="archive.no_results">{{ t.archive.no_results | default: 'No posts found for the selected date criteria.' }}</p>
 
-    <nav class="blog-pagination blog-pagination--hidden" data-archive-pagination aria-label="Archive pagination">
-      <button class="blog-pagination__btn" data-archive-prev aria-label="Previous page">Previous</button>
+    <nav class="blog-pagination blog-pagination--hidden" data-archive-pagination aria-label="{{ t.drawer.archive | default: 'Archive pagination' }}">
+      <button class="blog-pagination__btn" data-archive-prev aria-label="{{ t.ui.previous | default: 'Previous' }}" data-i18n="ui.previous">{{ t.ui.previous | default: 'Previous' }}</button>
       <span class="blog-pagination__meta" data-archive-page-meta></span>
-      <button class="blog-pagination__btn" data-archive-next aria-label="Next page">Next</button>
+      <button class="blog-pagination__btn" data-archive-next aria-label="{{ t.ui.next | default: 'Next' }}" data-i18n="ui.next">{{ t.ui.next | default: 'Next' }}</button>
     </nav>
   </div>
 </section>

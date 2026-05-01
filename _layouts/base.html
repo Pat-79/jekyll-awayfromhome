@@ -2,15 +2,41 @@
 {%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign _lang_base = _page_lang | split: '-' | first | downcase -%}
 {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
-{%- if page.dir -%}
-  {%- assign _dir = page.dir -%}
+{%- unless _page_lang == site.lang or _page_lang == '' or site.lang == nil -%}
+  {%- assign _lang_prefix = '/' | append: _page_lang -%}
+{%- else -%}
+  {%- assign _lang_prefix = '' -%}
+{%- endunless -%}
+{%- if page.text_dir and page.text_dir != '' -%}
+  {%- assign _dir = page.text_dir -%}
 {%- elsif _rtl_langs contains _lang_base -%}
   {%- assign _dir = 'rtl' -%}
 {%- else -%}
   {%- assign _dir = 'ltr' -%}
 {%- endif -%}
-<html lang="{{ _page_lang }}" dir="{{ _dir }}">
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+<html lang="{{ _page_lang }}" dir="{{ _dir }}" data-site-lang="{{ _page_lang }}">
 {% include head.html %}
+{%- comment -%}Build translations map: other-lang → URL for this page (via page.ref lookup){%- endcomment -%}
+{%- assign _trans_pieces = '' | split: '' -%}
+{%- if page.ref and page.ref != '' -%}
+  {%- assign _all_content = site.posts | concat: site.pages -%}
+  {%- for _lang_obj in site.languages -%}
+    {%- assign _lcode = _lang_obj.code -%}
+    {%- if _lcode != _page_lang -%}
+      {%- assign _trans_matches = _all_content | where: "ref", page.ref | where: "lang", _lcode -%}
+      {%- assign _trans_match = _trans_matches | first -%}
+      {%- if _trans_match -%}
+        {%- assign _trans_url = _trans_match.url | relative_url -%}
+        {%- assign _trans_piece = '"' | append: _lcode | append: '":"' | append: _trans_url | append: '"' -%}
+        {%- assign _trans_pieces = _trans_pieces | push: _trans_piece -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign _trans_json = _trans_pieces | join: ',' -%}
+{%- assign _trans_json_obj = '{' | append: _trans_json | append: '}' -%}
+<script type="application/json" id="afh-page-meta">{"currentLang":"{{ _page_lang }}","defaultLang":"{{ site.lang | default: 'en' }}","translations":{{ _trans_json_obj }},"i18n":{{ site.data.i18n | jsonify }}}</script>
 <body class="layout-{{ page.layout | default: 'default' }}{% if page.image and page.layout != 'post' %} has-page-image{% endif %}{% if page.url == '/' %} home-landing{% endif %}">
 <a class="skip-link" href="#main-content">Skip to main content</a>
 <aside class="menu-drawer" id="site-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Site menu">
@@ -22,7 +48,7 @@
 <div class="site-shell" data-site-shell>
   {% include header.html %}
   <div class="site-body">
-    <main class="page-content" id="main-content" aria-label="Content" tabindex="-1">
+    <main class="page-content" id="main-content" lang="{{ _page_lang }}" dir="{{ _dir }}" aria-label="Content" tabindex="-1">
       {{ content }}
     </main>
     {% include footer.html %}

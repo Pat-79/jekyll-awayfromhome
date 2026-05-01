@@ -1,3 +1,6 @@
+---
+sitemap: false
+---
 # jekyll-awayfromhome Theme Structure
 
 This document describes the structure of the jekyll-awayfromhome theme gem and how it's organized for Jekyll 3.10.0+ compatibility.

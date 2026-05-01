@@ -16,12 +16,19 @@
   var nextBtn = list.querySelector('[data-blog-next]');
   var meta = list.querySelector('[data-blog-page-meta]');
 
+  // Read i18n page format from data attribute: "Page {page} of {total}"
+  var pageFormat = (nav && nav.getAttribute('data-pagination-format')) || 'Page {page} of {total}';
+
   // Restore page from URL hash (#page-2) so browser back/forward works
   var currentPage = 1;
   var hashMatch = window.location.hash.match(/^#page-(\d+)$/);
   if (hashMatch) {
     var parsed = parseInt(hashMatch[1], 10);
     if (parsed >= 1 && parsed <= totalPages) currentPage = parsed;
+  }
+
+  function formatPageMeta(page, total) {
+    return pageFormat.replace('{page}', page).replace('{total}', total);
   }
 
   function render(page) {
@@ -35,7 +42,7 @@
 
     prevBtn.disabled = page === 1;
     nextBtn.disabled = page === totalPages;
-    meta.textContent = 'Page ' + page + ' of ' + totalPages;
+    meta.textContent = formatPageMeta(page, totalPages);
 
     // Update URL hash without scrolling
     history.replaceState(null, '', page === 1 ? window.location.pathname : '#page-' + page);

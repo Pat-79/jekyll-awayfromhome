@@ -1,0 +1,127 @@
+# German UI strings (Deutsch)
+# Used via: {% assign t = site.data.i18n[page.lang] | default: site.data.i18n.en %}
+# Then access with t.section.key
+
+site:
+  title: Dein großartiger Titel
+  description: >-
+    Schreibe hier eine großartige Beschreibung für deine neue Website. Du kannst
+    diese Zeile in _config.yml bearbeiten. Sie erscheint im Dokument-Head-Meta
+    (für Google-Suchergebnisse) und in deiner feed.xml-Sitebeschreibung.
+
+nav:
+  home: Startseite
+  about: Über
+  blog: Blog
+  browse: Stöbern
+  search: Suche
+  archive: Archiv
+  tags: Tags
+
+ui:
+  language: Sprache
+  search_placeholder: Geschichten durchsuchen...
+  open_menu: Websitemenü öffnen
+  latest_posts: Neueste Beiträge
+  read_more: Mehr lesen...
+  continue_reading: Weiterlesen
+  written_by: Geschrieben von
+  by: "von"
+  in: "in"
+  previous: Vorherige
+  next: Nächste
+  sitemap: Sitemap
+  date_format: "%-d. %B %Y"
+  home_breadcrumb: Startseite
+
+drawer:
+  navigate: Navigieren
+  tags: Tags
+  social: Soziale Medien
+  archive: Archiv
+
+theme:
+  label: Thema
+  system: System
+  light: Hell
+  dark: Dunkel
+  share: Diese Seite teilen
+  copied: URL in die Zwischenablage kopiert
+
+archive:
+  filters: Archivfilter
+  year: Jahr
+  month: Monat
+  day: Tag
+  all_years: Alle Jahre
+  all_months: Alle Monate
+  all_days: Alle Tage
+  clear: Filter zurücksetzen
+  no_results: Keine Beiträge für die ausgewählten Datumskriterien gefunden.
+  filtered_by: "Gefiltert nach {filter}"
+  showing_all: Alle Beiträge anzeigen
+  post_count_one: "1 Beitrag"
+  post_count: "{count} Beiträge"
+  page_of: "Seite {page} von {total}"
+  months:
+    "1": Januar
+    "2": Februar
+    "3": März
+    "4": April
+    "5": Mai
+    "6": Juni
+    "7": Juli
+    "8": August
+    "9": September
+    "10": Oktober
+    "11": November
+    "12": Dezember
+
+blog:
+  intro: Neueste Beiträge mit dem wiederverwendbaren Artikellayout.
+  page_of: "Seite {page} von {total}"
+
+browse:
+  intro: Wähle eine Kategorie, um Beiträge und Seiten nach Autor, Kategorie oder Tag zu filtern.
+  authors: Autoren
+  categories: Kategorien
+  tags: Tags
+  no_authors: "Noch keine Autoren verfügbar."
+  no_categories: "Noch keine Kategorien verfügbar."
+  no_tags: "Noch keine Tags verfügbar."
+  eyebrow_author: "Autor"
+  eyebrow_category: "Kategorie"
+  eyebrow_tag: "Tag"
+  item_count_one: "1 Eintrag"
+  item_count: "{count} Einträge"
+  showing_author: "Beiträge und Seiten von \"{label}\" anzeigen."
+  showing_tag: "Beiträge und Seiten mit dem Tag \"{label}\" anzeigen."
+  showing_category: "Beiträge und Seiten in der Kategorie \"{label}\" anzeigen."
+  not_found_eyebrow: "Filter"
+  not_found_title: "Filter nicht vorhanden"
+  not_found_message: "Der angeforderte Autor, die Kategorie oder der Tag kann nicht angezeigt werden, da er auf dieser Website nicht vorhanden ist."
+  not_found_status: "Der angeforderte Filter ist nicht vorhanden."
+  page_label: "Seite"
+
+search:
+  intro: Finde Geschichten, Orte und Seiten auf der Website.
+  word_regex: "[A-Za-zÀ-ÖØ-öø-ÿ0-9''\\-]+"
+  stopwords: "aber,alle,allem,allen,aller,alles,als,also,am,an,andere,anderem,anderen,anderer,anderes,auch,auf,aus,bei,bin,bis,bist,da,damit,dann,das,dass,dem,den,der,des,dich,die,dies,diese,diesem,diesen,dieser,dieses,dir,doch,dort,durch,ein,eine,einem,einen,einer,eines,er,es,etwas,euch,für,gegen,gewesen,hab,habe,haben,hat,hatte,hatten,hier,hin,hinter,ich,ihm,ihn,ihnen,ihr,ihre,ihrem,ihren,ihrer,ihres,im,immer,in,ins,ist,jede,jedem,jeden,jeder,jedes,jetzt,kann,kein,keine,keinem,keinen,keiner,keines,machen,man,mein,meine,meinem,meinen,meiner,meines,mich,mir,mit,nach,nicht,nichts,noch,nun,nur,ob,oder,ohne,sein,seine,seinem,seinen,seiner,seines,selbst,sich,sie,sind,so,soll,sollte,sondern,sonst,über,um,und,uns,unter,viel,vom,von,vor,war,waren,warst,was,weil,weiter,welche,welchem,welchen,welcher,welches,wenn,wer,werden,wie,wieder,will,wir,wird,wirst,wo,wollen,wollte,würde,würden,zu,zum,zur,zwar,zwischen"
+
+tags:
+  intro: Beiträge nach Tag filtern oder die Seite ungefiltert lassen, um alle getagten Abschnitte zu durchsuchen.
+  all: Alle
+  showing_all: Beiträge für alle Tags anzeigen.
+  showing_tagged: "Beiträge mit dem Tag \"{label}\" anzeigen."
+  eyebrow: TAG
+  post_count_one: "1 Beitrag"
+  post_count: "{count} Beiträge"
+  read_more: Mehr lesen...
+  not_found: "Der angeforderte Tag ist nicht vorhanden."
+  not_found_title: "Tag nicht vorhanden"
+  not_found_message: "Der angeforderte Tag kann nicht angezeigt werden, da er auf dieser Website nicht vorhanden ist."
+  no_tags: "Noch keine Tags."
+
+footer:
+  copyright: Alle Rechte vorbehalten.
+  disclaimer: Inhalte und Meinungen dienen nur zu Informationszwecken.

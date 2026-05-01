@@ -22,10 +22,71 @@
   var pageMeta = list.querySelector('[data-archive-page-meta]');
 
   var perPage = parseInt(list.getAttribute('data-archive-per-page'), 10) || 10;
-  var monthNames = [
+
+  // Read i18n strings from embedded JSON, falling back to English defaults.
+  var i18n = {
+    all_years: 'All years',
+    all_months: 'All months',
+    all_days: 'All days',
+    months: {},
+    filtered_by: 'Filtered by {filter}',
+    showing_all: 'Showing all posts',
+    post_count_one: '1 post',
+    post_count: '{count} posts',
+    page_of: 'Page {page} of {total}'
+  };
+  var i18nEl = document.getElementById('afh-archive-i18n');
+  if (i18nEl) {
+    try {
+      var parsed = JSON.parse(i18nEl.textContent);
+      for (var k in parsed) {
+        if (Object.prototype.hasOwnProperty.call(parsed, k)) i18n[k] = parsed[k];
+      }
+    } catch (e) {}
+  }
+
+  // If lang-persist.js overrode the page language, use that language's i18n
+  // from afh-page-meta (which contains all languages' data).
+  var metaEl = document.getElementById('afh-page-meta');
+  if (metaEl) {
+    try {
+      var meta = JSON.parse(metaEl.textContent);
+      var htmlLang = document.documentElement.lang;
+      if (meta.i18n && htmlLang && htmlLang !== meta.currentLang) {
+        var al = meta.i18n[htmlLang] && meta.i18n[htmlLang].archive;
+        if (al) {
+          if (al.all_years) i18n.all_years = al.all_years;
+          if (al.all_months) i18n.all_months = al.all_months;
+          if (al.all_days) i18n.all_days = al.all_days;
+          if (al.months) i18n.months = al.months;
+          if (al.filtered_by) i18n.filtered_by = al.filtered_by;
+          if (al.showing_all) i18n.showing_all = al.showing_all;
+          if (al.post_count_one) i18n.post_count_one = al.post_count_one;
+          if (al.post_count) i18n.post_count = al.post_count;
+          if (al.page_of) i18n.page_of = al.page_of;
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Month name lookup: use i18n.months map (keys "1"–"12") when available,
+  // falling back to English names.
+  var fallbackMonths = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+  function monthName(m) {
+    return (i18n.months && i18n.months[String(m)]) || fallbackMonths[m - 1] || String(m);
+  }
+
+  function formatPostCount(count) {
+    if (count === 1) return i18n.post_count_one;
+    return i18n.post_count.replace('{count}', count);
+  }
+
+  function formatPageOf(page, total) {
+    return i18n.page_of.replace('{page}', page).replace('{total}', total);
+  }
 
   function toInt(value) {
     var parsed = parseInt(value, 10);
@@ -126,7 +187,7 @@
   function getMonthOptions(year) {
     var source = year && monthsByYear[year] ? monthsByYear[year] : monthsSet;
     return objectKeysToSortedInts(source, sortAsc).map(function (month) {
-      return { value: month, label: monthNames[month - 1] || String(month) };
+      return { value: month, label: monthName(month) };
     });
   }
 
@@ -167,9 +228,9 @@
   var state = normalizeFiltersFromUrl();
 
   function updateSelectors() {
-    buildSelectOptions(yearSelect, getYearOptions(), 'All years', state.year);
-    buildSelectOptions(monthSelect, getMonthOptions(state.year), 'All months', state.month);
-    buildSelectOptions(daySelect, getDayOptions(state.year, state.month), 'All days', state.day);
+    buildSelectOptions(yearSelect, getYearOptions(), i18n.all_years, state.year);
+    buildSelectOptions(monthSelect, getMonthOptions(state.year), i18n.all_months, state.month);
+    buildSelectOptions(daySelect, getDayOptions(state.year, state.month), i18n.all_days, state.day);
 
     state.year = toInt(yearSelect.value);
     state.month = toInt(monthSelect.value);
@@ -179,11 +240,13 @@
   function buildStatusText(count) {
     var parts = [];
     if (state.year) parts.push(String(state.year));
-    if (state.month) parts.push(monthNames[state.month - 1] || String(state.month));
+    if (state.month) parts.push(monthName(state.month));
     if (state.day) parts.push(String(state.day));
 
-    var prefix = parts.length ? ('Filtered by ' + parts.join(' / ')) : 'Showing all posts';
-    return prefix + ' - ' + count + ' post' + (count === 1 ? '' : 's');
+    if (parts.length) {
+      return i18n.filtered_by.replace('{filter}', parts.join(' / ')) + ' - ' + formatPostCount(count);
+    }
+    return i18n.showing_all + ' - ' + formatPostCount(count);
   }
 
   function matchesFilter(record) {
@@ -249,7 +312,7 @@
 
       prevBtn.disabled = state.page <= 1;
       nextBtn.disabled = state.page >= totalPages;
-      pageMeta.textContent = 'Page ' + state.page + ' of ' + totalPages;
+      pageMeta.textContent = formatPageOf(state.page, totalPages);
     }
 
     syncUrl(totalPages);
@@ -268,10 +331,10 @@
     var selectedDay = toInt(daySelect.value);
 
     state.year = toInt(yearSelect.value);
-    buildSelectOptions(monthSelect, getMonthOptions(state.year), 'All months', selectedMonth);
+    buildSelectOptions(monthSelect, getMonthOptions(state.year), i18n.all_months, selectedMonth);
     state.month = toInt(monthSelect.value);
 
-    buildSelectOptions(daySelect, getDayOptions(state.year, state.month), 'All days', selectedDay);
+    buildSelectOptions(daySelect, getDayOptions(state.year, state.month), i18n.all_days, selectedDay);
     state.day = toInt(daySelect.value);
 
     state.page = 1;

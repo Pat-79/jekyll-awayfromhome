@@ -4,7 +4,7 @@
 {%- assign hero_show_meta = include.show_meta | default: false -%}
 {%- assign hero_author_name = include.author_name -%}
 {%- assign hero_date = include.date -%}
-{%- assign entity_index_url = '/browse/' | relative_url -%}
+{%- assign entity_index_url = _lang_prefix | append: '/browse/' | relative_url -%}
 {%- assign entity_results_anchor = '#browse-results' -%}
 
 {%- assign hero_categories = '' | split: '' -%}
@@ -40,20 +40,20 @@
     {%- if hero_show_meta and (hero_author_name or hero_date) -%}
       <p class="post-hero__meta">
         {%- if hero_author_name -%}
-          <span class="post-hero__separator" aria-hidden="true">by&nbsp;</span>
+          <span class="post-hero__separator" aria-hidden="true">{{ t.ui.by | default: 'by' }}&nbsp;</span>
           <a class="post-hero__byline post-hero__meta-link" href="{{ entity_index_url }}?author={{ hero_author_name | slugify }}{{ entity_results_anchor }}">{{ hero_author_name }}</a>
         {%- endif -%}
         {%- if hero_author_name and hero_date -%}
           <span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>
         {%- endif -%}
         {%- if hero_date -%}
-          <time datetime="{{ hero_date | date_to_xmlschema }}">{{ hero_date | date: '%B %-d, %Y' }}</time>
+          <time datetime="{{ hero_date | date_to_xmlschema }}">{%- include format-date.html date=hero_date -%}</time>
         {%- endif -%}
       </p>
     {%- endif -%}
     {%- if hero_categories and hero_categories.size > 0 -%}
       <p class="post-hero__categories">
-        <span class="post-hero__separator">in&nbsp;</span>
+        <span class="post-hero__separator">{{ t.ui.in | default: 'in' }}&nbsp;</span>
         {%- for category in hero_categories -%}
           {%- assign category_name = category | strip -%}
           {%- if category_name != '' -%}

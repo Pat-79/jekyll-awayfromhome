@@ -1,8 +1,10 @@
 ---
 layout: page
 ---
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 
-{%- assign blog_intro = page.blog_intro | default: site.blog_page.intro | default: 'Recent posts using the reusable article layout.' -%}
+{%- assign blog_intro = page.blog_intro | default: site.blog_page.intro | default: '' -%}
 {%- assign excerpt_words = page.blog_excerpt_words | default: site.blog_page.excerpt_words | default: 30 -%}
 {%- assign posts_limit = page.blog_posts_limit | default: site.blog_page.posts_limit -%}
 
@@ -12,7 +14,7 @@ layout: page
       <h1>{{ page.title | default: "Blog" }}</h1>
     {% endunless %}
     {% if blog_intro and blog_intro != '' %}
-      <p>{{ blog_intro }}</p>
+      <p data-i18n="blog.intro">{{ blog_intro }}</p>
     {% endif %}
   </div>
 </section>
@@ -21,28 +23,57 @@ layout: page
 
 <section class="page-section page-section--spaced">
   <div class="container story-list" data-blog-list data-blog-per-page="{{ blog_per_page }}">
-    {%- assign all_posts = site.posts -%}
-    {%- if posts_limit and posts_limit != '' -%}
-      {%- assign all_posts = site.posts | slice: 0, posts_limit -%}
+    {%- assign _default_lang = site.lang | default: 'en' -%}
+    {%- assign _fallback = site.lang_fallback | default: false -%}
+    {%- assign all_posts = '' | split: '' -%}
+    {%- assign _seen_refs = '' | split: '' -%}
+    {%- for _p in site.posts -%}
+      {%- assign _p_lang = _p.lang | default: _default_lang -%}
+      {%- if _p_lang == _page_lang -%}
+        {%- assign all_posts = all_posts | push: _p -%}
+        {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if _fallback and _page_lang != _default_lang -%}
+      {%- for _p in site.posts -%}
+        {%- assign _p_lang = _p.lang | default: _default_lang -%}
+        {%- if _p_lang == _default_lang -%}
+          {%- if _p.ref and _p.ref != '' -%}
+            {%- unless _seen_refs contains _p.ref -%}{%- assign all_posts = all_posts | push: _p -%}{%- endunless -%}
+          {%- else -%}
+            {%- assign all_posts = all_posts | push: _p -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign all_posts = all_posts | sort: 'date' | reverse -%}
     {%- endif -%}
+    {%- if posts_limit and posts_limit != '' -%}
+      {%- assign all_posts = all_posts | slice: 0, posts_limit -%}
+    {%- endif -%}
+    {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
     {%- for post in all_posts -%}
       {%- assign post_image = post.image | default: site.default_post_image -%}
-      <a class="story-card story-card--blog" href="{{ post.url | relative_url }}" data-blog-item>
+      {%- assign _post_lang = post.lang | default: _default_lang -%}
+      {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
+      {%- assign _post_dir = 'ltr' -%}
+      {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
+      {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
+      <a class="story-card story-card--blog" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}" data-blog-item>
         <div class="story-card__media">
           <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
         </div>
         <div class="story-card__body">
-          <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}</p>
+          <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}</p>
           <h2>{{ post.title }}</h2>
           <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
         </div>
       </a>
     {%- endfor -%}
 
-    <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination aria-label="Blog pagination">
-      <button class="blog-pagination__btn" data-blog-prev aria-label="Previous page">Previous</button>
+    <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination data-pagination-format="{{ t.blog.page_of }}" aria-label="{{ t.drawer.navigate | default: 'Blog pagination' }}">
+      <button class="blog-pagination__btn" data-blog-prev aria-label="{{ t.ui.previous | default: 'Previous' }}" data-i18n="ui.previous">{{ t.ui.previous | default: 'Previous' }}</button>
       <span class="blog-pagination__meta" data-blog-page-meta></span>
-      <button class="blog-pagination__btn" data-blog-next aria-label="Next page">Next</button>
+      <button class="blog-pagination__btn" data-blog-next aria-label="{{ t.ui.next | default: 'Next' }}" data-i18n="ui.next">{{ t.ui.next | default: 'Next' }}</button>
     </nav>
   </div>
 </section>

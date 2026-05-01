@@ -1,18 +1,20 @@
 ---
 layout: page
 ---
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 
 <section class="page-section">
   <div class="container">
     {% unless page.image %}
       <h1>{{ page.title | default: "Search" }}</h1>
     {% endunless %}
-    <p>{{ page.intro | default: "Find stories, places, and pages across the site." }}</p>
+    <p data-i18n="search.intro">{{ page.intro | default: t.search.intro | default: "Find stories, places, and pages across the site." }}</p>
   </div>
 </section>
 
 <section class="page-section page-section--spaced">
   <div class="container">
-    {% include search-widget.html id='search-page' limit=20 class='search-widget--page' sync_query=true %}
+    {% include search-widget.html id='search-page' limit=20 class='search-widget--page' sync_query=true placeholder=t.ui.search_placeholder %}
   </div>
 </section>

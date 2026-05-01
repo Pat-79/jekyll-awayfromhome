@@ -1,5 +1,6 @@
 ---
 title: home
+ref: page-home
 layout: home
 home_per_page: 3
 ---

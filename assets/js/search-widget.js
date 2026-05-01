@@ -85,6 +85,7 @@ function initSearchWidget(widget) {
     results = nextResults;
     active = -1;
 
+    const rtlLangs = ['ar', 'he', 'fa', 'ur', 'dv', 'ku', 'ps', 'sd', 'ug', 'yi'];
     const query = input.value;
     const rows = nextResults.slice(0, limit).map((entry) => {
       const hasImage = Boolean(entry.image);
@@ -92,8 +93,13 @@ function initSearchWidget(widget) {
       const media = hasImage
         ? `<div class="search-widget__thumb-wrap"><img class="search-widget__thumb" src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async" /></div>`
         : '';
+      const lang = entry.lang || '';
+      const langBase = lang.split('-')[0].toLowerCase();
+      const dir = rtlLangs.includes(langBase) ? 'rtl' : 'ltr';
+      const langAttr = lang ? ` lang="${escapeHtml(lang)}"` : '';
+      const dirAttr = lang ? ` dir="${dir}"` : '';
 
-      return `<li class="${itemClass}" data-url="${entry.url}">
+      return `<li class="${itemClass}" data-url="${entry.url}"${langAttr}${dirAttr}>
         ${media}
         <div class="search-widget__content">
           <div class="search-widget__title">${highlightText(entry.title || 'Untitled', query)}</div>
@@ -128,8 +134,23 @@ function initSearchWidget(widget) {
 
     await engine.load(version);
 
-    const results = await engine.search(query);
-    render(results);
+    const pageLang = document.documentElement.lang || 'en';
+    const allResults = await engine.search(query);
+
+    // Collect refs that have a page-language version — those take priority.
+    const coveredRefs = new Set(
+      allResults
+        .filter(r => r.lang === pageLang && r.ref)
+        .map(r => r.ref)
+    );
+
+    // Keep page-language results, plus cross-language results whose ref
+    // is not already covered (no translated version exists for this page).
+    const filtered = allResults.filter(r =>
+      r.lang === pageLang || !r.ref || !coveredRefs.has(r.ref)
+    );
+
+    render(filtered);
     syncQueryParam(query);
   }, 120);
 

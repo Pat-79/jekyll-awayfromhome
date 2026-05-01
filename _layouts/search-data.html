@@ -3,7 +3,6 @@ layout: none
 permalink: /assets/data/search-data.json
 ---
 
-{%- assign stopwords = "a,about,above,after,again,against,all,also,am,an,and,any,are,around,as,at,be,because,been,before,being,below,between,both,but,by,can,could,day,days,did,do,does,doing,down,during,each,few,first,for,from,further,had,has,have,having,he,her,here,hers,herself,him,himself,his,how,i,if,in,into,is,it,its,itself,just,last,like,more,most,my,myself,no,nor,not,now,of,off,on,once,one,only,or,other,our,ours,ourselves,out,over,own,really,same,she,should,so,some,such,than,that,the,their,theirs,them,themselves,then,there,these,they,this,those,through,to,too,under,until,up,very,was,we,well,were,what,when,where,which,while,who,whom,why,will,with,without,would,you,your,yours,yourself,yourselves" | split: "," -%}
 {%- assign all_docs = site.posts | concat: site.pages -%}
 {%- assign entries = "" | split: "" -%}
 {%- for doc in all_docs -%}
@@ -13,6 +12,9 @@ permalink: /assets/data/search-data.json
   {%- assign doc_title = doc.title | default: "" | strip_html | downcase -%}
   {%- assign doc_permalink = doc.permalink | default: "" | downcase -%}
   {%- if doc_layout == "error" or doc_layout == "none" -%}
+    {%- continue -%}
+  {%- endif -%}
+  {%- if doc.sitemap == false -%}
     {%- continue -%}
   {%- endif -%}
   {%- if doc_url == "" -%}
@@ -33,10 +35,18 @@ permalink: /assets/data/search-data.json
       {%- continue -%}
     {%- endunless -%}
   {%- endif -%}
+  {%- comment -%}Per-language stopwords from i18n data{%- endcomment -%}
+  {%- assign _doc_lang = doc.lang | default: site.lang | default: "en" -%}
+  {%- assign _doc_i18n = site.data.i18n[_doc_lang] | default: site.data.i18n.en -%}
+  {%- assign stopwords = _doc_i18n.search.stopwords | default: "" | split: "," -%}
   {%- assign safe_title = doc.title | default: doc.name | default: doc_url | strip_html | downcase -%}
+  {%- assign display_title = doc.title | default: doc.name | default: doc_url | strip_html -%}
   {%- assign raw_excerpt = doc.excerpt | default: doc.description | default: doc.content | default: "" -%}
   {%- assign stripped_excerpt = raw_excerpt | strip_html | strip_newlines | downcase | replace: "  ", " " | strip -%}
+  {%- assign display_excerpt = raw_excerpt | strip_html | strip_newlines | replace: "  ", " " | strip -%}
   {%- assign safe_image = doc.image | default: "" -%}
+  {%- assign safe_lang = doc.lang | default: site.lang | default: "en" -%}
+  {%- assign safe_ref = doc.ref | default: "" -%}
   {%- assign tags_text = doc.tags | join: " " | downcase -%}
   {%- assign categories_text = doc.categories | join: " " | downcase -%}
   {%- assign metadata_text = safe_title | append: " " | append: tags_text | append: " " | append: categories_text -%}
@@ -122,12 +132,12 @@ permalink: /assets/data/search-data.json
   {%- endfor -%}
   {%- assign unique_words = metadata_filtered | concat: content_filtered | uniq -%}
   {%- if stripped_excerpt == "" or stripped_excerpt contains "{%" or stripped_excerpt contains "{{" -%}
-    {%- assign safe_excerpt = safe_title -%}
+    {%- assign safe_excerpt = display_title -%}
   {%- else -%}
-    {%- assign safe_excerpt = stripped_excerpt | truncatewords: 28 -%}
+    {%- assign safe_excerpt = display_excerpt | truncatewords: 28 -%}
   {%- endif -%}
   {%- for word in unique_words -%}
-    {%- capture entry -%}{"w": {{ word | jsonify }}, "u": {{ doc.url | jsonify }}, "t": {{ safe_title | jsonify }}, "e": {{ safe_excerpt | jsonify }}, "i": {{ safe_image | jsonify }}}{%- endcapture -%}
+    {%- capture entry -%}{"w": {{ word | jsonify }}, "u": {{ doc.url | jsonify }}, "t": {{ display_title | jsonify }}, "e": {{ safe_excerpt | jsonify }}, "i": {{ safe_image | jsonify }}, "l": {{ safe_lang | jsonify }}, "r": {{ safe_ref | jsonify }}}{%- endcapture -%}
     {%- assign entries = entries | push: entry -%}
   {%- endfor -%}
 {%- endfor -%}

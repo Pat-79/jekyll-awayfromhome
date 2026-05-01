@@ -1,3 +1,8 @@
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+{%- assign _default_lang = site.lang | default: 'en' -%}
+{%- assign _fallback = site.lang_fallback | default: false -%}
+{%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
 {%- assign sorted_tags = site.tags | sort -%}
 {%- assign min_posts = 999999999 -%}
 {%- assign max_posts = 0 -%}
@@ -25,10 +30,10 @@
     {% unless page.image %}
       <h1>{{ page.title | default: 'Tags' }}</h1>
     {% endunless %}
-    <p>{{ page.tag_posts_intro | default: 'Filter posts by tag, or leave the page unfiltered to browse every tagged section.' }}</p>
+    <p data-i18n="tags.intro">{{ page.tag_posts_intro | default: t.tags.intro | default: 'Filter posts by tag, or leave the page unfiltered to browse every tagged section.' }}</p>
     <div class="tag-cloud tag-cloud--scaled tag-cloud--page tag-cloud--filters">
       <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ '/tags/' | relative_url }}" data-tag-filter-link data-tag-value="all">
-        <span class="tag-chip__label">All</span>
+        <span class="tag-chip__label" data-i18n="tags.all">{{ t.tags.all | default: 'All' }}</span>
       </a>
       <div class="tag-cloud tag-cloud--scaled tag-cloud--filters-list">
         {%- for tag in sorted_tags -%}
@@ -44,7 +49,10 @@
         {%- endfor -%}
       </div>
     </div>
-    <p class="tag-posts__status" data-tag-status hidden></p>
+    <p class="tag-posts__status" data-tag-status hidden
+      data-i18n-showing-all="{{ t.tags.showing_all | escape }}"
+      data-i18n-showing-tagged="{{ t.tags.showing_tagged | escape }}"
+      data-i18n-not-found="{{ t.tags.not_found | escape }}"></p>
   </div>
 </section>
 
@@ -53,27 +61,55 @@
     {%- for tag in sorted_tags -%}
       {%- assign tag_name = tag[0] -%}
       {%- assign tag_slug = tag_name | slugify -%}
-      {%- assign tagged_posts = tag[1] | sort: 'date' | reverse -%}
+      {%- assign _all_tagged = tag[1] | sort: 'date' | reverse -%}
+      {%- assign tagged_posts = '' | split: '' -%}
+      {%- assign _tag_seen_refs = '' | split: '' -%}
+      {%- for _p in _all_tagged -%}
+        {%- assign _p_lang = _p.lang | default: _default_lang -%}
+        {%- if _p_lang == _page_lang -%}
+          {%- assign tagged_posts = tagged_posts | push: _p -%}
+          {%- if _p.ref and _p.ref != '' -%}{%- assign _tag_seen_refs = _tag_seen_refs | push: _p.ref -%}{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if _fallback and _page_lang != _default_lang -%}
+        {%- for _p in _all_tagged -%}
+          {%- assign _p_lang = _p.lang | default: _default_lang -%}
+          {%- if _p_lang == _default_lang -%}
+            {%- if _p.ref and _p.ref != '' -%}
+              {%- unless _tag_seen_refs contains _p.ref -%}{%- assign tagged_posts = tagged_posts | push: _p -%}{%- endunless -%}
+            {%- else -%}
+              {%- assign tagged_posts = tagged_posts | push: _p -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- assign tagged_posts = tagged_posts | sort: 'date' | reverse -%}
+      {%- endif -%}
+      {%- if tagged_posts.size == 0 -%}{%- continue -%}{%- endif -%}
       <div class="story-list tag-section" id="tag-{{ tag_slug }}" data-tag-section data-tag-value="{{ tag_slug }}" data-tag-label="{{ tag_name }}">
         <div class="home-section-head">
-          <p class="tag-section__eyebrow">Tag</p>
+          <p class="tag-section__eyebrow" data-i18n="tags.eyebrow">{{ t.tags.eyebrow | default: 'TAG' }}</p>
           <h2>{{ tag_name }}</h2>
-          <p class="tag-section__summary">{{ tagged_posts.size }} post{% if tagged_posts.size != 1 %}s{% endif %}</p>
+          <p class="tag-section__summary">{% if tagged_posts.size == 1 %}{{ t.tags.post_count_one | default: '1 post' }}{% else %}{%- assign _tag_pc = t.tags.post_count | replace: '{count}', tagged_posts.size -%}{{ _tag_pc }}{% endif %}</p>
         </div>
         {%- for post in tagged_posts -%}
           {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
           {%- assign post_word_count = post.content | strip_html | number_of_words -%}
           {%- assign post_image = post.image | default: site.default_post_image -%}
-          <a class="story-card" href="{{ post.url | relative_url }}">
+          {%- assign _post_lang = post.lang | default: _default_lang -%}
+          {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
+          {%- assign _post_dir = 'ltr' -%}
+          {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
+          {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
+          <a class="story-card" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}">
             <div class="story-card__media">
               <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
             </div>
             <div class="story-card__body">
-              <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
+              <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
               <h2>{{ post.title }}</h2>
               <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
               {%- if post_word_count > 60 -%}
-                <p class="story-card__read-more">Read more...</p>
+                <p class="story-card__read-more" data-i18n="tags.read_more">{{ t.tags.read_more | default: 'Read more...' }}</p>
               {%- endif -%}
             </div>
           </a>
@@ -83,9 +119,9 @@
 
     <div class="story-list">
       <section class="intro-card tag-section tag-section--missing" data-tag-not-found hidden>
-        <p class="tag-section__eyebrow">Tag</p>
-        <h2>Tag does not exist</h2>
-        <p class="tag-section__summary">Unable to show the requested tag because it does not exist in this site.</p>
+        <p class="tag-section__eyebrow">{{ t.tags.eyebrow | default: 'TAG' }}</p>
+        <h2>{{ t.tags.not_found_title | default: 'Tag does not exist' }}</h2>
+        <p class="tag-section__summary">{{ t.tags.not_found_message | default: 'Unable to show the requested tag because it does not exist in this site.' }}</p>
       </section>
     </div>
   </div>

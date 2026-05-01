@@ -1,0 +1,9 @@
+{%- assign _fmt_t = include.t | default: t -%}
+{%- assign _fmt_month_num = include.date | date: '%-m' -%}
+{%- assign _fmt_month_name = _fmt_t.archive.months[_fmt_month_num] | default: (include.date | date: '%B') -%}
+{%- assign _fmt_day = include.date | date: '%-d' -%}
+{%- assign _fmt_year = include.date | date: '%Y' -%}
+{%- assign _fmt_result = _fmt_t.ui.date_format | default: '%B %-d, %Y' -%}
+{%- assign _fmt_result = _fmt_result | replace: '%B', _fmt_month_name -%}
+{%- assign _fmt_result = _fmt_result | replace: '%-d', _fmt_day -%}
+{%- assign _fmt_result = _fmt_result | replace: '%Y', _fmt_year -%}{{ _fmt_result }}

@@ -1,6 +1,13 @@
 ---
 layout: base
 ---
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+{%- unless _page_lang == site.lang or _page_lang == '' or site.lang == nil -%}
+  {%- assign _lang_prefix = '/' | append: _page_lang -%}
+{%- else -%}
+  {%- assign _lang_prefix = '' -%}
+{%- endunless -%}
 
 {%- assign is_post_layout = false -%}
 {%- if page.layout == 'post' or page.collection == 'posts' -%}

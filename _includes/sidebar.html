@@ -1,18 +1,19 @@
 <div class="menu-drawer__top-controls">
-  <div class="theme-switch theme-switch--drawer-top" role="group" aria-label="Color theme">
-    <button class="theme-switch__option" type="button" data-theme-option="auto" aria-pressed="false" aria-label="Use system theme" title="System">
+  <div class="theme-switch theme-switch--drawer-top" role="group" aria-label="{{ t.theme.label | default: 'Theme' }}">
+    <button class="theme-switch__option" type="button" data-theme-option="auto" aria-pressed="false" aria-label="{{ t.theme.system | default: 'System' }}" title="{{ t.theme.system | default: 'System' }}">
       {% include icon.html platform='theme-system' %}
-      <span class="sr-only">System theme</span>
+      <span class="sr-only" data-i18n="theme.system">{{ t.theme.system | default: 'System' }}</span>
     </button>
-    <button class="theme-switch__option" type="button" data-theme-option="light" aria-pressed="false" aria-label="Use light theme" title="Light">
+    <button class="theme-switch__option" type="button" data-theme-option="light" aria-pressed="false" aria-label="{{ t.theme.light | default: 'Light' }}" title="{{ t.theme.light | default: 'Light' }}">
       {% include icon.html platform='theme-light' %}
-      <span class="sr-only">Light theme</span>
+      <span class="sr-only" data-i18n="theme.light">{{ t.theme.light | default: 'Light' }}</span>
     </button>
-    <button class="theme-switch__option" type="button" data-theme-option="dark" aria-pressed="false" aria-label="Use dark theme" title="Dark">
+    <button class="theme-switch__option" type="button" data-theme-option="dark" aria-pressed="false" aria-label="{{ t.theme.dark | default: 'Dark' }}" title="{{ t.theme.dark | default: 'Dark' }}">
       {% include icon.html platform='theme-dark' %}
-      <span class="sr-only">Dark theme</span>
+      <span class="sr-only" data-i18n="theme.dark">{{ t.theme.dark | default: 'Dark' }}</span>
     </button>
   </div>
+  {%- include language-selector.html -%}
 </div>
 
 <div class="menu-panel">
@@ -44,19 +45,25 @@
     {%- assign sidebar_archive_show_counts = true -%}
   {%- endif -%}
 
+  {%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+  {%- assign _archive_base = _lang_prefix | append: '/archive/' -%}
+
   <section class="menu-section">
-    <h2>NAVIGATE</h2>
-    <nav aria-label="Drawer navigation">
+    <h2 data-i18n="drawer.navigate" data-i18n-upcase>{{ t.drawer.navigate | default: 'Navigate' | upcase }}</h2>
+    <nav aria-label="{{ t.drawer.navigate | default: 'Drawer navigation' }}">
       <ul class="menu-list">
         {%- for item in site.navigation %}
-          <li><a href="{{ item.url | relative_url }}" data-drawer-link>{{ item.title }}</a></li>
+          {%- assign _nav_label = t.nav[item.key] | default: item.title -%}
+          {%- assign _lang_url_key = 'url_' | append: _page_lang -%}
+          {%- assign _nav_url = item[_lang_url_key] | default: item.url -%}
+          <li><a href="{{ _nav_url | relative_url }}" data-drawer-link data-i18n="nav.{{ item.key }}">{{ _nav_label }}</a></li>
         {%- endfor %}
       </ul>
     </nav>
   </section>
 
   <section class="menu-section">
-    <h2>TAGS</h2>
+    <h2 data-i18n="drawer.tags" data-i18n-upcase>{{ t.drawer.tags | default: 'Tags' | upcase }}</h2>
     {%- include tag-cloud.html
       min_size=13
       max_size=19
@@ -69,17 +76,41 @@
   </section>
 
   <section class="menu-section">
-    <h2>SOCIAL MEDIA</h2>
+    <h2 data-i18n="drawer.social" data-i18n-upcase>{{ t.drawer.social | default: 'Social Media' | upcase }}</h2>
     {%- include social-links.html class_name='social-links social-links--drawer' %}
   </section>
   {%- if sidebar_archive_enabled -%}
     <section class="menu-section">
-      <h2>ARCHIVE</h2>
+      <h2 data-i18n="drawer.archive" data-i18n-upcase>{{ t.drawer.archive | default: 'Archive' | upcase }}</h2>
       <ul class="menu-list">
         {%- assign archive_keys = '' | split: '' -%}
         {%- assign archive_year_keys = '' | split: '' -%}
         {%- assign archive_month_keys = '' | split: '' -%}
-        {%- for post in site.posts -%}
+        {%- assign _default_lang = site.lang | default: 'en' -%}
+        {%- assign _fallback = site.lang_fallback | default: false -%}
+        {%- assign sidebar_posts = '' | split: '' -%}
+        {%- assign _seen_refs = '' | split: '' -%}
+        {%- for _p in site.posts -%}
+          {%- assign _p_lang = _p.lang | default: _default_lang -%}
+          {%- if _p_lang == _page_lang -%}
+            {%- assign sidebar_posts = sidebar_posts | push: _p -%}
+            {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if _fallback and _page_lang != _default_lang -%}
+          {%- for _p in site.posts -%}
+            {%- assign _p_lang = _p.lang | default: _default_lang -%}
+            {%- if _p_lang == _default_lang -%}
+              {%- if _p.ref and _p.ref != '' -%}
+                {%- unless _seen_refs contains _p.ref -%}{%- assign sidebar_posts = sidebar_posts | push: _p -%}{%- endunless -%}
+              {%- else -%}
+                {%- assign sidebar_posts = sidebar_posts | push: _p -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- assign sidebar_posts = sidebar_posts | sort: 'date' | reverse -%}
+        {%- endif -%}
+        {%- for post in sidebar_posts -%}
           {%- assign archive_key = '' -%}
           {%- assign archive_label = '' -%}
           {%- assign archive_url = '' -%}
@@ -87,12 +118,12 @@
           {%- if sidebar_archive_mode == 'year' -%}
             {%- assign archive_key = post.date | date: '%Y' -%}
             {%- assign archive_label = archive_key -%}
-            {%- assign archive_url = '/archive/?year=' | append: archive_key -%}
+            {%- assign archive_url = _archive_base | append: '?year=' | append: archive_key -%}
             {%- unless archive_keys contains archive_key -%}
               {%- assign archive_keys = archive_keys | push: archive_key -%}
               {%- assign archive_count = 0 -%}
               {%- if sidebar_archive_show_counts -%}
-                {%- for count_post in site.posts -%}
+                {%- for count_post in sidebar_posts -%}
                   {%- assign count_year = count_post.date | date: '%Y' -%}
                   {%- if count_year == archive_key -%}
                     {%- assign archive_count = archive_count | plus: 1 -%}
@@ -103,15 +134,17 @@
             {%- endunless -%}
           {%- elsif sidebar_archive_mode == 'month-year' -%}
             {%- assign archive_key = post.date | date: '%Y-%m' -%}
-            {%- assign archive_label = post.date | date: '%B %Y' -%}
+            {%- assign _sb_month_num = post.date | date: '%-m' -%}
+            {%- assign _sb_month_name = t.archive.months[_sb_month_num] | default: (post.date | date: '%B') -%}
+            {%- assign archive_label = _sb_month_name | append: ' ' | append: (post.date | date: '%Y') -%}
             {%- assign archive_year = post.date | date: '%Y' -%}
             {%- assign archive_month = post.date | date: '%m' -%}
-            {%- assign archive_url = '/archive/?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
+            {%- assign archive_url = _archive_base | append: '?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
             {%- unless archive_keys contains archive_key -%}
               {%- assign archive_keys = archive_keys | push: archive_key -%}
               {%- assign archive_count = 0 -%}
               {%- if sidebar_archive_show_counts -%}
-                {%- for count_post in site.posts -%}
+                {%- for count_post in sidebar_posts -%}
                   {%- assign count_month_key = count_post.date | date: '%Y-%m' -%}
                   {%- if count_month_key == archive_key -%}
                     {%- assign archive_count = archive_count | plus: 1 -%}
@@ -126,7 +159,7 @@
               {%- assign archive_year_keys = archive_year_keys | push: archive_year -%}
               {%- assign archive_year_count = 0 -%}
               {%- if sidebar_archive_show_counts -%}
-                {%- for count_post in site.posts -%}
+                {%- for count_post in sidebar_posts -%}
                   {%- assign count_year = count_post.date | date: '%Y' -%}
                   {%- if count_year == archive_year -%}
                     {%- assign archive_year_count = archive_year_count | plus: 1 -%}
@@ -141,18 +174,19 @@
                   </summary>
                   <ul class="menu-list archive-tree__months">
                     {%- assign archive_month_keys = '' | split: '' -%}
-                    {%- for year_post in site.posts -%}
+                    {%- for year_post in sidebar_posts -%}
                       {%- assign year_post_year = year_post.date | date: '%Y' -%}
                       {%- if year_post_year == archive_year -%}
                         {%- assign archive_month = year_post.date | date: '%m' -%}
-                        {%- assign archive_month_name = year_post.date | date: '%B' -%}
+                        {%- assign _sb_ym_num = year_post.date | date: '%-m' -%}
+                        {%- assign archive_month_name = t.archive.months[_sb_ym_num] | default: (year_post.date | date: '%B') -%}
                         {%- assign archive_month_key = archive_year | append: '-' | append: archive_month -%}
-                        {%- assign archive_month_url = '/archive/?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
+                        {%- assign archive_month_url = _archive_base | append: '?year=' | append: archive_year | append: '&month=' | append: archive_month -%}
                         {%- unless archive_month_keys contains archive_month_key -%}
                           {%- assign archive_month_keys = archive_month_keys | push: archive_month_key -%}
                           {%- assign archive_month_count = 0 -%}
                           {%- if sidebar_archive_show_counts -%}
-                            {%- for month_count_post in site.posts -%}
+                            {%- for month_count_post in sidebar_posts -%}
                               {%- assign month_count_year = month_count_post.date | date: '%Y' -%}
                               {%- assign month_count_month = month_count_post.date | date: '%m' -%}
                               {%- if month_count_year == archive_year and month_count_month == archive_month -%}

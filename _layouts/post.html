@@ -2,6 +2,8 @@
 layout: page
 has_author: true
 ---
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 
 {%- assign author_name = site.author.name -%}
 {%- if page.author and page.author.name and page.author.name != empty -%}
@@ -12,7 +14,50 @@ has_author: true
 {%- assign author_avatar = page.author.avatar | default: site.author.avatar -%}
 {%- assign author_bio = page.author.bio | default: site.author.bio -%}
 {%- assign author_location = page.author.location | default: site.author.location -%}
-{%- assign continue_post = page.previous | default: site.posts.first -%}
+{%- assign _default_lang = site.lang | default: 'en' -%}
+{%- assign _fallback = site.lang_fallback | default: false -%}
+{%- assign continue_post = nil -%}
+{%- assign _fallback_post = nil -%}
+{%- assign _passed_current = false -%}
+{%- for _p in site.posts -%}
+  {%- if _passed_current == false and _p.path == page.path -%}
+    {%- assign _passed_current = true -%}
+  {%- elsif _passed_current -%}
+    {%- assign _p_lang = _p.lang | default: _default_lang -%}
+    {%- assign _same_ref = false -%}
+    {%- if page.ref and page.ref != '' and _p.ref == page.ref -%}{%- assign _same_ref = true -%}{%- endif -%}
+    {%- unless _same_ref -%}
+      {%- unless continue_post -%}
+        {%- if _p_lang == _page_lang -%}{%- assign continue_post = _p -%}{%- endif -%}
+      {%- endunless -%}
+      {%- if _fallback and _page_lang != _default_lang -%}
+        {%- unless _fallback_post -%}
+          {%- if _p_lang == _default_lang -%}{%- assign _fallback_post = _p -%}{%- endif -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- unless continue_post -%}{%- assign continue_post = _fallback_post -%}{%- endunless -%}
+{%- unless continue_post -%}
+  {%- assign _wrap_fallback = nil -%}
+  {%- for _p in site.posts -%}
+    {%- assign _p_lang = _p.lang | default: _default_lang -%}
+    {%- assign _same_ref = false -%}
+    {%- if page.ref and page.ref != '' and _p.ref == page.ref -%}{%- assign _same_ref = true -%}{%- endif -%}
+    {%- unless _same_ref -%}
+      {%- unless continue_post -%}
+        {%- if _p_lang == _page_lang -%}{%- assign continue_post = _p -%}{%- endif -%}
+      {%- endunless -%}
+      {%- if _fallback and _page_lang != _default_lang -%}
+        {%- unless _wrap_fallback -%}
+          {%- if _p_lang == _default_lang -%}{%- assign _wrap_fallback = _p -%}{%- endif -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- unless continue_post -%}{%- assign continue_post = _wrap_fallback -%}{%- endunless -%}
+{%- endunless -%}
 
 <article class="post-page{% unless continue_post %} post-page--no-continue{% endunless %}">
   <div class="post-body container">
@@ -27,7 +72,18 @@ has_author: true
   {%- endif -%}
   {%- if continue_post %}
     {%- assign continue_image = continue_post.image | default: site.default_post_image -%}
-    <section class="post-banner">
+    {%- assign _continue_lang = continue_post.lang | default: _default_lang -%}
+    {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+    {%- assign _continue_lang_base = _continue_lang | split: '-' | first -%}
+    {%- if continue_post.text_dir and continue_post.text_dir != '' -%}
+      {%- assign _continue_dir = continue_post.text_dir -%}
+    {%- elsif _rtl_langs contains _continue_lang_base -%}
+      {%- assign _continue_dir = 'rtl' -%}
+    {%- else -%}
+      {%- assign _continue_dir = 'ltr' -%}
+    {%- endif -%}
+    {%- assign _continue_t = site.data.i18n[_continue_lang] | default: site.data.i18n.en -%}
+    <section class="post-banner" lang="{{ _continue_lang }}" dir="{{ _continue_dir }}">
       <a class="post-banner__link" href="{{ continue_post.url | relative_url }}">
         <div class="post-banner__media">
           {%- if continue_image -%}
@@ -35,10 +91,10 @@ has_author: true
           {%- endif -%}
         </div>
         <div class="post-banner__content container">
-          <p class="post-banner__label">Continue Reading</p>
+          <p class="post-banner__label">{{ t.ui.continue_reading | default: 'Continue Reading' }}</p>
           <h2>{{ continue_post.title }}</h2>
           {%- if continue_post.date %}
-            <time datetime="{{ continue_post.date | date_to_xmlschema }}">{{ continue_post.date | date: '%B %-d, %Y' }}</time>
+            <time datetime="{{ continue_post.date | date_to_xmlschema }}">{%- include format-date.html date=continue_post.date t=_continue_t -%}</time>
           {%- endif %}
         </div>
       </a>

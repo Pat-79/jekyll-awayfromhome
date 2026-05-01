@@ -18,7 +18,8 @@
       data-search-input
       autocomplete="off"
       placeholder="{{ widget_placeholder }}"
-      aria-label="Search"
+      data-i18n-placeholder="ui.search_placeholder"
+      aria-label="{{ t.nav.search | default: 'Search' }}"
     />
   </div>
   <ul class="search-widget__results" data-search-results></ul>
