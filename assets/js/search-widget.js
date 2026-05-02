@@ -43,6 +43,30 @@ function initSearchWidget(widget) {
   const resultsBox = widget.querySelector('[data-search-results]');
   if (!input || !resultsBox) return;
 
+  const isHeaderWidget = Boolean(widget.closest('.site-header'));
+
+  function getHeaderOffset() {
+    const header = document.querySelector('.site-header');
+    const headerHeight = header ? header.getBoundingClientRect().height : 0;
+    const cssVar = getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '0';
+    const cssHeight = Number.parseFloat(cssVar);
+    const safeCssHeight = Number.isFinite(cssHeight) ? cssHeight : 0;
+    return Math.max(headerHeight, safeCssHeight, 0);
+  }
+
+  function alignInputToTopIfNeeded() {
+    if (isHeaderWidget) return;
+
+    const targetTop = getHeaderOffset() + 8;
+    const inputTop = input.getBoundingClientRect().top;
+
+    // Only adjust when the field sits noticeably below the desired top anchor.
+    if (inputTop <= targetTop + 2) return;
+
+    const nextY = Math.max(0, window.scrollY + (inputTop - targetTop));
+    window.scrollTo({ top: nextY, behavior: 'auto' });
+  }
+
   const limit = Number(widget.dataset.searchLimit || 8);
   const version = widget.dataset.searchVersion || '';
   const syncQuery = toBool(widget.dataset.searchSyncQuery || 'true');
@@ -156,6 +180,11 @@ function initSearchWidget(widget) {
 
   input.addEventListener('input', (event) => {
     run(event.target.value);
+  });
+
+  input.addEventListener('focus', () => {
+    alignInputToTopIfNeeded();
+    window.setTimeout(alignInputToTopIfNeeded, 180);
   });
 
   input.addEventListener('keydown', (event) => {

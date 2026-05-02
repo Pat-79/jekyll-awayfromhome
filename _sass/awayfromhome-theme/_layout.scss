@@ -1461,6 +1461,14 @@ body.menu-open .site-body {
   padding-top: 0;
 }
 
+/// Search page: add bottom slack so focus-scroll can place the input near
+/// the top even on short pages and mobile keyboards.
+.layout-search .page-content::after {
+  content: "";
+  display: block;
+  height: clamp(16rem, 62svh, 34rem);
+}
+
 /// On the landing hero, the brand text shadow is already handled by the
 /// default $header-text-shadow. No additional overrides needed.
 
@@ -1751,6 +1759,10 @@ body:not(.layout-post) .page-content > :last-child {
   .page-copy li,
   .page-copy blockquote {
     font-size: 1.06rem;
+  }
+
+  .layout-search .page-content::after {
+    height: clamp(20rem, 78svh, 44rem);
   }
 }
 
