@@ -1,12 +1,20 @@
 <footer class="site-footer">
+  {%- assign _is_default_lang = _page_lang == site.lang or _page_lang == '' or site.lang == nil -%}
+  {%- if _is_default_lang -%}
+    {%- assign _footer_copyright = site.footer.copyright | default: t.footer.copyright | default: 'All rights reserved.' -%}
+    {%- assign _footer_disclaimer = site.footer.disclaimer | default: t.footer.disclaimer | default: 'Content and opinions are provided for informational purposes.' -%}
+  {%- else -%}
+    {%- assign _footer_copyright = t.footer.copyright | default: site.footer.copyright | default: 'All rights reserved.' -%}
+    {%- assign _footer_disclaimer = t.footer.disclaimer | default: site.footer.disclaimer | default: 'Content and opinions are provided for informational purposes.' -%}
+  {%- endif -%}
   <div class="container site-footer__inner">
     <div class="site-footer__brand">
       <a href="{{ _lang_prefix | append: '/' | relative_url }}">{{ site.footer.domain_label | default: site.title }}</a>
       <a href="{{ site.footer.sitemap_url | default: '/sitemap/' | relative_url }}" data-i18n="ui.sitemap">{{ t.ui.sitemap | default: 'Sitemap' }}</a>
     </div>
     <div class="site-footer__note">
-      <p{% unless site.footer.copyright %} data-i18n="footer.copyright"{% endunless %}>{{ site.footer.copyright | default: t.footer.copyright | default: 'All rights reserved.' }}</p>
-      <p{% unless site.footer.disclaimer %} data-i18n="footer.disclaimer"{% endunless %}>{{ site.footer.disclaimer | default: t.footer.disclaimer | default: 'Content and opinions are provided for informational purposes.' }}</p>
+      <p data-i18n="footer.copyright">{{ _footer_copyright }}</p>
+      <p data-i18n="footer.disclaimer">{{ _footer_disclaimer }}</p>
     </div>
     {%- include social-links.html class_name='social-links social-links--footer' %}
   </div>
