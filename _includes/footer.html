@@ -1,5 +1,7 @@
 <footer class="site-footer">
   {%- assign _is_default_lang = _page_lang == site.lang or _page_lang == '' or site.lang == nil -%}
+  {%- assign _default_sitemap_url = _lang_prefix | append: '/sitemap/' -%}
+  {%- assign _footer_sitemap_url = site.footer.sitemap_url | default: _default_sitemap_url -%}
   {%- if _is_default_lang -%}
     {%- assign _footer_copyright = site.footer.copyright | default: t.footer.copyright | default: 'All rights reserved.' -%}
     {%- assign _footer_disclaimer = site.footer.disclaimer | default: t.footer.disclaimer | default: 'Content and opinions are provided for informational purposes.' -%}
@@ -10,7 +12,7 @@
   <div class="container site-footer__inner">
     <div class="site-footer__brand">
       <a href="{{ _lang_prefix | append: '/' | relative_url }}">{{ site.footer.domain_label | default: site.title }}</a>
-      <a href="{{ site.footer.sitemap_url | default: '/sitemap/' | relative_url }}" data-i18n="ui.sitemap">{{ t.ui.sitemap | default: 'Sitemap' }}</a>
+      <a href="{{ _footer_sitemap_url | relative_url }}" data-i18n="ui.sitemap">{{ t.ui.sitemap | default: 'Sitemap' }}</a>
     </div>
     <div class="site-footer__note">
       <p data-i18n="footer.copyright">{{ _footer_copyright }}</p>

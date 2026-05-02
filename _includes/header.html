@@ -1,6 +1,6 @@
 <header class="site-header">
   <div class="site-header__inner">
-    <a class="site-brand" href="{{ '/' | relative_url }}" aria-label="{{ site.brand.title | default: site.title }}">
+    <a class="site-brand" href="{{ _lang_prefix | append: '/' | relative_url }}" aria-label="{{ site.brand.title | default: site.title }}">
       {%- if site.brand.logo %}
         <img class="site-brand__logo" src="{{ site.brand.logo | relative_url }}" alt="" width="40" height="40">
       {%- else %}

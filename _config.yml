@@ -102,23 +102,23 @@ navigation:
   - title: Home
     key: home
     url: /
-    url_ar: /ar/
+    #url_ar: /ar/
   - title: About
     key: about
     url: /about/
-    url_ar: /ar/about/
+    #url_ar: /ar/about/
   - title: Blogs
     key: blog
     url: /blog/
-    url_ar: /ar/blog/
+    #url_ar: /ar/blog/
   - title: Browse
     key: browse
     url: /browse/
-    url_ar: /ar/browse/
+    #url_ar: /ar/browse/
   - title: Search
     key: search
     url: /search/
-    url_ar: /ar/search/
+    #url_ar: /ar/search/
 brand:
   title: Away From Home
   logo: /assets/images/logo-mark.svg
@@ -129,7 +129,7 @@ home_landing:
   video_url: https://youtu.be/VIDEO_ID
   youtube_id:
   image: /assets/images/default-hero.svg
-  latest_posts_limit: 9999
+  latest_posts_limit: 9999999999
   #hls_url: /assets/streams/sample_stream.m3u8
   hls_url: https://pat-79.github.io/assets/streams/sample/sample_stream.m3u8
 
