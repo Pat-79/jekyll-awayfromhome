@@ -1,7 +1,8 @@
 ---
 layout: home
-lang: ar
+lang: nl
 ref: page-home
-title: الرئيسية
+title: Home
+permalink: /nl/
 home_per_page: 3
 ---
