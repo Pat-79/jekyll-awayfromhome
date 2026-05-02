@@ -5,6 +5,8 @@ permalink: /assets/data/search-data.json
 
 {%- assign all_docs = site.posts | concat: site.pages -%}
 {%- assign entries = "" | split: "" -%}
+{%- assign _sdata_all_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _sdata_all_paths = '||' | append: _sdata_all_paths | append: '||' -%}
 {%- for doc in all_docs -%}
   {%- assign doc_url = doc.url | default: "" | downcase -%}
   {%- assign doc_path = doc.path | default: "" | downcase -%}
@@ -44,7 +46,50 @@ permalink: /assets/data/search-data.json
   {%- assign raw_excerpt = doc.excerpt | default: doc.description | default: doc.content | default: "" -%}
   {%- assign stripped_excerpt = raw_excerpt | strip_html | strip_newlines | downcase | replace: "  ", " " | strip -%}
   {%- assign display_excerpt = raw_excerpt | strip_html | strip_newlines | replace: "  ", " " | strip -%}
-  {%- assign safe_image = doc.image | default: "" -%}
+  {%- assign _raw_image = doc.image | default: "" -%}
+  {%- assign safe_image = "" -%}
+  {%- if _raw_image != "" -%}
+    {%- assign _si_marker = '||' | append: _raw_image | append: '||' -%}
+    {%- if _sdata_all_paths contains _si_marker -%}
+      {%- assign safe_image = _raw_image -%}
+    {%- else -%}
+      {%- comment -%}Base path missing; resolve via variant subdirs or alternate extensions{%- endcomment -%}
+      {%- assign _si_fn = _raw_image | split: '/' | last -%}
+      {%- assign _si_dir = _raw_image | replace: _si_fn, '' -%}
+      {%- assign _si_ext = _si_fn | split: '.' | last | downcase -%}
+      {%- assign _si_stem_sfx = '.' | append: _si_ext -%}
+      {%- assign _si_stem = _si_fn | remove: _si_stem_sfx -%}
+      {%- assign _si_try_exts = 'webp,avif,jpg,jpeg,png,gif' | split: ',' -%}
+      {%- comment -%}1. Try thumbs/ subdir variant{%- endcomment -%}
+      {%- for _si_ve in _si_try_exts -%}
+        {%- if safe_image == "" -%}
+          {%- assign _si_tp = _si_dir | append: 'thumbs/' | append: _si_stem | append: '.' | append: _si_ve -%}
+          {%- assign _si_tm = '||' | append: _si_tp | append: '||' -%}
+          {%- if _sdata_all_paths contains _si_tm -%}{%- assign safe_image = _si_tp -%}{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- comment -%}2. Try base path with alternate extension{%- endcomment -%}
+      {%- if safe_image == "" -%}
+        {%- for _si_ve in _si_try_exts -%}
+          {%- if safe_image == "" -%}
+            {%- assign _si_bp = _si_dir | append: _si_stem | append: '.' | append: _si_ve -%}
+            {%- assign _si_bm = '||' | append: _si_bp | append: '||' -%}
+            {%- if _sdata_all_paths contains _si_bm -%}{%- assign safe_image = _si_bp -%}{%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+      {%- comment -%}3. Try small/ and medium/ subdirs as further fallbacks{%- endcomment -%}
+      {%- if safe_image == "" -%}
+        {%- for _si_ve in _si_try_exts -%}
+          {%- if safe_image == "" -%}
+            {%- assign _si_sp = _si_dir | append: 'small/' | append: _si_stem | append: '.' | append: _si_ve -%}
+            {%- assign _si_sm = '||' | append: _si_sp | append: '||' -%}
+            {%- if _sdata_all_paths contains _si_sm -%}{%- assign safe_image = _si_sp -%}{%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
   {%- assign safe_lang = doc.lang | default: site.lang | default: "en" -%}
   {%- assign safe_ref = doc.ref | default: "" -%}
   {%- assign tags_text = doc.tags | join: " " | downcase -%}
