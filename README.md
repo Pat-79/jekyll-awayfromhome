@@ -329,6 +329,51 @@ The theme also includes a lightweight `video-widget.html` include for HLS, YouTu
 
 Supported widget options are `provider`, `src`, `url`, `youtube_id`, `vimeo_id`, `title`, `description`, `player_title`, `poster`, `width`, `height`, `max_width`, `max_height`, `aspect_ratio`, `bare`, `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `preload`, `lazy`, `privacy_mode`, and `referrer_policy`. Include-level values override `video_widget` defaults.
 
+### Responsive Image Include (`responsive-image.html`)
+
+The theme uses `_includes/responsive-image.html` to render `<img>` tags that automatically use responsive variants when available.
+
+What it does:
+
+- accepts a source image and emits a standard `<img>` with optional `srcset` and `sizes`
+- detects existing generated variants and only references files that actually exist
+- supports both variant naming schemes:
+  - subdirectories: `thumbs/`, `small/`, `medium/`, `large/`, `full/`
+  - suffixes: `.thumb`, `.small`, `.medium`, `.large`, `.full`
+- supports extension flexibility (`jpg`, `jpeg`, `png`, `webp`, `avif`, `gif`, `svg`)
+- falls back safely when the original source path no longer exists but variants do
+
+Common usage:
+
+```liquid
+{% assign _all_static_paths = site.static_files | map: 'path' | join: '||' %}
+{% assign _all_static_paths = '||' | append: _all_static_paths | append: '||' %}
+
+{% include responsive-image.html
+  src=page.image
+  class='post-hero__media-image'
+  alt=page.title
+  loading='eager'
+  decoding='async'
+  fetchpriority='high'
+  sizes='100vw'
+  base_width=2000
+  fallback=site.default_post_image
+  all_static_paths=_all_static_paths
+%}
+```
+
+Key include parameters:
+
+- `src`: image path or external URL
+- `alt`: alt text
+- `class`: CSS class(es)
+- `loading`, `decoding`, `fetchpriority`: native browser loading hints
+- `sizes`: responsive sizes attribute
+- `base_width`: width descriptor used for base `src` in `srcset` when base exists
+- `fallback`: fallback image path used when `src` cannot be resolved
+- `all_static_paths`: optional precomputed static file marker for performance
+
 ### Image Variant Generator (ImageMagick)
 
 The repository includes a helper script at `scripts/generate-image-variants.sh` to generate responsive image variants for theme images.
@@ -412,9 +457,30 @@ Only include the platforms you actively use. Icons are rendered as a responsive 
 
 ## Theme Structure
 
+The `theme/` directory contains route-level page sources that render site URLs.
+
+- language-neutral routes live directly in `theme/` (for example `theme/about.markdown`, `theme/archive.markdown`, `theme/index.markdown`)
+- translated routes live in `theme/<lang>/` (for example `theme/nl/about.markdown`)
+- URL output is controlled by front matter `permalink`, so source paths stay flexible
+
 
 ```
 jekyll-awayfromhome/
+├── theme/                        # Route page sources (default + translated)
+│   ├── index.markdown            # Home page (/)
+│   ├── about.markdown            # About page (/about/)
+│   ├── archive.markdown          # Archive page (/archive/)
+│   ├── blog.md                   # Blog listing page
+│   ├── browse.md                 # Browse page
+│   ├── search.md                 # Search page
+│   ├── tags.md                   # Tags page
+│   ├── social-media.md           # Social hub page
+│   ├── sitemap_html.md           # HTML sitemap page
+│   ├── sitemap_xml.md            # XML sitemap source
+│   ├── nl/                       # Dutch translated routes
+│   ├── de/                       # German translated routes
+│   └── ar/                       # Arabic translated routes
+│
 ├── _includes/                    # Reusable HTML partials
 │   ├── head.html                 # <head>: charset, viewport, CSS links
 │   ├── meta.html                 # SEO: Open Graph, Twitter Card, JSON-LD
@@ -839,7 +905,7 @@ languages:
     flag: "🇸🇦"
 
 defaults:
-  - scope: { path: "nl" }
+  - scope: { path: "theme/nl" }
     values:
       lang: nl
   - scope: { path: "_posts/nl", type: "posts" }
@@ -852,7 +918,7 @@ defaults:
 
 1. Add the language to `_config.yml` `languages:` list and `defaults:` scopes.
 2. Create `_data/i18n/<code>.yml` with all UI string keys — copy `en.yml` as a starting template.
-3. Create a `<code>/` directory with translated page files — copy `ar/` as a template, updating `lang:`, `title:`, `permalink:`, and page content.
+3. Create `theme/<code>/` with translated page files — copy `theme/ar/` as a template, updating `lang:`, `title:`, `permalink:`, and page content.
 4. Optionally add translated posts to `_posts/<code>/` with matching `ref:` front matter.
 
 ### Translating posts and pages
