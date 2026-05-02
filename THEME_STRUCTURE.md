@@ -3,458 +3,246 @@ sitemap: false
 ---
 # jekyll-awayfromhome Theme Structure
 
-This document describes the structure of the jekyll-awayfromhome theme gem and how it's organized for Jekyll 3.10.0+ compatibility.
+This document describes the current structure of the jekyll-awayfromhome theme repository and how the main pieces fit together.
 
 ## Directory Structure
 
-```
+```text
 jekyll-awayfromhome/
 ├── _data/
-│   └── i18n/                   # Per-language UI strings
-│       ├── en.yml              # English (default)
-│       ├── ar.yml              # Arabic (RTL)
-│       ├── nl.yml              # Dutch
-│       └── de.yml              # German
+│   ├── authors.yml                 # Author directory used by author-card.html
+│   └── i18n/                       # Per-language UI strings and search settings
+│       ├── en.yml
+│       ├── ar.yml
+│       ├── nl.yml
+│       └── de.yml
 │
-├── _includes/              # Partial templates included in layouts
-│   ├── head.html
-│   ├── footer.html
-│   ├── icon.html
-│   ├── meta.html
-│   ├── social-links.html
-│   ├── javascript-body.html
-│   ├── language-selector.html
-│   └── ...
+├── _includes/                      # Reusable Liquid partials
+│   ├── author-card.html            # Author card with author lookup + optional socials/page
+│   ├── css.html                    # Stylesheet loading
+│   ├── entity-index.html           # Shared browse/index renderer
+│   ├── font.html                   # Font loading
+│   ├── footer.html                 # Footer and footer language-aware links
+│   ├── format-date.html            # Language-aware date formatting helper
+│   ├── gallery-widget.html         # Gallery widget markup
+│   ├── head.html                   # Head assembly
+│   ├── header.html                 # Header and home link
+│   ├── icon.html                   # SVG sprite helper
+│   ├── javascript-body.html        # Deferred script loading
+│   ├── javascript-head.html        # Early inline script loading
+│   ├── language-selector.html      # Translation switcher
+│   ├── map-widget.html             # Map widget markup
+│   ├── meta.html                   # SEO / Open Graph / alternates / JSON-LD
+│   ├── post-hero.html              # Post hero banner
+│   ├── responsive-image.html       # Responsive image include with existence-aware srcset
+│   ├── search-widget.html          # Inline search field widget
+│   ├── sidebar.html                # Drawer/sidebar contents
+│   ├── social-links.html           # Social icon row
+│   ├── tag-cloud-page.html         # Full-page tag cloud block
+│   ├── tag-cloud.html              # Compact tag cloud block
+│   ├── tag-index.html              # Tag-index renderer
+│   └── video-widget.html           # Video widget markup
 │
-├── _layouts/               # Page layouts
-│   ├── base.html           # Root layout (wraps all others); injects afh-page-meta JSON
-│   ├── home.html           # Landing/homepage
-│   ├── page.html           # Standard page
-│   ├── post.html           # Blog post
-│   ├── search.html         # Search results
-│   ├── blog.html           # Blog archive
-│   ├── entity-index.html   # Browse/category pages
-│   ├── tag-index.html      # Tag cloud
-│   ├── search-data.html    # Generates search-data.json (per-language stopwords)
-│   ├── sitemap.html        # XML sitemap
-│   └── ...
-│
-├── _sass/                  # SCSS partials (compiled to CSS)
-│   └── awayfromhome-theme/
-│       ├── variables.scss  # Design tokens (colors, fonts, sizes)
-│       ├── reset.scss      # CSS reset
-│       ├── typography.scss # Font and text styles
-│       ├── layout.scss     # Layout, header, footer, grid
-│       ├── components.scss # Buttons, cards, etc.
-│       └── ...
-│
-├── assets/                 # Static assets
-│   ├── css/
-│   │   └── main.scss       # Main SCSS entrypoint (with YAML front matter)
-│   ├── js/
-│   │   ├── theme.js        # Core theme logic
-│   │   ├── lang-persist.js # Language detection, preference persistence, chrome override
-│   │   ├── search.js       # Search engine (index loading, SearchEngine class)
-│   │   ├── search-worker.js# Web Worker — inverted index + fuzzy search
-│   │   ├── search-widget.js# Search UI (dropdown, language filtering, ref deduplication)
-│   │   ├── search-highlight.js # Post-page term highlighter (Unicode-aware, i18n word_regex)
-│   │   ├── home-landing.js # Landing page snap behavior
-│   │   ├── post-snap.js    # Post snap behavior
-│   │   ├── tag-index.js    # Tag index filtering
-│   │   ├── entity-index.js # Browse page filtering
-│   │   └── ...
-│   └── images/
-│       ├── logo-mark.svg
-│       ├── icons.svg
-│       └── ...
-│
-├── ar/                     # Arabic language pages
-│   ├── index.markdown
-│   ├── about.markdown
-│   ├── blog.markdown
-│   ├── browse.markdown
-│   ├── archive.markdown
-│   ├── search.markdown
-│   └── tags.markdown
-│
-├── nl/                     # Dutch language pages
-│   └── (same structure as ar/)
-│
-├── de/                     # German language pages
-│   └── (same structure as ar/)
+├── _layouts/                       # Page and data-output layouts
+│   ├── archive.html                # Archive page with filters/pagination
+│   ├── base.html                   # Root shell; computes lang, dir, translations JSON
+│   ├── blog.html                   # Blog listing page
+│   ├── entity-index.html           # Browse/category page layout
+│   ├── error.html                  # Error pages
+│   ├── home.html                   # Homepage / landing layout
+│   ├── page.html                   # Standard content page
+│   ├── post.html                   # Post page with hero, tags, author card, continue banner
+│   ├── search-data.html            # Generates search-data.json
+│   ├── search.html                 # Full-page search UI
+│   ├── sitemap.html                # Human-readable sitemap
+│   ├── sitemap_xml.html            # XML sitemap output
+│   ├── social-media.html           # Social hub page
+│   ├── tag-cloud.html              # Tag cloud page
+│   └── tag-index.html              # Posts grouped by tag
 │
 ├── _posts/
-│   ├── (English posts — default lang)
-│   ├── ar/                 # Arabic translations
-│   ├── nl/                 # Dutch translations
-│   └── de/                 # German translations
+│   ├── ...                         # Default-language posts
+│   ├── ar/                         # Arabic post translations
+│   ├── de/                         # German post translations
+│   └── nl/                         # Dutch post translations
 │
-├── lib/                    # Ruby gem code (minimal for Jekyll themes)
+├── _sass/
+│   └── awayfromhome-theme/
+│       ├── _base.scss             # Base element styling
+│       ├── _gallery.scss          # Gallery widget styles
+│       ├── _layout.scss           # Header, footer, drawer, grids, site structure
+│       ├── _map-widget.scss       # Map widget styles
+│       ├── _post.scss             # Post, hero, author card, banners
+│       ├── _print.scss            # Print stylesheet
+│       ├── _search-widget.scss    # Search widget styles
+│       ├── _variables.scss        # Theme variables and design tokens
+│       └── _video-widget.scss     # Video widget styles
+│
+├── assets/
+│   ├── css/
+│   │   └── main.scss              # Main SCSS entrypoint
+│   ├── data/
+│   │   ├── home-landing-chapters.json
+│   │   └── search-data.md         # Source file that builds search-data.json
+│   ├── images/
+│   │   ├── avatar.svg             # Default author avatar
+│   │   ├── default-hero.svg       # Default post hero fallback
+│   │   ├── icons.svg              # SVG sprite sheet
+│   │   ├── logo-mark.svg          # Brand mark
+│   │   ├── page-hero-*.svg        # Default page hero illustrations
+│   │   ├── posts/                 # User/content images
+│   │   └── .image-variant-state.tsv
+│   └── js/
+│       ├── archive.js             # Archive filtering and pagination
+│       ├── blog-pagination.js     # Blog page pagination
+│       ├── entity-index.js        # Browse filtering
+│       ├── gallery-widget.js      # Gallery behavior
+│       ├── home-landing.js        # Home hero runtime
+│       ├── lang-persist.js        # Language detection and persistence
+│       ├── map-widget.js          # Leaflet map runtime
+│       ├── post-snap.js           # Post page scroll behavior
+│       ├── print-links.js         # Print-friendly external links
+│       ├── search-highlight.js    # Search term highlighting
+│       ├── search-widget.js       # Inline search UI
+│       ├── search-worker.js       # Search worker
+│       ├── search.js              # Search engine runtime
+│       ├── tag-index.js           # Tag page filtering
+│       ├── theme.js               # Theme switching and shared chrome logic
+│       └── video-widget.js        # Video widget runtime
+│
+├── scripts/
+│   └── generate-image-variants.sh # ImageMagick helper for responsive image variants
+│
+├── theme/                         # Route source pages shipped by the theme
+│   ├── about.markdown             # /about/
+│   ├── archive.markdown           # /archive/
+│   ├── blog.md                    # /blog/
+│   ├── browse.md                  # /browse/
+│   ├── index.markdown             # /
+│   ├── search.md                  # /search/
+│   ├── sitemap_html.md            # /sitemap/
+│   ├── sitemap_xml.md             # /sitemap.xml
+│   ├── social-media.md            # /social-media/
+│   ├── tags.md                    # /tags/
+│   ├── ar/                        # Arabic translated pages
+│   ├── de/                        # German translated pages
+│   └── nl/                        # Dutch translated pages
+│
+├── lib/
 │   ├── jekyll-awayfromhome.rb
 │   └── jekyll-awayfromhome/
 │       └── version.rb
 │
-├── _config.yml             # Theme defaults (incl. languages list and defaults scopes)
-├── jekyll-awayfromhome.gemspec # Gem metadata and dependencies
-├── README.md               # Installation and usage guide
-├── LICENSE                 # MIT License
-└── THEME_STRUCTURE.md      # This file
+├── _config.yml                    # Theme defaults and language scopes
+├── Gemfile
+├── README.md
+├── LICENSE
+└── THEME_STRUCTURE.md
 ```
 
 ## Key Design Principles
 
-### Jekyll 3.10.0 Compatibility
+### Route Sources in `theme/`
 
-- **No Liquid 5+ Syntax**: Uses older Liquid template syntax
-- **Minimal Dependencies**: Only requires Jekyll ≥3.10.0
-- **No Ruby 3+ Features**: Compatible with Ruby 2.6+
-- **GitHub Pages Compatible**: Works with `github-pages` gem ~232
-
-### SCSS Organization
-
-- **Single Entrypoint**: `assets/css/main.scss` with YAML front matter
-- **Variables File**: `_sass/awayfromhome-theme/variables.scss` for theming
-- **Exports CSS Variables**: Uses `--custom-property` for runtime overrides
-- **Mobile-First**: Responsive design with mobile defaults
-
-### JavaScript Organization
-
-- **Modular Design**: Each feature in separate modules
-- **No Build Step**: Plain ES6 modules (no bundler needed)
-- **Progressive Enhancement**: Works without JavaScript
-- **Keyboard Navigation**: Full keyboard accessibility support
+- Route-level pages now live in `theme/` instead of the repository root.
+- Default-language pages are stored directly in `theme/`.
+- Translated pages are stored in `theme/<lang>/`.
+- Output URLs are controlled by front matter `permalink`, so moving a source file does not need to change the public route.
 
 ### Multilingual Architecture
 
-- **i18n data**: `_data/i18n/<lang>.yml` — UI strings for every language
-- **`afh-page-meta`**: JSON blob injected by `base.html` containing `currentLang`, `defaultLang`, `translations` (ref→url map), and the full `i18n` object — used by all client-side scripts
-- **`lang` + `ref` front matter**: `lang` identifies the language; `ref` ties translations of the same page/post together across languages
-- **Language detection** (`lang-persist.js`): `navigator.languages` (BCP 47, exact then base-language match e.g. `nl-BE → nl`) → timezone hint → site default. Detection result is never saved; only explicit dropdown selection writes `localStorage('afh-lang')`.
-- **RTL**: Automatic `dir="rtl"` on `<html>` for Arabic and other RTL language codes
-- **Search**: Per-language stopwords (used at build time in `search-data.html` and at runtime in `search-highlight.js`); `word_regex` in each i18n file controls Unicode tokenisation for highlighting; ref-based deduplication in `search-widget.js`
+- UI translations live in `_data/i18n/<lang>.yml`.
+- Page and post translations are tied together with shared `ref` values.
+- `base.html` computes `_lang_prefix`, directionality, and a JSON translations map for client-side code.
+- Page language defaults are assigned in `_config.yml` using `defaults` scopes for `theme/<lang>` and `_posts/<lang>`.
+- `lang-persist.js` handles browser-language detection and explicit user preference storage.
 
-## Customization
+### Author Data Model
 
-### Using Theme Variables
+- Author records live in `_data/authors.yml`.
+- `author-card.html` resolves author data by matching `author:` front matter to the `name` field.
+- `bio` and `location` may be plain strings or language maps with per-language values and a `default` fallback.
+- Optional `page_url` / `page` and `social_links` entries are rendered when present.
 
-Create `_sass/awayfromhome-theme/custom-variables.scss` in your site:
+### Responsive Image Pipeline
 
-```scss
-@use "awayfromhome-theme/variables" as *;
+- `_includes/responsive-image.html` is the shared image renderer used by heroes, cards, banners, and author avatars.
+- It supports two variant layouts:
+  - subdirectories: `thumbs/`, `small/`, `medium/`, `large/`, `full/`
+  - suffixes: `.thumb`, `.small`, `.medium`, `.large`, `.full`
+- It only emits `srcset` entries for files that actually exist in `site.static_files`.
+- It supports extension fallback across `webp`, `avif`, `jpg`, `jpeg`, `png`, `gif`, and `svg`.
+- `scripts/generate-image-variants.sh` creates these variants and can optionally rewrite content references.
 
-// Override theme colors
-$color-accent: #your-color;
-$color-primary: #your-primary;
-$font-display: 'Your Font', sans-serif;
-```
+## Current Routing Model
 
-### Overriding Layouts and Includes
+### Default-language pages
 
-1. Copy the desired file from the theme
-2. Place it in your site's corresponding directory (e.g., `_layouts/page.html`)
-3. Modify as needed—Jekyll will use your local version
+- `theme/index.markdown` -> `/`
+- `theme/about.markdown` -> `/about/`
+- `theme/archive.markdown` -> `/archive/`
+- `theme/blog.md` -> `/blog/`
+- `theme/browse.md` -> `/browse/`
+- `theme/search.md` -> `/search/`
+- `theme/tags.md` -> `/tags/`
 
-### CSS Custom Properties
+### Translated pages
 
-All colors and sizes are exposed as CSS custom properties for runtime overrides:
+- `theme/nl/index.markdown` -> `/nl/`
+- `theme/nl/about.markdown` -> `/nl/about/`
+- `theme/de/archive.markdown` -> `/de/archive/`
+- `theme/ar/search.markdown` -> `/ar/search/`
 
-```css
-:root {
-  --accent: #0066cc;
-  --text: #333;
-  --background: #fff;
-  --header-bg-scrolled: rgba(255, 255, 255, 0.9);
-  /* ... more variables ... */
-}
-```
+### Posts
 
-### Adding a New Language
-
-1. Add to `_config.yml` `languages:` list and `defaults:` scopes
-2. Create `_data/i18n/<code>.yml` with all UI string keys (copy `en.yml` as template)
-3. Create `<code>/` directory with translated page files (copy `ar/` as template)
-4. Add translated posts to `_posts/<code>/` with matching `ref:` front matter
-
-## Build Output
-
-When Jekyll builds with this theme:
-
-1. **_site/assets/css/main.css** - Compiled SCSS
-2. **_site/assets/js/** - JavaScript files (copied as-is)
-3. **_site/assets/images/** - Image assets
-4. **_site/index.html** - Homepage (using `home` layout)
-5. **_site/about/** - Pages (using default/custom layouts)
-6. **_site/assets/data/search-data.json** - Search index (from `_layouts/search-data.html`)
-7. **_site/ar/**, **_site/nl/**, **_site/de/** - Language-prefixed page trees
-
-## Theme Configuration (defaults in _config.yml)
-
-```yaml
-# Default and available languages
-lang: en
-lang_fallback: true
-languages:
-  - code: en
-    name: English
-    native: English
-    flag: "🇬🇧"
-
-# Home page hero section
-home_landing:
-  video_url: null
-  youtube_id: null
-  image: null
-  latest_posts_limit: 6
-  hls_url: null
-
-# SEO/Social
-url: https://example.com
-twitter_username: null
-github_username: null
-```
-
-## Testing the Theme
-
-During development:
-
-```bash
-cd jekyll-awayfromhome
-bundle install
-bundle exec jekyll serve
-```
-
-This loads the theme from the local directory.
-
-## Publishing to RubyGems
-
-1. Update version in `lib/jekyll-awayfromhome/version.rb`
-2. Build: `gem build jekyll-awayfromhome.gemspec`
-3. Push: `gem push jekyll-awayfromhome-X.X.X.gem`
-
-## Browser Compatibility
-
-- Chrome/Edge (latest 2 versions)
-- Firefox (latest 2 versions)
-- Safari 12+
-- iOS Safari 12+
-- Mobile Chrome/Firefox (latest)
-
-## Performance Considerations
-
-- **Lazy-loaded images**: Except hero image
-- **Deferred JavaScript**: Non-critical JS deferred
-- **Minified CSS/JS**: Compiled assets
-- **Optimized fonts**: System font stack by default
-- **No external dependencies**: Zero CDN dependencies
-
-## Accessibility (WCAG 2.1)
-
-- **Semantic HTML**: Proper heading hierarchy, nav landmarks
-- **ARIA labels**: For icon buttons, navigation
-- **Keyboard navigation**: Full keyboard support
-- **Color contrast**: WCAG AA compliant
-- **Focus visible**: Custom focus indicators
-
-## Known Limitations on Jekyll 3.10.0
-
-- No native support for newer Liquid filters/tags (e.g., `relative_url` filter only in 4.0+)
-- SCSS features limited to what's in Sass 3.x
-- No built-in incremental file watching (use --incremental flag)
-
-
-This document describes the structure of the jekyll-awayfromhome theme gem and how it's organized for Jekyll 3.10.0+ compatibility.
-
-## Directory Structure
-
-```
-jekyll-awayfromhome/
-├── _includes/              # Partial templates included in layouts
-│   ├── head.html
-│   ├── footer.html
-│   ├── icon.html
-│   ├── meta.html
-│   ├── social-links.html
-│   ├── javascript-body.html
-│   └── ...
-│
-├── _layouts/               # Page layouts
-│   ├── base.html           # Root layout (wraps all others)
-│   ├── home.html           # Landing/homepage
-│   ├── page.html           # Standard page
-│   ├── post.html           # Blog post
-│   ├── search.html         # Search results
-│   ├── blog.html           # Blog archive
-│   ├── entity-index.html   # Browse/category pages
-│   ├── tag-index.html      # Tag cloud
-│   ├── sitemap.html        # XML sitemap
-│   └── ...
-│
-├── _sass/                  # SCSS partials (compiled to CSS)
-│   └── awayfromhome-theme/
-│       ├── variables.scss  # Design tokens (colors, fonts, sizes)
-│       ├── reset.scss      # CSS reset
-│       ├── typography.scss # Font and text styles
-│       ├── layout.scss     # Layout, header, footer, grid
-│       ├── components.scss # Buttons, cards, etc.
-│       └── ...
-│
-├── assets/                 # Static assets
-│   ├── css/
-│   │   └── main.scss       # Main SCSS entrypoint (with YAML front matter)
-│   ├── js/
-│   │   ├── theme.js        # Core theme logic
-│   │   ├── search.js       # Search engine
-│   │   ├── search-widget.js# Search UI component
-│   │   ├── home-landing.js # Landing page snap behavior
-│   │   ├── post-snap.js    # Post snap behavior
-│   │   └── ...
-│   └── images/
-│       ├── logo-mark.svg
-│       ├── icons.svg
-│       └── ...
-│
-├── lib/                    # Ruby gem code (minimal for Jekyll themes)
-│   ├── jekyll-awayfromhome.rb
-│   └── jekyll-awayfromhome/
-│       └── version.rb
-│
-├── _config.yml             # Theme defaults
-├── jekyll-awayfromhome.gemspec # Gem metadata and dependencies
-├── README.md               # Installation and usage guide
-├── LICENSE                 # MIT License
-└── THEME_STRUCTURE.md      # This file
-```
-
-## Key Design Principles
-
-### Jekyll 3.10.0 Compatibility
-
-- **No Liquid 5+ Syntax**: Uses older Liquid template syntax
-- **Minimal Dependencies**: Only requires Jekyll ≥3.10.0
-- **No Ruby 3+ Features**: Compatible with Ruby 2.6+
-- **GitHub Pages Compatible**: Works with `github-pages` gem ~232
-
-### SCSS Organization
-
-- **Single Entrypoint**: `assets/css/main.scss` with YAML front matter
-- **Variables File**: `_sass/awayfromhome-theme/variables.scss` for theming
-- **Exports CSS Variables**: Uses `--custom-property` for runtime overrides
-- **Mobile-First**: Responsive design with mobile defaults
-
-### JavaScript Organization
-
-- **Modular Design**: Each feature in separate modules
-- **No Build Step**: Plain ES6 modules (no bundler needed)
-- **Progressive Enhancement**: Works without JavaScript
-- **Keyboard Navigation**: Full keyboard accessibility support
-
-## Customization
-
-### Using Theme Variables
-
-Create `_sass/awayfromhome-theme/custom-variables.scss` in your site:
-
-```scss
-@use "awayfromhome-theme/variables" as *;
-
-// Override theme colors
-$color-accent: #your-color;
-$color-primary: #your-primary;
-$font-display: 'Your Font', sans-serif;
-```
-
-### Overriding Layouts and Includes
-
-1. Copy the desired file from the theme
-2. Place it in your site's corresponding directory (e.g., `_layouts/page.html`)
-3. Modify as needed—Jekyll will use your local version
-
-### CSS Custom Properties
-
-All colors and sizes are exposed as CSS custom properties for runtime overrides:
-
-```css
-:root {
-  --accent: #0066cc;
-  --text: #333;
-  --background: #fff;
-  --header-bg-scrolled: rgba(255, 255, 255, 0.9);
-  /* ... more variables ... */
-}
-```
+- Default-language posts live in `_posts/`.
+- Translated posts live in `_posts/<lang>/`.
+- Permalinks for translated posts are controlled by `_config.yml` defaults, for example `/nl/blog/:slug/`.
 
 ## Build Output
 
-When Jekyll builds with this theme:
+When Jekyll builds the site, the main outputs include:
 
-1. **_site/assets/css/main.css** - Compiled SCSS
-2. **_site/assets/js/** - JavaScript files (copied as-is)
-3. **_site/assets/images/** - Image assets
-4. **_site/index.html** - Homepage (using `home` layout)
-5. **_site/about/** - Pages (using default/custom layouts)
-6. **_site/search-data.json** - Search index (from `_layouts/search-data.html`)
+1. `_site/index.html` from `theme/index.markdown`
+2. `_site/about/index.html`, `_site/archive/index.html`, and other route pages from `theme/`
+3. `_site/nl/`, `_site/de/`, `_site/ar/` for translated page trees
+4. `_site/assets/data/search-data.json` from `assets/data/search-data.md` + `_layouts/search-data.html`
+5. `_site/assets/css/main.css` from `assets/css/main.scss`
+6. Copied assets from `assets/js/` and `assets/images/`
 
-## Theme Configuration (defaults in _config.yml)
+## Adding a New Language
 
-```yaml
-# Home page hero section
-home_landing:
-  video_url: null               # Background video URL
-  youtube_id: null              # YouTube video ID
-  image: null                   # Fallback hero image
-  latest_posts_limit: 6         # Posts shown on homepage
-  hls_url: null                 # HLS stream URL
+1. Add the language to `_config.yml` under `languages:`.
+2. Add a page default scope for `theme/<code>`.
+3. Add a post default scope for `_posts/<code>` if translated posts are needed.
+4. Create `_data/i18n/<code>.yml` by copying `en.yml`.
+5. Create translated pages in `theme/<code>/` by copying one of the existing language directories.
+6. Optionally create translated posts in `_posts/<code>/` using matching `ref` values.
 
-# SEO/Social
-url: https://example.com
-twitter_username: null
-github_username: null
-```
+## Customization Rules
 
-## Testing the Theme
+### Overriding layouts and includes
 
-During development:
+- Copy a layout from `_layouts/` into your site’s `_layouts/` to override it.
+- Copy an include from `_includes/` into your site’s `_includes/` to override it.
+- User site files take precedence over the theme copies.
 
-```bash
-cd jekyll-awayfromhome
-bundle install
-bundle exec jekyll serve
-```
+### Styling
 
-This loads the theme from the local directory.
+- Theme tokens live in `_sass/awayfromhome-theme/_variables.scss`.
+- Main layout styles live in `_layout.scss`.
+- Post-specific styles, including the author card, live in `_post.scss`.
+- Widget styles are kept in their own partials where appropriate.
 
-## Publishing to RubyGems
+### Content images
 
-1. Update version in `lib/jekyll-awayfromhome/version.rb`
-2. Build: `gem build jekyll-awayfromhome.gemspec`
-3. Push: `gem push jekyll-awayfromhome-X.X.X.gem`
+- Put content images under `assets/images/posts/...`.
+- Use `responsive-image.html` directly for custom templates.
+- Use `generate-image-variants.sh` to create responsive derivatives.
 
-## Browser Compatibility
+## Development Notes
 
-- Chrome/Edge (latest 2 versions)
-- Firefox (latest 2 versions)
-- Safari 12+
-- iOS Safari 12+
-- Mobile Chrome/Firefox (latest)
-
-## Performance Considerations
-
-- **Lazy-loaded images**: Except hero image
-- **Deferred JavaScript**: Non-critical JS deferred
-- **Minified CSS/JS**: Compiled assets
-- **Optimized fonts**: System font stack by default
-- **No external dependencies**: Zero CDN dependencies
-
-## Accessibility (WCAG 2.1)
-
-- **Semantic HTML**: Proper heading hierarchy, nav landmarks
-- **ARIA labels**: For icon buttons, navigation
-- **Keyboard navigation**: Full keyboard support
-- **Color contrast**: WCAG AA compliant
-- **Focus visible**: Custom focus indicators
-
-## Known Limitations on Jekyll 3.10.0
-
-- No native support for newer Liquid filters/tags (e.g., `relative_url` filter only in 4.0+)
-- SCSS features limited to what's in Sass 3.x
-- No built-in incremental file watching (use --incremental flag)
+- The project is designed for Jekyll 3.10.0+ and GitHub Pages compatibility.
+- Layouts and includes avoid newer Liquid-only patterns where practical.
+- JavaScript is plain ES modules with no bundler.
+- The theme supports RTL languages through automatic `dir="rtl"` handling.
