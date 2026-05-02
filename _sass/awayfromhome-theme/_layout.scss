@@ -1215,7 +1215,7 @@ body.menu-open .site-body {
   border: 1px solid $frost-border-soft;
   border-radius: $radius-pill;
   color: $color-white;
-  font-family: var(--font-display);
+  font-family: 'BabelStone Flags', var(--font-display), system-ui, sans-serif;
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1243,7 +1243,7 @@ body.menu-open .site-body {
   option {
     background: #1a1a2e;
     color: $color-white;
-    font-family: system-ui, sans-serif;
+    font-family: 'BabelStone Flags', var(--font-display), system-ui, sans-serif;
     font-size: 1rem;
   }
 

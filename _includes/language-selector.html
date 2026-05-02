@@ -18,7 +18,7 @@
     {%- assign _ref_translations = _all_content | where: "ref", page.ref -%}
   {%- endif -%}
 
-<select class="lang-select" aria-label="{{ t.ui.language | default: 'Language' }}" onchange="afhLangChange(this)">
+<select class="lang-select" data-short-breakpoint="900" aria-label="{{ t.ui.language | default: 'Language' }}" onchange="afhLangChange(this)">
   {%- for _lang in site.languages -%}
     {%- assign _is_active = false -%}
     {%- if _lang.code == _page_lang -%}{%- assign _is_active = true -%}{%- endif -%}
@@ -31,7 +31,13 @@
       {%- assign _href = page.url | relative_url -%}
     {%- endif -%}
 
-    <option value="{{ _href }}" data-lang="{{ _lang.code }}"{% if _is_active %} selected{% endif %}>{%- if _lang.flag and _lang.flag != '' -%}{{ _lang.flag | append: ' ' }}{%- endif -%}{{ _lang.native }}</option>
+    {%- assign _lang_short = _lang.short | default: _lang.code | upcase -%}
+    {%- assign _lang_prefix = '' -%}
+    {%- if _lang.flag and _lang.flag != '' -%}{%- assign _lang_prefix = _lang.flag | append: ' ' -%}{%- endif -%}
+    {%- assign _label_full = _lang_prefix | append: _lang.native -%}
+    {%- assign _label_short = _lang_prefix | append: _lang_short -%}
+
+    <option value="{{ _href }}" data-lang="{{ _lang.code }}" data-label-full="{{ _label_full | escape }}" data-label-short="{{ _label_short | escape }}"{% if _is_active %} selected{% endif %}>{{ _label_full }}</option>
   {%- endfor -%}
 </select>
 {%- endif -%}

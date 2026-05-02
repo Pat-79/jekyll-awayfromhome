@@ -45,18 +45,22 @@ languages:
   - code: en
     name: English
     native: English
+    short: EN
     flag: "🇬🇧"
   - code: de
     name: German
     native: Deutsch
+    short: DE
     flag: "🇩🇪"
   - code: nl
     name: Dutch
     native: Nederlands
+    short: NL
     flag: "🇳🇱"
   - code: ar
     name: Arabic
     native: العربية
+    short: AR
     flag: "🇸🇦"
 
 # Defaults: give every file a lang and give posts their permalink prefix.

@@ -100,7 +100,50 @@ function afhDetectLang(available, fallback) {
   return fallback;
 }
 
+/**
+ * Toggle language selector labels between full and short variants.
+ * Uses data-label-full and data-label-short attributes on <option> elements.
+ */
+function afhApplyResponsiveLangLabels() {
+  var select = document.querySelector('.lang-select');
+  if (!select) return;
+
+  var shortBreakpoint = parseInt(select.getAttribute('data-short-breakpoint') || '900', 10);
+  if (!shortBreakpoint || shortBreakpoint < 320) shortBreakpoint = 900;
+  var mediaQuery = '(max-width: ' + shortBreakpoint + 'px)';
+
+  var useShort = false;
+  try {
+    useShort = window.matchMedia(mediaQuery).matches;
+  } catch (e) {}
+
+  for (var i = 0; i < select.options.length; i++) {
+    var opt = select.options[i];
+    var fullLabel = opt.getAttribute('data-label-full') || opt.text;
+    var shortLabel = opt.getAttribute('data-label-short') || fullLabel;
+    var nextLabel = useShort ? shortLabel : fullLabel;
+    if (opt.text !== nextLabel) opt.text = nextLabel;
+  }
+}
+
 (function () {
+  // Keep language selector compact on narrow screens.
+  afhApplyResponsiveLangLabels();
+  try {
+    var shortBreakpoint = 900;
+    var selectEl = document.querySelector('.lang-select');
+    if (selectEl) {
+      var parsed = parseInt(selectEl.getAttribute('data-short-breakpoint') || '900', 10);
+      if (parsed && parsed >= 320) shortBreakpoint = parsed;
+    }
+    var mql = window.matchMedia('(max-width: ' + shortBreakpoint + 'px)');
+    if (mql.addEventListener) {
+      mql.addEventListener('change', afhApplyResponsiveLangLabels);
+    } else if (mql.addListener) {
+      mql.addListener(afhApplyResponsiveLangLabels);
+    }
+  } catch (e) {}
+
   var metaEl = document.getElementById('afh-page-meta');
   if (!metaEl) return;
 
