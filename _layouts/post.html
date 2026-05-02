@@ -14,6 +14,8 @@ has_author: true
 {%- assign author_avatar = page.author.avatar | default: site.author.avatar -%}
 {%- assign author_bio = page.author.bio | default: site.author.bio -%}
 {%- assign author_location = page.author.location | default: site.author.location -%}
+{%- assign author_page_url = page.author.page_url | default: page.author.page -%}
+{%- assign author_social_links = page.author.social_links -%}
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
@@ -85,7 +87,7 @@ has_author: true
   </div>
   {%- endif -%}
   {%- if author_name and author_name != empty -%}
-  {%- include author-card.html name=author_name avatar=author_avatar bio=author_bio location=author_location %}
+  {%- include author-card.html name=author_name avatar=author_avatar bio=author_bio location=author_location page_url=author_page_url social_links=author_social_links %}
   {%- endif -%}
   {%- if continue_post %}
     {%- assign continue_image = continue_post.image | default: site.default_post_image -%}

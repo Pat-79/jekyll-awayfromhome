@@ -1,24 +1,83 @@
+{%- assign _authors_data = site.data.authors | default: site.authors | default: empty -%}
 {%- assign author_name = include.name | default: site.author.name -%}
-{%- assign author_avatar = include.avatar | default: site.author.avatar -%}
-{%- assign author_bio = include.bio | default: site.author.bio -%}
-{%- assign author_location = include.location | default: site.author.location -%}
+{%- assign found_authors = _authors_data | where: 'name', author_name -%}
+{%- assign found_author = found_authors | first -%}
+{%- assign _author_lang = include.lang | default: page.lang | default: site.lang | default: 'en' -%}
+{%- assign author_avatar = include.avatar | default: found_author.avatar | default: site.author.avatar -%}
+{%- assign author_bio_raw = include.bio | default: found_author.bio | default: site.author.bio -%}
+{%- assign author_location_raw = include.location | default: found_author.location | default: site.author.location -%}
+{%- assign author_bio = author_bio_raw -%}
+{%- assign author_location = author_location_raw -%}
+{%- if author_bio_raw -%}
+  {%- assign _bio_lang_value = author_bio_raw[_author_lang] -%}
+  {%- assign _bio_default_value = author_bio_raw.default -%}
+  {%- if _bio_lang_value and _bio_lang_value != empty -%}
+    {%- assign author_bio = _bio_lang_value -%}
+  {%- elsif _bio_default_value and _bio_default_value != empty -%}
+    {%- assign author_bio = _bio_default_value -%}
+  {%- endif -%}
+{%- endif -%}
+{%- if author_location_raw -%}
+  {%- assign _location_lang_value = author_location_raw[_author_lang] -%}
+  {%- assign _location_default_value = author_location_raw.default -%}
+  {%- if _location_lang_value and _location_lang_value != empty -%}
+    {%- assign author_location = _location_lang_value -%}
+  {%- elsif _location_default_value and _location_default_value != empty -%}
+    {%- assign author_location = _location_default_value -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign author_page_url = include.page_url | default: include.page | default: found_author.page_url | default: found_author.page -%}
+{%- assign author_social_links = include.social_links | default: found_author.social_links | default: empty -%}
 {%- assign entity_index_url = _lang_prefix | append: '/browse/' | relative_url -%}
 {%- assign entity_results_anchor = '#browse-results' -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
+{%- assign author_avatar_alt = author_name | default: 'Author' | append: ' avatar' -%}
+{%- assign author_name_url = entity_index_url | append: '?author=' | append: (author_name | slugify) | append: entity_results_anchor -%}
+{%- if author_page_url and author_page_url != empty -%}
+  {%- assign author_name_url = author_page_url | relative_url -%}
+{%- endif -%}
 
 <section class="author-card container">
   <div class="author-card__inner">
     {%- if author_avatar %}
-      <img class="author-card__avatar" src="{{ author_avatar | relative_url }}" alt="{{ author_name | default: 'Author' }} avatar" width="88" height="88">
+      {%- include responsive-image.html
+        src=author_avatar
+        class='author-card__avatar'
+        alt=author_avatar_alt
+        loading='lazy'
+        decoding='async'
+        sizes='88px'
+        base_width=176
+        fallback=site.author.avatar
+        all_static_paths=_all_static_paths
+      -%}
     {%- endif %}
     <div class="author-card__content">
-      <p class="author-card__eyebrow">{{ t.ui.written_by | default: 'Written By' }}</p>
-      <h2><a class="author-card__name-link" href="{{ entity_index_url }}?author={{ author_name | slugify }}{{ entity_results_anchor }}">{{ author_name }}</a></h2>
+      <p class="author-card__eyebrow">{{ t.written_by | default: t.ui.written_by | default: 'Written By' }}</p>
+      <h2><a class="author-card__name-link" href="{{ author_name_url }}">{{ author_name }}</a></h2>
       {%- if author_bio %}
         <p>{{ author_bio }}</p>
       {%- endif %}
       {%- if author_location %}
         <p class="author-card__meta">{{ author_location }}</p>
       {%- endif %}
+      {%- if author_social_links and author_social_links.size > 0 -%}
+        <div class="author-card__social" aria-label="Author social links">
+          {%- for item in author_social_links -%}
+            {%- assign platform_name = item.platform | default: 'globe' | downcase -%}
+            {%- if platform_name == 'website' -%}
+              {%- assign platform_name = 'globe' -%}
+            {%- endif -%}
+            {%- if item.url and item.url != '' -%}
+              <a class="social-link" href="{{ item.url }}" target="_blank" rel="noopener noreferrer">
+                {%- include icon.html platform=platform_name -%}
+                <span class="sr-only">{{ platform_name }} (opens in a new tab)</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </section>

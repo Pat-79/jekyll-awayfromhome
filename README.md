@@ -208,6 +208,48 @@ plugins:
 
 You can override any map setting per include call, and include-level values always win over `map_widget` defaults.
 
+### Author Profiles in Data Files
+
+Authors are best maintained in a dedicated data file instead of `_config.yml`.
+
+Create `_data/authors.yml`:
+
+```yaml
+- name: Patrick
+  avatar: /assets/images/avatar.svg
+  bio:
+    default: Exploring local cities, scenic drives, and practical family travel routes.
+    en: Exploring local cities, scenic drives, and practical family travel routes.
+    nl: Lokale stedentrips, mooie autoroutes en praktische familievakanties.
+  location:
+    default: The Netherlands
+    en: The Netherlands
+    nl: Nederland
+  page_url: /author-patrick/   # Optional: user-created page, not provided by theme
+  social_links:                # Optional
+    - platform: github
+      url: https://github.com/yourusername
+    - platform: instagram
+      url: https://instagram.com/yourhandle
+    - platform: website
+      url: https://example.com
+```
+
+Then use matching names in front matter:
+
+```yaml
+author: Patrick
+```
+
+Notes:
+
+- `page_url` (or `page`) is optional. When set, the author name in the author card links to that page.
+- Author pages are intentionally user content. The theme does not generate or ship author pages.
+- `social_links` is optional and supports the same platform icon names as the global social links include.
+- `bio` and `location` can be either a plain string or a language map using `default`, `en`, `nl`, etc.
+- Language fallback behavior for `bio` and `location`: current page language value first, then `default`, then legacy plain-string value.
+- Backward compatibility is kept: if `_data/authors.yml` is missing, the theme still falls back to existing `site.author`/`site.authors` values.
+
 ```liquid
 {% include map-widget.html
   center="46.0569,14.5058"
