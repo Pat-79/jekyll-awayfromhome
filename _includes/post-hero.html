@@ -37,30 +37,29 @@
       </p>
     {%- endif -%}
     <h1>{{ hero_title }}</h1>
-    {%- if hero_show_meta and (hero_author_name or hero_date) -%}
+    {%- assign _hero_has_categories = false -%}
+    {%- if hero_categories and hero_categories.size > 0 -%}{%- assign _hero_has_categories = true -%}{%- endif -%}
+    {%- if hero_show_meta and (hero_author_name or hero_date or _hero_has_categories) -%}
       <p class="post-hero__meta">
         {%- if hero_author_name -%}
           <span class="post-hero__separator" aria-hidden="true">{{ t.ui.by | default: 'by' }}&nbsp;</span>
           <a class="post-hero__byline post-hero__meta-link" href="{{ entity_index_url }}?author={{ hero_author_name | slugify }}{{ entity_results_anchor }}">{{ hero_author_name }}</a>
         {%- endif -%}
-        {%- if hero_author_name and hero_date -%}
-          <span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>
-        {%- endif -%}
         {%- if hero_date -%}
-          <time datetime="{{ hero_date | date_to_xmlschema }}">{%- include format-date.html date=hero_date -%}</time>
+          {%- if hero_author_name -%}<span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>{%- endif -%}
+          <span class="post-hero__separator">{{ t.ui.on | default: 'on' }}&nbsp;</span><time datetime="{{ hero_date | date_to_xmlschema }}">{%- include format-date.html date=hero_date -%}</time>
         {%- endif -%}
-      </p>
-    {%- endif -%}
-    {%- if hero_categories and hero_categories.size > 0 -%}
-      <p class="post-hero__categories">
-        <span class="post-hero__separator">{{ t.ui.in | default: 'in' }}&nbsp;</span>
-        {%- for category in hero_categories -%}
-          {%- assign category_name = category | strip -%}
-          {%- if category_name != '' -%}
-            {%- assign category_slug = category_name | slugify -%}
-            <a class="post-hero__category-link" href="{{ entity_index_url }}?category={{ category_slug }}{{ entity_results_anchor }}">{{ category_name }}</a>{% unless forloop.last %}, {% endunless %}
-          {%- endif -%}
-        {%- endfor -%}
+        {%- if _hero_has_categories -%}
+          <span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>
+          <span class="post-hero__separator">{{ t.ui.in | default: 'in' }}&nbsp;</span>
+          {%- for category in hero_categories -%}
+            {%- assign category_name = category | strip -%}
+            {%- if category_name != '' -%}
+              {%- assign category_slug = category_name | slugify -%}
+              <a class="post-hero__category-link" href="{{ entity_index_url }}?category={{ category_slug }}{{ entity_results_anchor }}">{{ category_name }}</a>{% unless forloop.last %},&nbsp;{% endunless %}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
       </p>
     {%- endif -%}
   </div>

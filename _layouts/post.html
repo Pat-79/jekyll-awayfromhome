@@ -67,6 +67,21 @@ has_author: true
       </div>
     </div>
   </div>
+  {%- if page.tags and page.tags.size > 0 -%}
+  {%- assign _entity_index_url = _lang_prefix | append: '/browse/' | relative_url -%}
+  <div class="post-tags container">
+    <p class="post-tags__label">{{ t.tags.eyebrow_plural | default: t.ui.tags | default: 'TAGS' }}</p>
+    <div class="post-tags__list">
+      {%- for tag in page.tags -%}
+        {%- assign _tag_name = tag | strip -%}
+        {%- if _tag_name != '' -%}
+          {%- assign _tag_slug = _tag_name | slugify -%}
+          <a class="post-tags__chip" href="{{ _entity_index_url }}?tag={{ _tag_slug }}#browse-results">{{ _tag_name }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- endif -%}
   {%- if author_name and author_name != empty -%}
   {%- include author-card.html name=author_name avatar=author_avatar bio=author_bio location=author_location %}
   {%- endif -%}
