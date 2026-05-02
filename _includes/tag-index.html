@@ -3,14 +3,60 @@
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
 {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
-{%- assign sorted_tags = site.tags | sort -%}
+{%- if _page_lang == _default_lang or _page_lang == '' -%}
+  {%- assign _tags_prefix = '' -%}
+{%- else -%}
+  {%- assign _tags_prefix = '/' | append: _page_lang -%}
+{%- endif -%}
+{%- assign _tags_base = _tags_prefix | append: '/tags/' -%}
+{%- assign scoped_posts = '' | split: '' -%}
+{%- assign _seen_refs = '' | split: '' -%}
+{%- for _p in site.posts -%}
+  {%- assign _p_lang = _p.lang | default: _default_lang -%}
+  {%- if _p_lang == _page_lang -%}
+    {%- assign scoped_posts = scoped_posts | push: _p -%}
+    {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if _fallback and _page_lang != _default_lang -%}
+  {%- for _p in site.posts -%}
+    {%- assign _p_lang = _p.lang | default: _default_lang -%}
+    {%- if _p_lang == _default_lang -%}
+      {%- if _p.ref and _p.ref != '' -%}
+        {%- unless _seen_refs contains _p.ref -%}{%- assign scoped_posts = scoped_posts | push: _p -%}{%- endunless -%}
+      {%- else -%}
+        {%- assign scoped_posts = scoped_posts | push: _p -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- assign scoped_posts = scoped_posts | sort: 'date' | reverse -%}
+{%- endif -%}
+{%- assign _scoped_urls = '' | split: '' -%}
+{%- for _sp in scoped_posts -%}
+  {%- assign _scoped_urls = _scoped_urls | push: _sp.url -%}
+{%- endfor -%}
+{%- assign sorted_tags = '' | split: '' -%}
+{%- assign _sorted_site_tags = site.tags | sort -%}
+{%- for _tag in _sorted_site_tags -%}
+  {%- assign _scoped_count = 0 -%}
+  {%- for _tagged_post in _tag[1] -%}
+    {%- if _scoped_urls contains _tagged_post.url -%}
+      {%- assign _scoped_count = _scoped_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if _scoped_count > 0 -%}
+    {%- assign _tag_row = _tag[0] | append: '|||' | append: _scoped_count -%}
+    {%- assign sorted_tags = sorted_tags | push: _tag_row -%}
+  {%- endif -%}
+{%- endfor -%}
 {%- assign min_posts = 999999999 -%}
 {%- assign max_posts = 0 -%}
 {%- assign min_size = 14 -%}
 {%- assign max_size = 28 -%}
 
 {%- for tag in sorted_tags -%}
-  {%- assign post_count = tag[1] | size -%}
+  {%- assign _tag_parts = tag | split: '|||' -%}
+  {%- assign post_count = _tag_parts[1] | plus: 0 -%}
   {%- if post_count < min_posts -%}
     {%- assign min_posts = post_count -%}
   {%- endif -%}
@@ -32,17 +78,18 @@
     {% endunless %}
     <p data-i18n="tags.intro">{{ page.tag_posts_intro | default: t.tags.intro | default: 'Filter posts by tag, or leave the page unfiltered to browse every tagged section.' }}</p>
     <div class="tag-cloud tag-cloud--scaled tag-cloud--page tag-cloud--filters">
-      <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ '/tags/' | relative_url }}" data-tag-filter-link data-tag-value="all">
+      <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ _tags_base | relative_url }}" data-tag-filter-link data-tag-value="all">
         <span class="tag-chip__label" data-i18n="tags.all">{{ t.tags.all | default: 'All' }}</span>
       </a>
       <div class="tag-cloud tag-cloud--scaled tag-cloud--filters-list">
         {%- for tag in sorted_tags -%}
-          {%- assign tag_name = tag[0] -%}
+          {%- assign _tag_parts = tag | split: '|||' -%}
+          {%- assign tag_name = _tag_parts[0] -%}
           {%- assign tag_slug = tag_name | slugify -%}
-          {%- assign post_count = tag[1] | size -%}
+          {%- assign post_count = _tag_parts[1] | plus: 0 -%}
           {%- assign font_size = post_count | minus: min_posts | times: size_range | divided_by: steps | plus: min_size -%}
           {%- assign size_bucket = font_size | minus: min_size | times: 5 | divided_by: size_range | plus: 1 -%}
-          <a class="tag-chip tag-chip--cloud tag-filter-chip tag-chip--size-{{ size_bucket }}" href="{{ '/tags/' | relative_url }}?tag={{ tag_slug }}" data-tag-filter-link data-tag-value="{{ tag_slug }}">
+          <a class="tag-chip tag-chip--cloud tag-filter-chip tag-chip--size-{{ size_bucket }}" href="{{ _tags_base | relative_url }}?tag={{ tag_slug }}" data-tag-filter-link data-tag-value="{{ tag_slug }}">
             <span class="tag-chip__label">{{ tag_name }}</span>
             <span class="tag-chip__count">{{ post_count }}</span>
           </a>
@@ -59,31 +106,15 @@
 <section class="page-section">
   <div class="container tag-index" data-tag-posts-page>
     {%- for tag in sorted_tags -%}
-      {%- assign tag_name = tag[0] -%}
+      {%- assign _tag_parts = tag | split: '|||' -%}
+      {%- assign tag_name = _tag_parts[0] -%}
       {%- assign tag_slug = tag_name | slugify -%}
-      {%- assign _all_tagged = tag[1] | sort: 'date' | reverse -%}
       {%- assign tagged_posts = '' | split: '' -%}
-      {%- assign _tag_seen_refs = '' | split: '' -%}
-      {%- for _p in _all_tagged -%}
-        {%- assign _p_lang = _p.lang | default: _default_lang -%}
-        {%- if _p_lang == _page_lang -%}
+      {%- for _p in scoped_posts -%}
+        {%- if _p.tags and _p.tags contains tag_name -%}
           {%- assign tagged_posts = tagged_posts | push: _p -%}
-          {%- if _p.ref and _p.ref != '' -%}{%- assign _tag_seen_refs = _tag_seen_refs | push: _p.ref -%}{%- endif -%}
         {%- endif -%}
       {%- endfor -%}
-      {%- if _fallback and _page_lang != _default_lang -%}
-        {%- for _p in _all_tagged -%}
-          {%- assign _p_lang = _p.lang | default: _default_lang -%}
-          {%- if _p_lang == _default_lang -%}
-            {%- if _p.ref and _p.ref != '' -%}
-              {%- unless _tag_seen_refs contains _p.ref -%}{%- assign tagged_posts = tagged_posts | push: _p -%}{%- endunless -%}
-            {%- else -%}
-              {%- assign tagged_posts = tagged_posts | push: _p -%}
-            {%- endif -%}
-          {%- endif -%}
-        {%- endfor -%}
-        {%- assign tagged_posts = tagged_posts | sort: 'date' | reverse -%}
-      {%- endif -%}
       {%- if tagged_posts.size == 0 -%}{%- continue -%}{%- endif -%}
       <div class="story-list tag-section" id="tag-{{ tag_slug }}" data-tag-section data-tag-value="{{ tag_slug }}" data-tag-label="{{ tag_name }}">
         <div class="home-section-head">
