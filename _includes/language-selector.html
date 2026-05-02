@@ -32,10 +32,10 @@
     {%- endif -%}
 
     {%- assign _lang_short = _lang.short | default: _lang.code | upcase -%}
-    {%- assign _lang_prefix = '' -%}
-    {%- if _lang.flag and _lang.flag != '' -%}{%- assign _lang_prefix = _lang.flag | append: ' ' -%}{%- endif -%}
-    {%- assign _label_full = _lang_prefix | append: _lang.native -%}
-    {%- assign _label_short = _lang_prefix | append: _lang_short -%}
+    {%- assign _lang_label_prefix = '' -%}
+    {%- if _lang.flag and _lang.flag != '' -%}{%- assign _lang_label_prefix = _lang.flag | append: ' ' -%}{%- endif -%}
+    {%- assign _label_full = _lang_label_prefix | append: _lang.native -%}
+    {%- assign _label_short = _lang_label_prefix | append: _lang_short -%}
 
     <option value="{{ _href }}" data-lang="{{ _lang.code }}" data-label-full="{{ _label_full | escape }}" data-label-short="{{ _label_short | escape }}"{% if _is_active %} selected{% endif %}>{{ _label_full }}</option>
   {%- endfor -%}
