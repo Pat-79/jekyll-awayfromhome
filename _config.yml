@@ -73,21 +73,21 @@ defaults:
   - scope: { path: "" }
     values:
       lang: en
-  - scope: { path: "i18n/ar" }
+  - scope: { path: "theme/ar" }
     values:
       lang: ar
   - scope: { path: "_posts/ar", type: "posts" }
     values:
       lang: ar
       permalink: "/ar/blog/:slug/"
-  - scope: { path: "i18n/nl" }
+  - scope: { path: "theme/nl" }
     values:
       lang: nl
   - scope: { path: "_posts/nl", type: "posts" }
     values:
       lang: nl
       permalink: "/nl/blog/:slug/"
-  - scope: { path: "i18n/de" }
+  - scope: { path: "theme/de" }
     values:
       lang: de
   - scope: { path: "_posts/de", type: "posts" }

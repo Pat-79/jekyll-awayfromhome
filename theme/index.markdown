@@ -2,6 +2,7 @@
 title: home
 ref: page-home
 layout: home
+permalink: /
 home_per_page: 3
 ---
 
