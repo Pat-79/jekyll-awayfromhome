@@ -10,7 +10,7 @@ pkg/
 .ruby-gemset
 .env
 .DS_Store
-
+.vscode
 _posts/*
 !_posts/2026-04-18-welcome-to-jekyll.markdown
 /assets/images/posts/
