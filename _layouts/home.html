@@ -10,6 +10,8 @@ layout: base
 {%- assign landing_image_raw = page.landing_image | default: page.image | default: site.home_landing.image | default: site.default_post_image -%}
 {%- assign latest_posts_limit = page.latest_posts_limit | default: site.home_landing.latest_posts_limit -%}
 {%- assign home_per_page = page.home_per_page | default: site.home_landing.per_page | default: 10 -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 
 {%- if landing_video_id == nil or landing_video_id == '' -%}
   {%- if landing_video_url and landing_video_url != '' -%}
@@ -66,7 +68,18 @@ layout: base
         referrerpolicy="strict-origin-when-cross-origin"
       ></iframe>
     {%- else -%}
-      <img class="landing-hero__image" src="{{ landing_image_url }}" alt="" loading="eager" decoding="async">
+      {%- include responsive-image.html
+        src=landing_image_raw
+        class='landing-hero__image'
+        alt=''
+        loading='eager'
+        decoding='async'
+        fetchpriority='high'
+        sizes='100vw'
+        base_width=2400
+        fallback=site.default_post_image
+        all_static_paths=_all_static_paths
+      -%}
     {%- endif -%}
   </div>
 
@@ -151,7 +164,17 @@ layout: base
       {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
       <a class="story-card" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}" data-blog-item>
         <div class="story-card__media">
-          <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+          {%- include responsive-image.html
+            src=post_image
+            class='story-card__media-image'
+            alt=''
+            loading='lazy'
+            decoding='async'
+            sizes='(max-width: 900px) 100vw, 420px'
+            base_width=1600
+            fallback=site.default_post_image
+            all_static_paths=_all_static_paths
+          -%}
         </div>
         <div class="story-card__body">
           <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>

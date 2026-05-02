@@ -16,6 +16,8 @@ has_author: true
 {%- assign author_location = page.author.location | default: site.author.location -%}
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- assign continue_post = nil -%}
 {%- assign _fallback_post = nil -%}
 {%- assign _passed_current = false -%}
@@ -102,7 +104,17 @@ has_author: true
       <a class="post-banner__link" href="{{ continue_post.url | relative_url }}">
         <div class="post-banner__media">
           {%- if continue_image -%}
-            <img class="post-banner__media-image" src="{{ continue_image | relative_url }}" alt="" loading="lazy" decoding="async">
+            {%- include responsive-image.html
+              src=continue_image
+              class='post-banner__media-image'
+              alt=''
+              loading='lazy'
+              decoding='async'
+              sizes='100vw'
+              base_width=2000
+              fallback=site.default_post_image
+              all_static_paths=_all_static_paths
+            -%}
           {%- endif -%}
         </div>
         <div class="post-banner__content container">

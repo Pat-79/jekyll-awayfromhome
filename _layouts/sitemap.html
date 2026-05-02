@@ -3,6 +3,8 @@ layout: page
 ---
 
 {%- assign sitemap_intro = page.sitemap_intro | default: 'Browse every page, post, and yearly archive using the same card layout as the homepage.' -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 
 <section class="page-section">
   <div class="container sitemap-index">
@@ -34,7 +36,17 @@ layout: page
         {%- assign node_image = node.image | default: site.default_post_image -%}
         <a class="story-card story-card--blog" href="{{ node.url | relative_url }}">
           <div class="story-card__media">
-            <img class="story-card__media-image" src="{{ node_image | relative_url }}" alt="" loading="lazy" decoding="async">
+            {%- include responsive-image.html
+              src=node_image
+              class='story-card__media-image'
+              alt=''
+              loading='lazy'
+              decoding='async'
+              sizes='(max-width: 900px) 100vw, 420px'
+              base_width=1600
+              fallback=site.default_post_image
+              all_static_paths=_all_static_paths
+            -%}
           </div>
           <div class="story-card__body">
             <p class="story-card__meta">Page</p>
@@ -59,7 +71,17 @@ layout: page
         {%- assign post_image = post.image | default: site.default_post_image -%}
         <a class="story-card" href="{{ post.url | relative_url }}">
           <div class="story-card__media">
-            <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+            {%- include responsive-image.html
+              src=post_image
+              class='story-card__media-image'
+              alt=''
+              loading='lazy'
+              decoding='async'
+              sizes='(max-width: 900px) 100vw, 420px'
+              base_width=1600
+              fallback=site.default_post_image
+              all_static_paths=_all_static_paths
+            -%}
           </div>
           <div class="story-card__body">
             <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
@@ -99,7 +121,17 @@ layout: page
       {%- endfor -%}
       <a class="story-card story-card--blog" href="{{ year_url | relative_url }}">
         <div class="story-card__media">
-          <img class="story-card__media-image" src="{{ site.default_post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+          {%- include responsive-image.html
+            src=site.default_post_image
+            class='story-card__media-image'
+            alt=''
+            loading='lazy'
+            decoding='async'
+            sizes='(max-width: 900px) 100vw, 420px'
+            base_width=1600
+            fallback=site.default_post_image
+            all_static_paths=_all_static_paths
+          -%}
         </div>
         <div class="story-card__body">
           <p class="story-card__meta">Year Archive</p>

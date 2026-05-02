@@ -7,6 +7,8 @@ layout: page
 {%- assign blog_intro = page.blog_intro | default: site.blog_page.intro | default: '' -%}
 {%- assign excerpt_words = page.blog_excerpt_words | default: site.blog_page.excerpt_words | default: 30 -%}
 {%- assign posts_limit = page.blog_posts_limit | default: site.blog_page.posts_limit -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 
 <section class="page-section">
   <div class="container">
@@ -60,7 +62,17 @@ layout: page
       {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
       <a class="story-card story-card--blog" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}" data-blog-item>
         <div class="story-card__media">
-          <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+          {%- include responsive-image.html
+            src=post_image
+            class='story-card__media-image'
+            alt=''
+            loading='lazy'
+            decoding='async'
+            sizes='(max-width: 900px) 100vw, 420px'
+            base_width=1600
+            fallback=site.default_post_image
+            all_static_paths=_all_static_paths
+          -%}
         </div>
         <div class="story-card__body">
           <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}</p>

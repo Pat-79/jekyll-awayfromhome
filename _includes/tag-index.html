@@ -3,6 +3,8 @@
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
 {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- if _page_lang == _default_lang or _page_lang == '' -%}
   {%- assign _tags_prefix = '' -%}
 {%- else -%}
@@ -133,7 +135,17 @@
           {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
           <a class="story-card" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}">
             <div class="story-card__media">
-              <img class="story-card__media-image" src="{{ post_image | relative_url }}" alt="" loading="lazy" decoding="async">
+              {%- include responsive-image.html
+                src=post_image
+                class='story-card__media-image'
+                alt=''
+                loading='lazy'
+                decoding='async'
+                sizes='(max-width: 900px) 100vw, 420px'
+                base_width=1600
+                fallback=site.default_post_image
+                all_static_paths=_all_static_paths
+              -%}
             </div>
             <div class="story-card__body">
               <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>

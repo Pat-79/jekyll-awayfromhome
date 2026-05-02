@@ -20,8 +20,21 @@
 
 <header class="post-hero{% unless hero_image %} post-hero--plain{% endunless %}">
   {%- if hero_image -%}
+    {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+    {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
     <div class="post-hero__media">
-      <img class="post-hero__media-image" src="{{ hero_image | relative_url }}" alt="" loading="eager" decoding="async">
+      {%- include responsive-image.html
+        src=hero_image
+        class='post-hero__media-image'
+        alt=''
+        loading='eager'
+        decoding='async'
+        fetchpriority='high'
+        sizes='100vw'
+        base_width=2400
+        fallback=site.default_post_image
+        all_static_paths=_all_static_paths
+      -%}
     </div>
   {%- endif -%}
   <div class="post-hero__content container">

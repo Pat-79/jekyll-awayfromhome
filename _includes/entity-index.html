@@ -3,6 +3,8 @@
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
 {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- assign _all_docs_raw = site.posts | concat: site.pages -%}
 {%- assign _lang_docs = '' | split: '' -%}
 {%- assign _seen_refs_docs = '' | split: '' -%}
@@ -244,7 +246,17 @@
               {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
               <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
-                  <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
+                  {%- include responsive-image.html
+                    src=item_image
+                    class='story-card__media-image'
+                    alt=''
+                    loading='lazy'
+                    decoding='async'
+                    sizes='(max-width: 900px) 100vw, 420px'
+                    base_width=1600
+                    fallback=site.default_post_image
+                    all_static_paths=_all_static_paths
+                  -%}
                 </div>
                 <div class="story-card__body">
                   <p class="story-card__meta">
@@ -361,7 +373,17 @@
               {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
               <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
-                  <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
+                  {%- include responsive-image.html
+                    src=item_image
+                    class='story-card__media-image'
+                    alt=''
+                    loading='lazy'
+                    decoding='async'
+                    sizes='(max-width: 900px) 100vw, 420px'
+                    base_width=1600
+                    fallback=site.default_post_image
+                    all_static_paths=_all_static_paths
+                  -%}
                 </div>
                 <div class="story-card__body">
                   <p class="story-card__meta">
@@ -478,7 +500,17 @@
               {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
               <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
-                  <img class="story-card__media-image" src="{{ item_image | relative_url }}" alt="" loading="lazy" decoding="async">
+                  {%- include responsive-image.html
+                    src=item_image
+                    class='story-card__media-image'
+                    alt=''
+                    loading='lazy'
+                    decoding='async'
+                    sizes='(max-width: 900px) 100vw, 420px'
+                    base_width=1600
+                    fallback=site.default_post_image
+                    all_static_paths=_all_static_paths
+                  -%}
                 </div>
                 <div class="story-card__body">
                   <p class="story-card__meta">
