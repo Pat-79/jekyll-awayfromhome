@@ -16,3 +16,4 @@ _posts/*
 /assets/images/posts/
 .restorepoints/*
 MEMORY.md
+assets/images/.image-variant-state.tsv

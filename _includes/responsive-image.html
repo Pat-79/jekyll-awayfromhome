@@ -30,9 +30,7 @@
     {%- assign variant_root_dir = image_dir -%}
     {%- assign variant_stem = image_stem -%}
 
-    {%- if variant_root_dir | slice: -6, 6 == 'thumb/' -%}
-      {%- assign variant_root_dir = variant_root_dir | split: 'thumb/' | first -%}
-    {%- elsif variant_root_dir | slice: -7, 7 == 'thumbs/' -%}
+    {%- if variant_root_dir | slice: -7, 7 == 'thumbs/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'thumbs/' | first -%}
     {%- elsif variant_root_dir | slice: -6, 6 == 'small/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'small/' | first -%}
@@ -87,7 +85,6 @@
 
     {%- if variant_stem != '' and variant_stem != file_name -%}
       {%- for _ext in ext_candidates -%}
-        {%- assign _thumb_sub = variant_root_dir | append: 'thumb/' | append: variant_stem | append: '.' | append: _ext -%}
         {%- assign _thumbs_sub = variant_root_dir | append: 'thumbs/' | append: variant_stem | append: '.' | append: _ext -%}
         {%- assign _thumb_suffix = variant_root_dir | append: variant_stem | append: '.thumb.' | append: _ext -%}
         {%- assign _small_sub = variant_root_dir | append: 'small/' | append: variant_stem | append: '.' | append: _ext -%}
@@ -100,12 +97,8 @@
         {%- assign _full_suffix = variant_root_dir | append: variant_stem | append: '.full.' | append: _ext -%}
 
         {%- if thumb_url == '' -%}
-          {%- assign _marker = '||' | append: _thumb_sub | append: '||' -%}
-          {%- if static_marker contains _marker -%}{%- assign thumb_url = _thumb_sub | relative_url -%}{%- endif -%}
-          {%- if thumb_url == '' -%}
-            {%- assign _marker = '||' | append: _thumbs_sub | append: '||' -%}
-            {%- if static_marker contains _marker -%}{%- assign thumb_url = _thumbs_sub | relative_url -%}{%- endif -%}
-          {%- endif -%}
+          {%- assign _marker = '||' | append: _thumbs_sub | append: '||' -%}
+          {%- if static_marker contains _marker -%}{%- assign thumb_url = _thumbs_sub | relative_url -%}{%- endif -%}
           {%- if thumb_url == '' -%}
             {%- assign _marker = '||' | append: _thumb_suffix | append: '||' -%}
             {%- if static_marker contains _marker -%}{%- assign thumb_url = _thumb_suffix | relative_url -%}{%- endif -%}

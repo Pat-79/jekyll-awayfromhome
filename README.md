@@ -287,6 +287,57 @@ The theme also includes a lightweight `video-widget.html` include for HLS, YouTu
 
 Supported widget options are `provider`, `src`, `url`, `youtube_id`, `vimeo_id`, `title`, `description`, `player_title`, `poster`, `width`, `height`, `max_width`, `max_height`, `aspect_ratio`, `bare`, `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `preload`, `lazy`, `privacy_mode`, and `referrer_policy`. Include-level values override `video_widget` defaults.
 
+### Image Variant Generator (ImageMagick)
+
+The repository includes a helper script at `scripts/generate-image-variants.sh` to generate responsive image variants for theme images.
+
+The script:
+
+- moves each source file into an `original/` subdirectory before generating derivatives
+- creates a default web-optimized image at the original resolution using `--target-format` (default: `webp`)
+- creates `thumb`, `small`, `medium`, `large`, and `full` variants
+- can output either subdirectory variants (`thumbs/`, `small/`, `medium/`, `large/`, `full/`) or suffix variants (`.thumb`, `.small`, `.medium`, `.large`, `.full`)
+- supports converting to another format (for example `webp`)
+- only generates a variant when no equivalent alternative already exists (so it avoids unnecessary conversions/resizes)
+
+Prerequisite:
+
+- install ImageMagick (`magick` preferred, `convert` supported)
+
+Basic usage:
+
+```bash
+# Preview what would be generated (recommended first)
+./scripts/generate-image-variants.sh --dry-run --verbose
+
+# Generate variants under assets/images using default settings
+./scripts/generate-image-variants.sh
+```
+
+Common options:
+
+```bash
+# Use filename suffix naming
+./scripts/generate-image-variants.sh --scheme suffix
+
+# Force output format and quality
+./scripts/generate-image-variants.sh --target-format webp --quality 82
+
+# Limit generation to a specific folder
+./scripts/generate-image-variants.sh --root assets/images/posts/2026-03-02_canyon-skies-of-orrin-basin
+
+# By default animated GIFs are skipped. Opt in explicitly if needed:
+./scripts/generate-image-variants.sh --allow-animated-gif
+
+# Also update image paths in posts/pages content files (safe scope: not _layouts/_includes)
+./scripts/generate-image-variants.sh --update-content-refs
+
+# Optional: override where processing state is stored
+./scripts/generate-image-variants.sh --state-file assets/images/.image-variant-state.tsv
+```
+
+Run `./scripts/generate-image-variants.sh --help` for full options.
+
 ### Supported Social Media Platforms
 
 The theme includes icons for the following platforms. Add any or all to your `social_links` array in `_config.yml`:
