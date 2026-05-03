@@ -60,7 +60,7 @@
         {%- endif -%}
         {%- if hero_date -%}
           {%- if hero_author_name -%}<span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>{%- endif -%}
-          <span class="post-hero__separator">{{ t.ui.on | default: 'on' }}&nbsp;</span><time datetime="{{ hero_date | date_to_xmlschema }}">{%- include format-date.html date=hero_date -%}</time>
+          <span class="post-hero__separator">{{ t.ui.on | default: 'on' }}&nbsp;</span><time datetime="{{ hero_date | date_to_xmlschema }}">{%- include format-date.html date=hero_date t=t -%}</time>
         {%- endif -%}
         {%- if _hero_has_categories -%}
           <span class="post-hero__separator" aria-hidden="true">&nbsp;|&nbsp;</span>

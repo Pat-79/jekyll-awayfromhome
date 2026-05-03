@@ -1,8 +1,24 @@
 {%- assign _fmt_t = include.t | default: t -%}
 {%- assign _fmt_month_num = include.date | date: '%-m' -%}
-{%- assign _fmt_month_name = _fmt_t.archive.months[_fmt_month_num] | default: (include.date | date: '%B') -%}
 {%- assign _fmt_day = include.date | date: '%-d' -%}
 {%- assign _fmt_year = include.date | date: '%Y' -%}
+{%- assign _fmt_month_name = include.date | date: '%B' -%}
+
+{%- case _fmt_month_num -%}
+  {%- when '1' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['1'] | default: _fmt_month_name -%}
+  {%- when '2' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['2'] | default: _fmt_month_name -%}
+  {%- when '3' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['3'] | default: _fmt_month_name -%}
+  {%- when '4' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['4'] | default: _fmt_month_name -%}
+  {%- when '5' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['5'] | default: _fmt_month_name -%}
+  {%- when '6' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['6'] | default: _fmt_month_name -%}
+  {%- when '7' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['7'] | default: _fmt_month_name -%}
+  {%- when '8' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['8'] | default: _fmt_month_name -%}
+  {%- when '9' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['9'] | default: _fmt_month_name -%}
+  {%- when '10' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['10'] | default: _fmt_month_name -%}
+  {%- when '11' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['11'] | default: _fmt_month_name -%}
+  {%- when '12' -%}{%- assign _fmt_month_name = _fmt_t.archive.months['12'] | default: _fmt_month_name -%}
+{%- endcase -%}
+
 {%- assign _fmt_result = _fmt_t.ui.date_format | default: '%B %-d, %Y' -%}
 {%- assign _fmt_result = _fmt_result | replace: '%B', _fmt_month_name -%}
 {%- assign _fmt_result = _fmt_result | replace: '%-d', _fmt_day -%}
