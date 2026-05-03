@@ -123,6 +123,12 @@ navigation:
     key: search
     url: /search/
     #url_ar: /ar/search/
+  - title: Cookies
+    key: cookies
+    url: /cookies/
+    url_nl: /nl/cookies/
+    url_de: /de/cookies/
+    url_ar: /ar/cookies/
 brand:
   title: Away From Home
   logo: /assets/images/logo-mark.svg
