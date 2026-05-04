@@ -24,12 +24,12 @@
   {%- if _gw_async -%}{%- assign _gw_decoding = 'async' -%}{%- else -%}{%- assign _gw_decoding = 'auto' -%}{%- endif -%}
 {%- endif -%}
 
-{%- assign _gw_show_cap_raw = include.show_caption | default: include.show_image_caption | default: site.gallery_widget.show_image_caption | default: 'true' | downcase | strip -%}
+{%- assign _gw_show_cap_raw = include.show_caption | default: include.show_image_caption | default: site.gallery_widget.show_image_caption | default: 'false' | downcase | strip -%}
 {%- assign _gw_show_cap = true -%}
 {%- if _gw_show_cap_raw == 'false' or _gw_show_cap_raw == '0' or _gw_show_cap_raw == 'no' or _gw_show_cap_raw == 'off' -%}
   {%- assign _gw_show_cap = false -%}
 {%- endif -%}
-{%- assign _gw_show_desc_raw = include.show_description | default: include.show_image_description | default: site.gallery_widget.show_image_description | default: 'true' | downcase | strip -%}
+{%- assign _gw_show_desc_raw = include.show_description | default: include.show_image_description | default: site.gallery_widget.show_image_description | default: 'false' | downcase | strip -%}
 {%- assign _gw_show_desc = true -%}
 {%- if _gw_show_desc_raw == 'false' or _gw_show_desc_raw == '0' or _gw_show_desc_raw == 'no' or _gw_show_desc_raw == 'off' -%}
   {%- assign _gw_show_desc = false -%}
