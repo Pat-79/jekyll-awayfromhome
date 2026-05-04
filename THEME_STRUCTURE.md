@@ -24,7 +24,7 @@ jekyll-awayfromhome/
 │   ├── font.html                   # Font loading
 │   ├── footer.html                 # Footer and footer language-aware links
 │   ├── format-date.html            # Language-aware date formatting helper
-│   ├── gallery-widget.html         # Gallery widget markup
+│   ├── gallery-widget.html       # Gallery widget markup
 │   ├── head.html                   # Head assembly
 │   ├── header.html                 # Header and home link
 │   ├── icon.html                   # SVG sprite helper

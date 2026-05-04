@@ -1,331 +1,383 @@
-{%- assign gallery_dir = include.dir | default: include.directory | default: '' | strip -%}
-{%- assign gallery_single_src = include.file | default: include.src | default: '' | strip -%}
-{%- comment %} Auto-detect single file: if dir value ends with an image extension treat it as a file path {%- endcomment -%}
-{%- assign _gsf_img_exts = ',.jpg,.jpeg,.png,.webp,.gif,.avif,' -%}
-{%- if gallery_dir != '' and gallery_single_src == '' -%}
-  {%- assign _gsf_basename = gallery_dir | split: '/' | last | downcase -%}
-  {%- assign _gsf_ext = ',' | append: '.' | append: (_gsf_basename | split: '.' | last) | append: ',' -%}
-  {%- if _gsf_img_exts contains _gsf_ext -%}
-    {%- assign gallery_single_src = gallery_dir -%}
-    {%- assign gallery_dir = '' -%}
-  {%- endif -%}
+{%- comment -%}
+  gallery-widget.html
+  Unified gallery widget (single and multi share one markup path).
+{%- endcomment -%}
+
+{%- assign _gw_src = include.src | default: '' | strip -%}
+{%- assign _gw_title = include.title | default: '' | strip -%}
+{%- assign _gw_description = include.description | default: '' | strip -%}
+{%- assign _gw_alt = include.alt | default: '' | strip -%}
+{%- assign _gw_alt_prefix = include.alt_prefix | default: 'Gallery image' | strip -%}
+{%- assign _gw_empty_text = include.empty_text | default: 'No images found for this gallery.' | strip -%}
+
+{%- assign _gw_async_raw = include.async | default: include.image_async | default: site.gallery_widget.async | default: 'true' | downcase | strip -%}
+{%- assign _gw_async = true -%}
+{%- if _gw_async_raw == 'false' or _gw_async_raw == '0' or _gw_async_raw == 'no' or _gw_async_raw == 'off' -%}
+  {%- assign _gw_async = false -%}
 {%- endif -%}
-{%- if gallery_dir == '' and gallery_single_src == '' -%}
-  <p class="afh-gallery__notice">Gallery widget: missing <code>dir</code> or <code>file</code> parameter.</p>
-{%- elsif gallery_single_src != '' -%}
-  {%- assign _sf_path = gallery_single_src -%}
-  {%- assign _sf_first = _sf_path | slice: 0, 1 -%}
-  {%- if _sf_first != '/' -%}{%- assign _sf_path = '/' | append: _sf_path -%}{%- endif -%}
-  {%- assign _sf_file_name = _sf_path | split: '/' | last -%}
-  {%- assign _sf_dir = _sf_path | remove: _sf_file_name -%}
-  {%- comment %} Strip known variant subdirs to reach the root image dir {%- endcomment -%}
-  {%- assign _sf_root_dir = _sf_dir -%}
-  {%- if _sf_root_dir contains '/thumbs/' -%}{%- assign _sf_root_dir = _sf_root_dir | split: '/thumbs/' | first | append: '/' -%}
-  {%- elsif _sf_root_dir contains '/small/' -%}{%- assign _sf_root_dir = _sf_root_dir | split: '/small/' | first | append: '/' -%}
-  {%- elsif _sf_root_dir contains '/medium/' -%}{%- assign _sf_root_dir = _sf_root_dir | split: '/medium/' | first | append: '/' -%}
-  {%- elsif _sf_root_dir contains '/large/' -%}{%- assign _sf_root_dir = _sf_root_dir | split: '/large/' | first | append: '/' -%}
-  {%- elsif _sf_root_dir contains '/full/' -%}{%- assign _sf_root_dir = _sf_root_dir | split: '/full/' | first | append: '/' -%}
-  {%- endif -%}
-  {%- assign _sf_all_static = site.static_files | map: 'path' | join: '||' -%}
-  {%- assign _sf_all_static = '||' | append: _sf_all_static | append: '||' -%}
-  {%- assign _sf_thumb_path = _sf_root_dir | append: 'thumbs/' | append: _sf_file_name -%}
-  {%- assign _sf_small_path = _sf_root_dir | append: 'small/' | append: _sf_file_name -%}
-  {%- assign _sf_medium_path = _sf_root_dir | append: 'medium/' | append: _sf_file_name -%}
-  {%- assign _sf_large_path = _sf_root_dir | append: 'large/' | append: _sf_file_name -%}
-  {%- assign _sf_full_path = _sf_root_dir | append: 'full/' | append: _sf_file_name -%}
-  {%- assign _sf_thumb_url = '' -%}
-  {%- assign _sf_small_url = '' -%}
-  {%- assign _sf_medium_url = '' -%}
-  {%- assign _sf_large_url = '' -%}
-  {%- assign _sf_full_url = '' -%}
-  {%- assign _sf_base_url = _sf_path | relative_url -%}
-  {%- assign _sf_m = '||' | append: _sf_thumb_path | append: '||' -%}{%- if _sf_all_static contains _sf_m -%}{%- assign _sf_thumb_url = _sf_thumb_path | relative_url -%}{%- endif -%}
-  {%- assign _sf_m = '||' | append: _sf_small_path | append: '||' -%}{%- if _sf_all_static contains _sf_m -%}{%- assign _sf_small_url = _sf_small_path | relative_url -%}{%- endif -%}
-  {%- assign _sf_m = '||' | append: _sf_medium_path | append: '||' -%}{%- if _sf_all_static contains _sf_m -%}{%- assign _sf_medium_url = _sf_medium_path | relative_url -%}{%- endif -%}
-  {%- assign _sf_m = '||' | append: _sf_large_path | append: '||' -%}{%- if _sf_all_static contains _sf_m -%}{%- assign _sf_large_url = _sf_large_path | relative_url -%}{%- endif -%}
-  {%- assign _sf_m = '||' | append: _sf_full_path | append: '||' -%}{%- if _sf_all_static contains _sf_m -%}{%- assign _sf_full_url = _sf_full_path | relative_url -%}{%- endif -%}
-  {%- comment %} Choose the best preview (smallest available) and the best href (largest available) {%- endcomment -%}
-  {%- assign _sf_preview = _sf_thumb_url -%}
-  {%- if _sf_preview == '' and _sf_small_url != '' -%}{%- assign _sf_preview = _sf_small_url -%}{%- endif -%}
-  {%- if _sf_preview == '' and _sf_medium_url != '' -%}{%- assign _sf_preview = _sf_medium_url -%}{%- endif -%}
-  {%- if _sf_preview == '' and _sf_large_url != '' -%}{%- assign _sf_preview = _sf_large_url -%}{%- endif -%}
-  {%- if _sf_preview == '' -%}{%- assign _sf_preview = _sf_base_url -%}{%- endif -%}
-  {%- assign _sf_href = _sf_full_url -%}
-  {%- if _sf_href == '' -%}{%- assign _sf_href = _sf_large_url -%}{%- endif -%}
-  {%- if _sf_href == '' -%}{%- assign _sf_href = _sf_base_url -%}{%- endif -%}
-  {%- comment %} Build srcset {%- endcomment -%}
-  {%- assign _sf_srcset = '' -%}
-  {%- if _sf_thumb_url != '' -%}{%- assign _sf_srcset = _sf_thumb_url | append: ' 480w' -%}{%- endif -%}
-  {%- if _sf_small_url != '' -%}
-    {%- if _sf_srcset != '' -%}{%- assign _sf_srcset = _sf_srcset | append: ', ' -%}{%- endif -%}
-    {%- assign _sf_srcset = _sf_srcset | append: _sf_small_url | append: ' 768w' -%}
-  {%- endif -%}
-  {%- if _sf_medium_url != '' -%}
-    {%- if _sf_srcset != '' -%}{%- assign _sf_srcset = _sf_srcset | append: ', ' -%}{%- endif -%}
-    {%- assign _sf_srcset = _sf_srcset | append: _sf_medium_url | append: ' 1200w' -%}
-  {%- endif -%}
-  {%- if _sf_large_url != '' -%}
-    {%- if _sf_srcset != '' -%}{%- assign _sf_srcset = _sf_srcset | append: ', ' -%}{%- endif -%}
-    {%- assign _sf_srcset = _sf_srcset | append: _sf_large_url | append: ' 1600w' -%}
-  {%- endif -%}
-  {%- if _sf_full_url != '' -%}
-    {%- if _sf_srcset != '' -%}{%- assign _sf_srcset = _sf_srcset | append: ', ' -%}{%- endif -%}
-    {%- assign _sf_srcset = _sf_srcset | append: _sf_full_url | append: ' 2200w' -%}
-  {%- endif -%}
-  {%- comment %} Metadata {%- endcomment -%}
-  {%- assign _sf_display_name = _sf_file_name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' -%}
-  {%- assign _sf_alt = include.alt | default: _sf_display_name -%}
-  {%- assign _sf_title = include.title | default: '' -%}
-  {%- assign _sf_caption = include.caption | default: include.description | default: '' -%}
-  {%- assign _sf_sizes = include.sizes | default: '(max-width: 768px) 100vw, (max-width: 1400px) 80vw, 1200px' -%}
-  {%- comment %} Optional max-width / max-height style {%- endcomment -%}
-  {%- assign _sf_max_width = include.max_width | default: '' -%}
-  {%- if site.gallery_widget and site.gallery_widget.max_width -%}{%- assign _sf_max_width = _sf_max_width | default: site.gallery_widget.max_width -%}{%- endif -%}
-  {%- assign _sf_max_width = _sf_max_width | strip -%}
-  {%- assign _sf_max_height = include.max_height | default: '' -%}
-  {%- if site.gallery_widget and site.gallery_widget.max_height -%}{%- assign _sf_max_height = _sf_max_height | default: site.gallery_widget.max_height -%}{%- endif -%}
-  {%- assign _sf_max_height = _sf_max_height | strip -%}
-  {%- assign _sf_css_units = 'px,%,rem,em,vw,vh,ch,calc(' -%}
-  {%- assign _sf_max_width_has_unit = false -%}
-  {%- for _u in _sf_css_units -%}{%- if _sf_max_width contains _u -%}{%- assign _sf_max_width_has_unit = true -%}{%- endif -%}{%- endfor -%}
-  {%- if _sf_max_width != '' and _sf_max_width_has_unit == false -%}{%- assign _sf_max_width = _sf_max_width | append: 'px' -%}{%- endif -%}
-  {%- assign _sf_max_height_has_unit = false -%}
-  {%- for _u in _sf_css_units -%}{%- if _sf_max_height contains _u -%}{%- assign _sf_max_height_has_unit = true -%}{%- endif -%}{%- endfor -%}
-  {%- if _sf_max_height != '' and _sf_max_height_has_unit == false -%}{%- assign _sf_max_height = _sf_max_height | append: 'px' -%}{%- endif -%}
-  {%- capture _sf_style -%}{%- if _sf_max_width != '' -%}--afh-gallery-max-width: {{ _sf_max_width | escape }};{%- endif -%}{%- if _sf_max_height != '' -%}--afh-gallery-max-height: {{ _sf_max_height | escape }};{%- endif -%}{%- endcapture -%}
-  <section
-    class="afh-gallery afh-gallery--single"
-    data-gallery
-    data-gallery-id="{{ include.id | default: _sf_path | slugify }}"
-    data-gallery-dir="{{ _sf_root_dir }}"
-    data-gallery-has-json="0"
-    data-gallery-show-image-caption="1"
-    data-gallery-show-image-description="1"
-    data-gallery-name="{{ _sf_title | escape }}"
-    data-gallery-description="{{ _sf_caption | escape }}"
-    {% if _sf_style != '' %}style="{{ _sf_style }}"{% endif %}
-  >
-    <div class="afh-gallery__grid" data-gallery-grid>
-      <article class="afh-gallery__item" data-gallery-item data-gallery-file="{{ _sf_file_name | escape }}">
-        <a
-          class="afh-gallery__link afh-gallery__single-link"
-          href="{{ _sf_href }}"
-          data-gallery-open
-          data-gallery-file="{{ _sf_file_name | escape }}"
-          data-gallery-title="{{ _sf_title | escape }}"
-          data-gallery-description="{{ _sf_caption | escape }}"
-          data-gallery-alt="{{ _sf_alt | escape }}"
-          data-gallery-base="{{ _sf_base_url }}"
-          {% if _sf_thumb_url != '' %}data-gallery-thumb="{{ _sf_thumb_url }}"{% endif %}
-          {% if _sf_small_url != '' %}data-gallery-small="{{ _sf_small_url }}"{% endif %}
-          {% if _sf_medium_url != '' %}data-gallery-medium="{{ _sf_medium_url }}"{% endif %}
-          {% if _sf_large_url != '' %}data-gallery-large="{{ _sf_large_url }}"{% endif %}
-          {% if _sf_full_url != '' %}data-gallery-full="{{ _sf_full_url }}"{% endif %}
-        >
-          <img
-            class="afh-gallery__thumb"
-            src="{{ _sf_preview }}"
-            {% if _sf_srcset != '' %}srcset="{{ _sf_srcset }}" sizes="{{ _sf_sizes }}"{% endif %}
-            alt="{{ _sf_alt | escape }}"
-            loading="lazy"
-            decoding="async"
-            data-gallery-thumb-img
-            data-gallery-fallback="{{ _sf_small_url | default: _sf_medium_url | default: _sf_large_url | default: _sf_base_url }}"
-          >
-        </a>
-      </article>
-    </div>
-    {%- if _sf_title != '' or _sf_caption != '' -%}
-      <figcaption class="afh-gallery__single-caption">
-        {%- if _sf_title != '' -%}<p class="afh-gallery__single-title">{{ _sf_title }}</p>{%- endif -%}
-        {%- if _sf_caption != '' -%}<p class="afh-gallery__single-description">{{ _sf_caption }}</p>{%- endif -%}
-      </figcaption>
-    {%- endif -%}
+{%- assign _gw_loading = include.loading | default: '' | downcase | strip -%}
+{%- if _gw_loading != 'lazy' and _gw_loading != 'eager' -%}
+  {%- if _gw_async -%}{%- assign _gw_loading = 'lazy' -%}{%- else -%}{%- assign _gw_loading = 'eager' -%}{%- endif -%}
+{%- endif -%}
+{%- assign _gw_decoding = include.decoding | default: '' | downcase | strip -%}
+{%- if _gw_decoding != 'async' and _gw_decoding != 'sync' and _gw_decoding != 'auto' -%}
+  {%- if _gw_async -%}{%- assign _gw_decoding = 'async' -%}{%- else -%}{%- assign _gw_decoding = 'auto' -%}{%- endif -%}
+{%- endif -%}
 
-    <div class="afh-gallery__lightbox is-hidden" data-gallery-lightbox aria-hidden="true" role="dialog" aria-modal="true">
-      <figure class="afh-gallery__figure">
-        <button class="afh-gallery__close" type="button" data-gallery-close aria-label="Close gallery">&times;</button>
-        <button class="afh-gallery__nav afh-gallery__nav--prev" type="button" data-gallery-prev aria-label="Previous image">
-          <span aria-hidden="true">&#8249;</span>
-          <span class="sr-only">Previous image</span>
-        </button>
-        <picture class="afh-gallery__picture" data-gallery-picture>
-          <img class="afh-gallery__image" data-gallery-image alt="">
-        </picture>
-        <button class="afh-gallery__nav afh-gallery__nav--next" type="button" data-gallery-next aria-label="Next image">
-          <span aria-hidden="true">&#8250;</span>
-          <span class="sr-only">Next image</span>
-        </button>
-        <figcaption class="afh-gallery__caption">
-          <p class="afh-gallery__caption-title" data-gallery-caption-title></p>
-          <p class="afh-gallery__caption-description" data-gallery-caption-description></p>
-          <p class="afh-gallery__caption-meta" data-gallery-counter></p>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
+{%- assign _gw_show_cap_raw = include.show_caption | default: include.show_image_caption | default: site.gallery_widget.show_image_caption | default: 'true' | downcase | strip -%}
+{%- assign _gw_show_cap = true -%}
+{%- if _gw_show_cap_raw == 'false' or _gw_show_cap_raw == '0' or _gw_show_cap_raw == 'no' or _gw_show_cap_raw == 'off' -%}
+  {%- assign _gw_show_cap = false -%}
+{%- endif -%}
+{%- assign _gw_show_desc_raw = include.show_description | default: include.show_image_description | default: site.gallery_widget.show_image_description | default: 'true' | downcase | strip -%}
+{%- assign _gw_show_desc = true -%}
+{%- if _gw_show_desc_raw == 'false' or _gw_show_desc_raw == '0' or _gw_show_desc_raw == 'no' or _gw_show_desc_raw == 'off' -%}
+  {%- assign _gw_show_desc = false -%}
+{%- endif -%}
+
+{%- assign _gw_min_w = include.min_width | default: site.gallery_widget.min_width | default: '' | strip -%}
+{%- assign _gw_min_h = include.min_height | default: site.gallery_widget.min_height | default: '' | strip -%}
+{%- assign _gw_max_w = include.max_width | default: site.gallery_widget.max_width | default: '' | strip -%}
+{%- assign _gw_max_h = include.max_height | default: site.gallery_widget.max_height | default: '' | strip -%}
+{%- assign _gw_align_raw = include.align | default: site.gallery_widget.align | default: '' | downcase | strip -%}
+{%- assign _gw_align = '' -%}
+{%- if _gw_align_raw == 'left' or _gw_align_raw == 'start' -%}
+  {%- assign _gw_align = 'start' -%}
+{%- elsif _gw_align_raw == 'center' or _gw_align_raw == 'centre' -%}
+  {%- assign _gw_align = 'center' -%}
+{%- elsif _gw_align_raw == 'right' or _gw_align_raw == 'end' -%}
+  {%- assign _gw_align = 'end' -%}
+{%- endif -%}
+{%- assign _gw_min_w_probe = _gw_min_w | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: '.' | remove: ' ' -%}
+{%- if _gw_min_w != '' and _gw_min_w_probe == '' -%}{%- assign _gw_min_w = _gw_min_w | append: 'px' -%}{%- endif -%}
+{%- assign _gw_min_h_probe = _gw_min_h | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: '.' | remove: ' ' -%}
+{%- if _gw_min_h != '' and _gw_min_h_probe == '' -%}{%- assign _gw_min_h = _gw_min_h | append: 'px' -%}{%- endif -%}
+{%- assign _gw_max_w_probe = _gw_max_w | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: '.' | remove: ' ' -%}
+{%- if _gw_max_w != '' and _gw_max_w_probe == '' -%}{%- assign _gw_max_w = _gw_max_w | append: 'px' -%}{%- endif -%}
+{%- assign _gw_max_h_probe = _gw_max_h | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9' | remove: '.' | remove: ' ' -%}
+{%- if _gw_max_h != '' and _gw_max_h_probe == '' -%}{%- assign _gw_max_h = _gw_max_h | append: 'px' -%}{%- endif -%}
+{%- capture _gw_style -%}
+  {%- if _gw_align != '' -%}--afh-gallery-align: {{ _gw_align }};{%- endif -%}
+  {%- if _gw_min_w != '' -%}
+    --afh-gallery-min-width: {{ _gw_min_w | escape }};
+    --afh-gallery-stage-min-width: {{ _gw_min_w | escape }};
+  {%- endif -%}
+  {%- if _gw_min_h != '' -%}
+    --afh-gallery-min-height: {{ _gw_min_h | escape }};
+    --afh-gallery-stage-min-height: {{ _gw_min_h | escape }};
+  {%- endif -%}
+  {%- if _gw_max_w != '' -%}
+    --afh-gallery-max-width: {{ _gw_max_w | escape }};
+    --afh-gallery-stage-max-width: {{ _gw_max_w | escape }};
+  {%- endif -%}
+  {%- if _gw_max_h != '' -%}
+    --afh-gallery-max-height: {{ _gw_max_h | escape }};
+    --afh-gallery-stage-max-height: {{ _gw_max_h | escape }};
+  {%- endif -%}
+{%- endcapture -%}
+{%- assign _gw_style = _gw_style | strip -%}
+
+{%- if _gw_src == '' -%}
+  <p class="afh-gallery__notice">Gallery: missing <code>src</code> parameter.</p>
 {%- else -%}
-  {%- assign first_char = gallery_dir | slice: 0, 1 -%}
-  {%- if first_char != '/' -%}
-    {%- assign gallery_dir = '/' | append: gallery_dir -%}
-  {%- endif -%}
-  {%- assign last_char = gallery_dir | slice: -1, 1 -%}
-  {%- if last_char != '/' -%}
-    {%- assign gallery_dir = gallery_dir | append: '/' -%}
-  {%- endif -%}
+  {%- assign _gw_img_exts = ',.jpg,.jpeg,.png,.webp,.gif,.avif,' -%}
+  {%- assign _gw_basename = _gw_src | split: '/' | last | downcase -%}
+  {%- assign _gw_ext_chk = ',' | append: '.' | append: (_gw_basename | split: '.' | last) | append: ',' -%}
+  {%- assign _gw_is_file = false -%}
+  {%- if _gw_img_exts contains _gw_ext_chk -%}{%- assign _gw_is_file = true -%}{%- endif -%}
 
-  {%- assign gallery_id = include.id | default: gallery_dir | slugify -%}
-  {%- assign gallery_title = include.title | default: '' -%}
-  {%- assign gallery_description = include.description | default: '' -%}
-  {%- assign gallery_show_image_description_raw = 'true' -%}
-  {%- if site.gallery_widget and site.gallery_widget.show_image_description != nil -%}
-    {%- assign gallery_show_image_description_raw = site.gallery_widget.show_image_description -%}
-  {%- endif -%}
-  {%- if include.show_image_description != nil -%}
-    {%- assign gallery_show_image_description_raw = include.show_image_description -%}
-  {%- endif -%}
-  {%- assign gallery_show_image_description_raw = gallery_show_image_description_raw | downcase | strip -%}
-  {%- assign gallery_show_image_description = true -%}
-  {%- if gallery_show_image_description_raw == 'false' or gallery_show_image_description_raw == '0' or gallery_show_image_description_raw == 'no' or gallery_show_image_description_raw == 'off' -%}
-    {%- assign gallery_show_image_description = false -%}
-  {%- endif -%}
-  {%- assign gallery_show_image_caption_raw = 'true' -%}
-  {%- if site.gallery_widget and site.gallery_widget.show_image_caption != nil -%}
-    {%- assign gallery_show_image_caption_raw = site.gallery_widget.show_image_caption -%}
-  {%- endif -%}
-  {%- if include.show_image_caption != nil -%}
-    {%- assign gallery_show_image_caption_raw = include.show_image_caption -%}
-  {%- endif -%}
-  {%- assign gallery_show_image_caption_raw = gallery_show_image_caption_raw | downcase | strip -%}
-  {%- assign gallery_show_image_caption = true -%}
-  {%- if gallery_show_image_caption_raw == 'false' or gallery_show_image_caption_raw == '0' or gallery_show_image_caption_raw == 'no' or gallery_show_image_caption_raw == 'off' -%}
-    {%- assign gallery_show_image_caption = false -%}
-  {%- endif -%}
-  {%- assign gallery_alt_prefix = include.alt_prefix | default: 'Gallery image' -%}
-  {%- assign gallery_notice = include.empty_text | default: 'No images found for this gallery.' -%}
-  {%- assign gallery_max_width_raw = include.max_width | default: site.gallery_widget.max_width | default: '' | strip -%}
-  {%- assign gallery_max_height_raw = include.max_height | default: site.gallery_widget.max_height | default: '' | strip -%}
-  {%- assign image_exts = ',.jpg,.jpeg,.png,.webp,.gif,.avif,' -%}
-  {%- assign all_static_paths = site.static_files | map: 'path' | join: '||' -%}
-  {%- assign all_static_paths = '||' | append: all_static_paths | append: '||' -%}
-  {%- assign base_images = '' | split: '' -%}
+  {%- assign _gw_all_static = site.static_files | map: 'path' | join: '||' -%}
+  {%- assign _gw_all_static = '||' | append: _gw_all_static | append: '||' -%}
+  {%- assign _gw_images = '' | split: '' -%}
+  {%- assign _gw_root_dir = '' -%}
 
-  {%- for file in site.static_files -%}
-    {%- assign ext = file.extname | downcase -%}
-    {%- assign ext_marker = ',' | append: ext | append: ',' -%}
-    {%- if image_exts contains ext_marker and file.path contains gallery_dir -%}
-      {%- assign relative_to_gallery = file.path | remove_first: gallery_dir -%}
-      {%- unless relative_to_gallery contains '/' -%}
-        {%- assign base_images = base_images | push: file.path -%}
-      {%- endunless -%}
+  {%- if _gw_is_file -%}
+    {%- assign _gw_file_path = _gw_src -%}
+    {%- unless _gw_file_path | slice: 0, 1 == '/' -%}{%- assign _gw_file_path = '/' | append: _gw_file_path -%}{%- endunless -%}
+    {%- assign _gw_images = _gw_images | push: _gw_file_path -%}
+    {%- assign _gw_file_name = _gw_file_path | split: '/' | last -%}
+    {%- assign _gw_root_dir = _gw_file_path | remove: _gw_file_name -%}
+    {%- if _gw_root_dir contains '/thumbs/' -%}{%- assign _gw_root_dir = _gw_root_dir | split: '/thumbs/' | first | append: '/' -%}
+    {%- elsif _gw_root_dir contains '/small/' -%}{%- assign _gw_root_dir = _gw_root_dir | split: '/small/' | first | append: '/' -%}
+    {%- elsif _gw_root_dir contains '/medium/' -%}{%- assign _gw_root_dir = _gw_root_dir | split: '/medium/' | first | append: '/' -%}
+    {%- elsif _gw_root_dir contains '/large/' -%}{%- assign _gw_root_dir = _gw_root_dir | split: '/large/' | first | append: '/' -%}
+    {%- elsif _gw_root_dir contains '/full/' -%}{%- assign _gw_root_dir = _gw_root_dir | split: '/full/' | first | append: '/' -%}
     {%- endif -%}
-  {%- endfor -%}
+  {%- else -%}
+    {%- assign _gw_root_dir = _gw_src -%}
+    {%- unless _gw_root_dir | slice: 0, 1 == '/' -%}{%- assign _gw_root_dir = '/' | append: _gw_root_dir -%}{%- endunless -%}
+    {%- unless _gw_root_dir | slice: -1, 1 == '/' -%}{%- assign _gw_root_dir = _gw_root_dir | append: '/' -%}{%- endunless -%}
 
-  {%- assign base_images = base_images | sort -%}
+    {%- for _gw_file in site.static_files -%}
+      {%- assign _gw_ext = _gw_file.extname | downcase -%}
+      {%- assign _gw_ext_marker = ',' | append: _gw_ext | append: ',' -%}
+      {%- if _gw_img_exts contains _gw_ext_marker and _gw_file.path contains _gw_root_dir -%}
+        {%- assign _gw_rel = _gw_file.path | remove_first: _gw_root_dir -%}
+        {%- unless _gw_rel contains '/' -%}
+          {%- assign _gw_images = _gw_images | push: _gw_file.path -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
 
-  {%- assign gallery_max_width_css = gallery_max_width_raw -%}
-  {%- if gallery_max_width_css != '' and gallery_max_width_css contains 'px' == false and gallery_max_width_css contains '%' == false and gallery_max_width_css contains 'rem' == false and gallery_max_width_css contains 'em' == false and gallery_max_width_css contains 'vw' == false and gallery_max_width_css contains 'vh' == false and gallery_max_width_css contains 'ch' == false and gallery_max_width_css contains 'calc(' == false -%}
-    {%- assign gallery_max_width_css = gallery_max_width_css | append: 'px' -%}
+    {%- assign _gw_images = _gw_images | sort -%}
   {%- endif -%}
 
-  {%- assign gallery_max_height_css = gallery_max_height_raw -%}
-  {%- if gallery_max_height_css != '' and gallery_max_height_css contains 'px' == false and gallery_max_height_css contains '%' == false and gallery_max_height_css contains 'rem' == false and gallery_max_height_css contains 'em' == false and gallery_max_height_css contains 'vw' == false and gallery_max_height_css contains 'vh' == false and gallery_max_height_css contains 'ch' == false and gallery_max_height_css contains 'calc(' == false -%}
-    {%- assign gallery_max_height_css = gallery_max_height_css | append: 'px' -%}
-  {%- endif -%}
-
-  {%- capture gallery_inline_style -%}{%- if gallery_max_width_css != '' -%}--afh-gallery-max-width: {{ gallery_max_width_css | escape }};{%- endif -%}{%- if gallery_max_height_css != '' -%}--afh-gallery-max-height: {{ gallery_max_height_css | escape }};{%- endif -%}{%- endcapture -%}
-  {%- assign gallery_json_path = gallery_dir | append: 'gallery.json' -%}
-  {%- assign gallery_has_json = false -%}
-  {%- for file in site.static_files -%}
-    {%- if file.path == gallery_json_path -%}
-      {%- assign gallery_has_json = true -%}
+  {%- assign _gw_count = _gw_images | size -%}
+  {%- assign _gw_gid = include.id | default: _gw_src | slugify -%}
+  {%- assign _gw_mode_raw = include.mode | default: 'grid' | downcase | strip -%}
+  {%- assign _gw_mode = 'grid' -%}
+  {%- if _gw_mode_raw == 'carousel' -%}{%- assign _gw_mode = 'carousel' -%}{%- endif -%}
+  {%- assign _gw_autoplay_raw = include.autoplay_seconds | default: include.carousel_autoplay | default: site.gallery_widget.carousel_autoplay | default: '' | strip -%}
+  {%- assign _gw_autoplay_ms = 0 -%}
+  {%- if _gw_autoplay_raw != '' -%}
+    {%- assign _gw_autoplay_seconds = _gw_autoplay_raw | plus: 0 -%}
+    {%- if _gw_autoplay_seconds > 0 -%}
+      {%- assign _gw_autoplay_ms = _gw_autoplay_seconds | times: 1000 -%}
     {%- endif -%}
-  {%- endfor -%}
+  {%- endif -%}
+  {%- assign _gw_sizes = include.sizes | default: '(max-width: 720px) 100vw, (max-width: 1080px) 50vw, 33vw' -%}
+  {%- if _gw_count == 1 -%}{%- assign _gw_sizes = include.sizes | default: '(max-width: 720px) 100vw, (max-width: 1080px) 90vw, 1080px' -%}{%- endif -%}
+  {%- assign _gw_stage_sizes = '(max-width: 720px) 100vw, (max-width: 1080px) 90vw, 1080px' -%}
+
+  {%- assign _gw_json_path = include.json | default: '' | strip -%}
+  {%- if _gw_json_path != '' and _gw_json_path | slice: 0, 1 != '/' -%}{%- assign _gw_json_path = '/' | append: _gw_json_path -%}{%- endif -%}
+  {%- if _gw_json_path == '' and _gw_is_file == false -%}
+    {%- assign _gw_discovered_json = _gw_root_dir | append: 'gallery.json' -%}
+    {%- assign _gw_discovered_json_marker = '||' | append: _gw_discovered_json | append: '||' -%}
+    {%- if _gw_all_static contains _gw_discovered_json_marker -%}
+      {%- assign _gw_json_path = _gw_discovered_json -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- assign _gw_json_url = '' -%}
+  {%- if _gw_json_path != '' -%}{%- assign _gw_json_url = _gw_json_path | relative_url -%}{%- endif -%}
+
   <section
     class="afh-gallery"
     data-gallery
-    data-gallery-id="{{ gallery_id }}"
-    data-gallery-dir="{{ gallery_dir }}"
-    data-gallery-has-json="{% if gallery_has_json %}1{% else %}0{% endif %}"
-    data-gallery-show-image-caption="{% if gallery_show_image_caption %}1{% else %}0{% endif %}"
-    data-gallery-show-image-description="{% if gallery_show_image_description %}1{% else %}0{% endif %}"
-    data-gallery-name="{{ gallery_title | escape }}"
-    data-gallery-description="{{ gallery_description | escape }}"
-    style="{{ gallery_inline_style }}"
+    data-gallery-id="{{ _gw_gid }}"
+    data-gallery-mode="{{ _gw_mode }}"
+    data-gallery-show-image-caption="{% if _gw_show_cap %}1{% else %}0{% endif %}"
+    data-gallery-show-image-description="{% if _gw_show_desc %}1{% else %}0{% endif %}"
+    {% if _gw_mode == 'carousel' and _gw_autoplay_ms > 0 %}data-gallery-autoplay-ms="{{ _gw_autoplay_ms }}"{% endif %}
+    {% if _gw_title != '' %}data-gallery-name="{{ _gw_title | escape }}"{% endif %}
+    {% if _gw_description != '' %}data-gallery-description="{{ _gw_description | escape }}"{% endif %}
+    {% if _gw_json_url != '' %}data-gallery-json="{{ _gw_json_url }}"{% endif %}
+    {% if _gw_style != '' %}style="{{ _gw_style }}"{% endif %}
   >
-    <header class="afh-gallery__header{% if gallery_title == '' and gallery_description == '' %} is-empty{% endif %}" data-gallery-header>
-      <h2 class="afh-gallery__title" data-gallery-title>{{ gallery_title }}</h2>
-      <p class="afh-gallery__description" data-gallery-description-text>{{ gallery_description }}</p>
-    </header>
+    {%- if _gw_title != '' or _gw_description != '' -%}
+      <header class="afh-gallery__header" data-gallery-header>
+        {%- if _gw_title != '' -%}<h2 class="afh-gallery__title" data-gallery-title>{{ _gw_title }}</h2>{%- endif -%}
+        {%- if _gw_description != '' -%}<p class="afh-gallery__description" data-gallery-description-text>{{ _gw_description }}</p>{%- endif -%}
+      </header>
+    {%- endif -%}
 
-    {%- if base_images.size > 0 -%}
-      <div class="afh-gallery__grid" data-gallery-grid>
-        {%- for image_path in base_images -%}
-          {%- assign file_name = image_path | split: '/' | last -%}
-          {%- assign base_url = image_path | relative_url -%}
+    {%- if _gw_count > 0 -%}
+      {%- assign _gw_stage_href = '' -%}
+      {%- assign _gw_stage_src = '' -%}
+      {%- assign _gw_stage_srcset = '' -%}
+      {%- assign _gw_stage_alt = '' -%}
+      {%- assign _gw_stage_title = '' -%}
+      {%- assign _gw_stage_description = '' -%}
+      {%- capture _gw_items_markup -%}
+        {%- for _gw_image_path in _gw_images -%}
+          {%- assign _gw_file_name = _gw_image_path | split: '/' | last -%}
+          {%- assign _gw_base_url = _gw_image_path | relative_url -%}
 
-          {%- assign thumb_path = gallery_dir | append: 'thumbs/' | append: file_name -%}
-          {%- assign small_path = gallery_dir | append: 'small/' | append: file_name -%}
-          {%- assign medium_path = gallery_dir | append: 'medium/' | append: file_name -%}
-          {%- assign large_path = gallery_dir | append: 'large/' | append: file_name -%}
-          {%- assign full_path = gallery_dir | append: 'full/' | append: file_name -%}
+          {%- assign _gw_thumb_path = _gw_root_dir | append: 'thumbs/' | append: _gw_file_name -%}
+          {%- assign _gw_small_path = _gw_root_dir | append: 'small/' | append: _gw_file_name -%}
+          {%- assign _gw_medium_path = _gw_root_dir | append: 'medium/' | append: _gw_file_name -%}
+          {%- assign _gw_large_path = _gw_root_dir | append: 'large/' | append: _gw_file_name -%}
+          {%- assign _gw_full_path = _gw_root_dir | append: 'full/' | append: _gw_file_name -%}
 
-          {%- assign thumb_url = '' -%}
-          {%- assign small_url = '' -%}
-          {%- assign medium_url = '' -%}
-          {%- assign large_url = '' -%}
-          {%- assign full_url = '' -%}
-          {%- assign thumb_marker = '||' | append: thumb_path | append: '||' -%}
-          {%- assign small_marker = '||' | append: small_path | append: '||' -%}
-          {%- assign medium_marker = '||' | append: medium_path | append: '||' -%}
-          {%- assign large_marker = '||' | append: large_path | append: '||' -%}
-          {%- assign full_marker = '||' | append: full_path | append: '||' -%}
+          {%- assign _gw_thumb_url = '' -%}
+          {%- assign _gw_small_url = '' -%}
+          {%- assign _gw_medium_url = '' -%}
+          {%- assign _gw_large_url = '' -%}
+          {%- assign _gw_full_url = '' -%}
+          {%- assign _gw_marker = '||' | append: _gw_thumb_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_thumb_url = _gw_thumb_path | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_small_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_small_url = _gw_small_path | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_medium_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_medium_url = _gw_medium_path | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_large_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_large_url = _gw_large_path | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_full_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_full_url = _gw_full_path | relative_url -%}{%- endif -%}
 
-          {%- if all_static_paths contains thumb_marker -%}{%- assign thumb_url = thumb_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains small_marker -%}{%- assign small_url = small_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains medium_marker -%}{%- assign medium_url = medium_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains large_marker -%}{%- assign large_url = large_path | relative_url -%}{%- endif -%}
-          {%- if all_static_paths contains full_marker -%}{%- assign full_url = full_path | relative_url -%}{%- endif -%}
+          {%- assign _gw_srcset = '' -%}
+          {%- if _gw_thumb_url != '' -%}{%- assign _gw_srcset = _gw_thumb_url | append: ' 250w' -%}{%- endif -%}
+          {%- if _gw_small_url != '' -%}{%- if _gw_srcset != '' -%}{%- assign _gw_srcset = _gw_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_srcset = _gw_srcset | append: _gw_small_url | append: ' 600w' -%}{%- endif -%}
+          {%- if _gw_medium_url != '' -%}{%- if _gw_srcset != '' -%}{%- assign _gw_srcset = _gw_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_srcset = _gw_srcset | append: _gw_medium_url | append: ' 720w' -%}{%- endif -%}
+          {%- if _gw_large_url != '' -%}{%- if _gw_srcset != '' -%}{%- assign _gw_srcset = _gw_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_srcset = _gw_srcset | append: _gw_large_url | append: ' 1080w' -%}{%- endif -%}
+          {%- if _gw_full_url != '' -%}
+            {%- if _gw_srcset != '' -%}{%- assign _gw_srcset = _gw_srcset | append: ', ' -%}{%- endif -%}
+            {%- assign _gw_srcset = _gw_srcset | append: _gw_full_url | append: ' 1600w' -%}
+          {%- elsif _gw_base_url != '' -%}
+            {%- if _gw_srcset != '' -%}{%- assign _gw_srcset = _gw_srcset | append: ', ' -%}{%- endif -%}
+            {%- assign _gw_srcset = _gw_srcset | append: _gw_base_url | append: ' 1600w' -%}
+          {%- endif -%}
 
-          {%- assign preview_url = thumb_url -%}
-          {%- if preview_url == '' and small_url != '' -%}{%- assign preview_url = small_url -%}{%- endif -%}
-          {%- if preview_url == '' and medium_url != '' -%}{%- assign preview_url = medium_url -%}{%- endif -%}
-          {%- if preview_url == '' and large_url != '' -%}{%- assign preview_url = large_url -%}{%- endif -%}
-          {%- if preview_url == '' -%}{%- assign preview_url = base_url -%}{%- endif -%}
+          {%- assign _gw_preview_url = _gw_thumb_url -%}
+          {%- if _gw_count == 1 -%}
+            {%- assign _gw_preview_url = _gw_medium_url -%}
+            {%- if _gw_preview_url == '' and _gw_large_url != '' -%}{%- assign _gw_preview_url = _gw_large_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' and _gw_full_url != '' -%}{%- assign _gw_preview_url = _gw_full_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' and _gw_base_url != '' -%}{%- assign _gw_preview_url = _gw_base_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' and _gw_small_url != '' -%}{%- assign _gw_preview_url = _gw_small_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' -%}{%- assign _gw_preview_url = _gw_thumb_url -%}{%- endif -%}
+          {%- else -%}
+            {%- if _gw_preview_url == '' and _gw_small_url != '' -%}{%- assign _gw_preview_url = _gw_small_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' and _gw_medium_url != '' -%}{%- assign _gw_preview_url = _gw_medium_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' and _gw_large_url != '' -%}{%- assign _gw_preview_url = _gw_large_url -%}{%- endif -%}
+            {%- if _gw_preview_url == '' -%}{%- assign _gw_preview_url = _gw_base_url -%}{%- endif -%}
+          {%- endif -%}
 
-          {%- assign display_name = file_name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' -%}
+          {%- assign _gw_stage_preview_url = _gw_medium_url -%}
+          {%- if _gw_stage_preview_url == '' and _gw_large_url != '' -%}{%- assign _gw_stage_preview_url = _gw_large_url -%}{%- endif -%}
+          {%- if _gw_stage_preview_url == '' and _gw_full_url != '' -%}{%- assign _gw_stage_preview_url = _gw_full_url -%}{%- endif -%}
+          {%- if _gw_stage_preview_url == '' and _gw_base_url != '' -%}{%- assign _gw_stage_preview_url = _gw_base_url -%}{%- endif -%}
+          {%- if _gw_stage_preview_url == '' and _gw_small_url != '' -%}{%- assign _gw_stage_preview_url = _gw_small_url -%}{%- endif -%}
+          {%- if _gw_stage_preview_url == '' -%}{%- assign _gw_stage_preview_url = _gw_thumb_url -%}{%- endif -%}
 
-          <article class="afh-gallery__item" data-gallery-item data-gallery-file="{{ file_name | escape }}">
+          {%- assign _gw_href = _gw_full_url -%}
+          {%- if _gw_href == '' -%}{%- assign _gw_href = _gw_large_url -%}{%- endif -%}
+          {%- if _gw_href == '' -%}{%- assign _gw_href = _gw_base_url -%}{%- endif -%}
+
+          {%- assign _gw_display_name = _gw_file_name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' -%}
+          {%- if _gw_count == 1 -%}
+            {%- assign _gw_item_alt = _gw_alt -%}
+            {%- if _gw_item_alt == '' -%}{%- assign _gw_item_alt = _gw_description -%}{%- endif -%}
+            {%- if _gw_item_alt == '' -%}{%- assign _gw_item_alt = _gw_display_name -%}{%- endif -%}
+          {%- else -%}
+            {%- assign _gw_item_alt = _gw_alt_prefix | append: ': ' | append: _gw_display_name -%}
+          {%- endif -%}
+
+          {%- assign _gw_item_title = '' -%}
+          {%- assign _gw_item_description = '' -%}
+          {%- if _gw_count == 1 -%}
+            {%- assign _gw_item_title = _gw_title -%}
+            {%- assign _gw_item_description = _gw_description -%}
+          {%- endif -%}
+
+          {%- if forloop.first -%}
+            {%- assign _gw_stage_href = _gw_href -%}
+            {%- assign _gw_stage_src = _gw_stage_preview_url -%}
+            {%- assign _gw_stage_srcset = _gw_srcset -%}
+            {%- assign _gw_stage_alt = _gw_item_alt -%}
+            {%- assign _gw_stage_title = _gw_item_title -%}
+            {%- assign _gw_stage_description = _gw_item_description -%}
+          {%- endif -%}
+
+          <article class="afh-gallery__item{% if _gw_mode == 'carousel' and forloop.first %} is-active{% endif %}" data-gallery-item data-gallery-file="{{ _gw_file_name | escape }}">
             <a
-              class="afh-gallery__link"
-              href="{{ full_url | default: large_url | default: base_url }}"
-              data-gallery-open
-              data-gallery-file="{{ file_name | escape }}"
-              data-gallery-title=""
-              data-gallery-description=""
-              data-gallery-alt="{{ gallery_alt_prefix | append: ': ' | append: display_name | escape }}"
-              data-gallery-base="{{ base_url }}"
-              {% if thumb_url != '' %}data-gallery-thumb="{{ thumb_url }}"{% endif %}
-              {% if small_url != '' %}data-gallery-small="{{ small_url }}"{% endif %}
-              {% if medium_url != '' %}data-gallery-medium="{{ medium_url }}"{% endif %}
-              {% if large_url != '' %}data-gallery-large="{{ large_url }}"{% endif %}
-              {% if full_url != '' %}data-gallery-full="{{ full_url }}"{% endif %}
+              class="{% if _gw_mode == 'carousel' %}afh-gallery__thumb-link{% else %}afh-gallery__link{% endif %}"
+              href="{{ _gw_href }}"
+              data-gallery-source
+              {% if _gw_mode == 'carousel' %}data-gallery-select aria-label="Show image {{ forloop.index }} of {{ _gw_count }}"{% else %}data-gallery-open{% endif %}
+              data-gallery-file="{{ _gw_file_name | escape }}"
+              data-gallery-alt="{{ _gw_item_alt | escape }}"
+              data-gallery-base="{{ _gw_base_url }}"
+              {% if _gw_item_title != '' %}data-gallery-title="{{ _gw_item_title | escape }}"{% endif %}
+              {% if _gw_item_description != '' %}data-gallery-description="{{ _gw_item_description | escape }}"{% endif %}
+              {% if _gw_srcset != '' %}data-gallery-srcset="{{ _gw_srcset }}"{% endif %}
+              {% if _gw_mode == 'carousel' and forloop.first %}aria-current="true"{% endif %}
             >
               <img
                 class="afh-gallery__thumb"
-                src="{{ preview_url }}"
-                alt="{{ gallery_alt_prefix | append: ': ' | append: display_name | escape }}"
-                loading="lazy"
-                decoding="async"
-                data-gallery-thumb-img
-                data-gallery-fallback="{{ small_url | default: medium_url | default: large_url | default: base_url }}"
+                src="{{ _gw_preview_url }}"
+                {% if _gw_srcset != '' %}srcset="{{ _gw_srcset }}" sizes="{% if _gw_mode == 'carousel' %}(max-width: 720px) 5.75rem, 7rem{% else %}{{ _gw_sizes }}{% endif %}"{% endif %}
+                alt="{{ _gw_item_alt | escape }}"
+                loading="{{ _gw_loading }}"
+                decoding="{{ _gw_decoding }}"
               >
             </a>
+            {%- if _gw_mode != 'carousel' and (_gw_item_title != '' or _gw_item_description != '') -%}
+              <div class="afh-gallery__item-caption" data-gallery-item-caption>
+                {%- if _gw_item_title != '' -%}<p class="afh-gallery__item-title" data-gallery-item-title>{{ _gw_item_title }}</p>{%- endif -%}
+                {%- if _gw_item_description != '' -%}<p class="afh-gallery__item-description" data-gallery-item-description>{{ _gw_item_description }}</p>{%- endif -%}
+              </div>
+            {%- endif -%}
           </article>
         {%- endfor -%}
-      </div>
+      {%- endcapture -%}
+
+      {%- if _gw_mode == 'carousel' -%}
+        <div class="afh-gallery__stage" data-gallery-stage>
+          <a
+            class="afh-gallery__stage-link"
+            href="{{ _gw_stage_href }}"
+            data-gallery-stage-open
+            data-gallery-alt="{{ _gw_stage_alt | escape }}"
+            data-gallery-base="{{ _gw_stage_src }}"
+            {% if _gw_stage_title != '' %}data-gallery-title="{{ _gw_stage_title | escape }}"{% endif %}
+            {% if _gw_stage_description != '' %}data-gallery-description="{{ _gw_stage_description | escape }}"{% endif %}
+            {% if _gw_stage_srcset != '' %}data-gallery-srcset="{{ _gw_stage_srcset }}"{% endif %}
+          >
+            <picture class="afh-gallery__stage-picture is-active" data-gallery-stage-picture>
+              <img
+                class="afh-gallery__stage-image"
+                data-gallery-stage-image
+                src="{{ _gw_stage_src }}"
+                {% if _gw_stage_srcset != '' %}srcset="{{ _gw_stage_srcset }}" sizes="{{ _gw_stage_sizes }}"{% endif %}
+                alt="{{ _gw_stage_alt | escape }}"
+                loading="{{ _gw_loading }}"
+                decoding="{{ _gw_decoding }}"
+              >
+            </picture>
+            <picture class="afh-gallery__stage-picture is-inactive" data-gallery-stage-picture aria-hidden="true">
+              <img
+                class="afh-gallery__stage-image"
+                data-gallery-stage-image
+                src="{{ _gw_stage_src }}"
+                {% if _gw_stage_srcset != '' %}srcset="{{ _gw_stage_srcset }}" sizes="{{ _gw_stage_sizes }}"{% endif %}
+                alt="{{ _gw_stage_alt | escape }}"
+                loading="{{ _gw_loading }}"
+                decoding="{{ _gw_decoding }}"
+              >
+            </picture>
+          </a>
+        </div>
+        <div class="afh-gallery__stage-controls" data-gallery-stage-controls>
+          <div class="afh-gallery__stage-control-group">
+            <button class="afh-gallery__nav afh-gallery__stage-nav" type="button" data-gallery-stage-prev aria-label="Previous image">
+              <span class="afh-gallery__control-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25"/>
+                </svg>
+              </span>
+              <span class="sr-only">Previous image</span>
+            </button>
+            <button class="afh-gallery__nav afh-gallery__stage-toggle" type="button" data-gallery-stage-toggle aria-label="Pause slideshow" aria-pressed="false">
+              <span class="afh-gallery__toggle-ring" aria-hidden="true">
+                <svg viewBox="0 0 40 40" focusable="false" aria-hidden="true">
+                  <circle class="afh-gallery__toggle-ring-track" cx="20" cy="20" r="17"></circle>
+                  <circle class="afh-gallery__toggle-ring-progress" data-gallery-toggle-progress cx="20" cy="20" r="17"></circle>
+                </svg>
+              </span>
+              <span class="afh-gallery__control-icon" aria-hidden="true" data-gallery-stage-toggle-icon></span>
+              <span class="sr-only" data-gallery-stage-toggle-text>Pause slideshow</span>
+            </button>
+            <button class="afh-gallery__nav afh-gallery__stage-nav" type="button" data-gallery-stage-next aria-label="Next image">
+              <span class="afh-gallery__control-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="M9.5 5.5L16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25"/>
+                </svg>
+              </span>
+              <span class="sr-only">Next image</span>
+            </button>
+          </div>
+          <p class="afh-gallery__stage-meta" data-gallery-stage-counter>{{ 1 }} / {{ _gw_count }}</p>
+        </div>
+        <div class="afh-gallery__stage-caption" data-gallery-stage-caption>
+          <p class="afh-gallery__stage-title" data-gallery-stage-title{% unless _gw_show_cap and _gw_stage_title != '' %} hidden{% endunless %}>{{ _gw_stage_title }}</p>
+          <p class="afh-gallery__stage-description" data-gallery-stage-description{% unless _gw_show_desc and _gw_stage_description != '' %} hidden{% endunless %}>{{ _gw_stage_description }}</p>
+        </div>
+        <div class="afh-gallery__grid" data-gallery-grid>
+          {{ _gw_items_markup }}
+        </div>
+      {%- else -%}
+        <div class="afh-gallery__grid" data-gallery-grid>
+          {{ _gw_items_markup }}
+        </div>
+      {%- endif -%}
     {%- else -%}
-      <p class="afh-gallery__notice">{{ gallery_notice }}</p>
+      <p class="afh-gallery__notice">{{ _gw_empty_text }}</p>
     {%- endif -%}
 
     <div class="afh-gallery__lightbox is-hidden" data-gallery-lightbox aria-hidden="true" role="dialog" aria-modal="true">

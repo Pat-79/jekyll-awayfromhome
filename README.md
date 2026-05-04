@@ -15,6 +15,7 @@ A demo website is available at [demo.awayfromhome.nl](https://demo.awayfromhome.
 
 - **Full-screen landing hero** — HLS live/VOD stream, YouTube embed, or static image as the homepage background, with chapter-weighted random seek
 - **Inline video widget** — lightweight HLS, YouTube, and Vimeo embeds with shared options and lazy loading
+- **Image gallery widget** — responsive photo grid with lightbox and a carousel mode with thumbnail strip, autoplay, and viewport-aware pause
 - **Archive page + sidebar archive modes** — querystring-driven archive filtering with year/month/day and configurable drawer archive views
 - **Light / Dark / Auto theme** — persistent user preference stored in `localStorage`, no flash on load
 - **Client-side search** — full-text search engine with a JSON index built at compile time; no external service required
@@ -188,10 +189,13 @@ video_widget:
 
 # ── Gallery widget defaults ────────────────────────────────────────────────────
 gallery_widget:
-  max_width:                                          # Optional max width constraint (e.g., "1200px")
-  max_height:                                         # Optional max height constraint (e.g., "800px")
-  show_image_caption: false                           # Show image caption in gallery lightbox
-  show_image_description: false                       # Show image description in gallery lightbox
+  max_width: 900px                                    # Optional max width constraint (any CSS unit, e.g. "900px", "80%", "70vw")
+  max_height:                                         # Optional max height constraint (e.g., "70vh", "600px")
+  min_width:                                          # Optional min width constraint
+  min_height:                                         # Optional min height constraint
+  show_image_caption: false                           # Show image title in lightbox
+  show_image_description: false                       # Show image description in lightbox
+  carousel_autoplay: 6                                # Autoplay interval in seconds for carousel mode (0 = disabled)
 
 # ── Sidebar archive menu ──────────────────────────────────────────────────────
 sidebar:
@@ -328,6 +332,97 @@ The theme also includes a lightweight `video-widget.html` include for HLS, YouTu
 ```
 
 Supported widget options are `provider`, `src`, `url`, `youtube_id`, `vimeo_id`, `title`, `description`, `player_title`, `poster`, `width`, `height`, `max_width`, `max_height`, `aspect_ratio`, `bare`, `autoplay`, `muted`, `loop`, `controls`, `playsinline`, `preload`, `lazy`, `privacy_mode`, and `referrer_policy`. Include-level values override `video_widget` defaults.
+
+### Gallery Widget (`gallery-widget.html`)
+
+The gallery widget renders a responsive photo gallery from a folder of images. Two modes are available: `grid` (default masonry-style grid with lightbox) and `carousel` (stage + thumbnail strip with autoplay).
+
+#### Grid mode
+
+Point `src` at the image directory:
+
+```liquid
+{% include gallery-widget.html
+  src="/assets/images/posts/2026-04-19-my-post/"
+%}
+```
+
+A lightbox opens when a grid image is clicked. Caption and description fields are shown in the lightbox when `show_caption` and `show_description` are enabled.
+
+#### Carousel mode
+
+```liquid
+{% include gallery-widget.html
+  src="/assets/images/posts/2026-04-19-my-post/"
+  mode="carousel"
+  autoplay_seconds="6"
+  show_caption="false"
+  align="center"
+  max_width="900px"
+%}
+```
+
+With `mode="carousel"`, the widget renders a large stage image and a scrollable thumbnail strip below it. Autoplay cycles through slides automatically and pauses on hover, focus, or when the carousel scrolls out of the viewport.
+
+#### Sizing
+
+`max_width`, `min_width`, `max_height`, and `min_height` all accept any valid CSS length — `px`, `%`, `rem`, `em`, `vw`, `vh`, `ch`, `calc(...)`, `clamp(...)`, etc. Plain numbers without a unit are treated as `px`.
+
+```liquid
+{% include gallery-widget.html
+  src="/assets/images/posts/2026-04-19-my-post/"
+  mode="carousel"
+  max_width="70vw"
+  max_height="70vh"
+  align="center"
+%}
+```
+
+#### Responsive image variants
+
+When image variants exist in subdirectories (`thumbs/`, `small/`, `medium/`, `large/`, `full/`), the widget uses them automatically for thumbnails and the lightbox/stage, loading the right size for the display context.
+
+#### Optional `gallery.json` metadata
+
+Place a `gallery.json` file in the same folder as your images to override titles, descriptions, and alt text per image:
+
+```json
+{
+  "name": "My Trip",
+  "description": "A few highlights from the journey.",
+  "images": [
+    { "file": "photo-01.jpg", "title": "Arrival", "description": "Landing at dusk.", "alt": "Airplane view of city lights" },
+    { "file": "photo-02.jpg", "title": "Old Town" }
+  ]
+}
+```
+
+The widget discovers `gallery.json` automatically when it sits alongside the images. Supply a custom path with `json="/path/to/gallery.json"`.
+
+#### All parameters
+
+| Parameter | Default | Description |
+|---|---|---|
+| `src` | *(required)* | Directory path or single image path |
+| `mode` | `grid` | `grid` or `carousel` |
+| `title` | — | Gallery heading |
+| `description` | — | Gallery subheading |
+| `align` | — | `left`, `center`, or `right` |
+| `max_width` | `site.gallery_widget.max_width` | Max width — any CSS unit |
+| `min_width` | `site.gallery_widget.min_width` | Min width — any CSS unit |
+| `max_height` | `site.gallery_widget.max_height` | Max height — any CSS unit |
+| `min_height` | `site.gallery_widget.min_height` | Min height — any CSS unit |
+| `autoplay_seconds` | `site.gallery_widget.carousel_autoplay` | Carousel autoplay interval in seconds (`0` = off) |
+| `show_caption` | `site.gallery_widget.show_image_caption` | Show image title in lightbox / carousel |
+| `show_description` | `site.gallery_widget.show_image_description` | Show image description in lightbox / carousel |
+| `alt` | — | Alt text for single-image galleries |
+| `alt_prefix` | `Gallery image` | Prefix for auto-generated alt text |
+| `json` | *(auto-discovered)* | Path to `gallery.json` metadata file |
+| `sizes` | *(auto)* | Custom `srcset` sizes attribute |
+| `loading` | `lazy` | Image loading hint (`lazy` or `eager`) |
+| `id` | *(slug of src)* | Custom gallery ID for the DOM |
+
+Include-level values always override `gallery_widget` defaults from `_config.yml`.
 
 ### Responsive Image Include (`responsive-image.html`)
 
@@ -490,7 +585,7 @@ jekyll-awayfromhome/
 │   ├── author-card.html          # Post author byline
 │   ├── post-hero.html            # Hero banner for posts
 │   ├── map-widget.html           # Map widget include (Leaflet)
-│   ├── gallery-widget.html       # Image gallery include
+│   ├── gallery-widget.html     # Image gallery include
 │   ├── video-widget.html         # Inline video include (HLS/YouTube/Vimeo)
 │   ├── search-widget.html        # Inline search input with dropdown results
 │   ├── social-links.html         # Social media icon row
