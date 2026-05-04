@@ -419,6 +419,8 @@
   justify-content: center;
   padding: $gallery-lightbox-padding;
   background: var(--afh-gallery-overlay);
+  backdrop-filter: blur(7px) saturate(0.78);
+  -webkit-backdrop-filter: blur(14px) saturate(0.78);
 }
 
 .afh-gallery__lightbox.is-hidden {
