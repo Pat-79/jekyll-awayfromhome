@@ -18,8 +18,8 @@ Both help the site remember settings and support basic features.
 This theme can store small technical settings, for example:
 
 - Your theme preference (light, dark, or system)
+- Your language preference
 - Cached search data to make search faster
-- Small search-related preferences
 
 This data is used for site features only, not to identify you personally.
 
@@ -32,6 +32,10 @@ Those cookies are controlled by the third-party provider, not by this theme.
 
 You can clear cookies and local storage in your browser settings at any time.
 If you clear this data, some preferences may reset.
+
+You can also use the button below to remove all data stored by this site in your browser immediately.
+
+{% include storage-widget.html %}
 
 ## Questions
 

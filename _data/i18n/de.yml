@@ -129,3 +129,16 @@ tags:
 footer:
   copyright: Alle Rechte vorbehalten.
   disclaimer: Inhalte und Meinungen dienen nur zu Informationszwecken.
+
+storage_widget:
+  clear_button: Alle Website-Daten löschen
+  msg_confirm: Dadurch werden alle von dieser Website in deinem Browser gespeicherten Einstellungen und zwischengespeicherten Daten gelöscht. Fortfahren?
+  msg_done: Alle Website-Daten wurden gelöscht.
+  msg_list: "Entfernte Einträge: {list}."
+  msg_nothing: Es wurden keine Website-Daten in deinem Browser gefunden.
+  msg_total: Gesamt
+  key_afh_lang: Spracheinstellung
+  key_afh_theme: Theme-Auswahl
+  key_search_data: Suchindex-Cache
+  key_search_data_version: Suchindex-Version
+  key_afh_highlight_terms: Suchbegriff-Markierung

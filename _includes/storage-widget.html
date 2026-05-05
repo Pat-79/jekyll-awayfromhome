@@ -1,0 +1,22 @@
+{% assign t = site.data.i18n[page.lang] | default: site.data.i18n.en %}
+{% assign w = t.storage_widget %}
+{% assign _sw_confirm = w.msg_confirm | default: "This will delete all preferences and cached data stored by this site in your browser. Continue?" %}
+{% assign _sw_done    = w.msg_done    | default: "All site data has been cleared." %}
+{% assign _sw_list    = w.msg_list    | default: "Items removed: {list}." %}
+{% assign _sw_nothing = w.msg_nothing | default: "No site data was found in your browser." %}
+{% assign _sw_total   = w.msg_total   | default: "Total" %}
+{% assign _sw_button  = w.clear_button | default: "Clear all site data" %}
+{% capture _sw_key_labels %}{"afh-lang":{{ w.key_afh_lang | default: "Language preference" | jsonify }},"afh-theme":{{ w.key_afh_theme | default: "Theme preference" | jsonify }},"searchData":{{ w.key_search_data | default: "Search index cache" | jsonify }},"searchDataVersion":{{ w.key_search_data_version | default: "Search index version" | jsonify }},"afh-highlight-terms":{{ w.key_afh_highlight_terms | default: "Search highlight terms" | jsonify }}}{% endcapture %}
+<div id="afh-clear-data-block"
+  data-key-labels="{{ _sw_key_labels | escape }}"
+  data-msg-confirm="{{ _sw_confirm | escape }}"
+  data-msg-done="{{ _sw_done | escape }}"
+  data-msg-list="{{ _sw_list | escape }}"
+  data-msg-nothing="{{ _sw_nothing | escape }}"
+  data-msg-total="{{ _sw_total | escape }}">
+  <div id="afh-storage-summary"></div>
+  <button id="afh-clear-data-btn" class="btn btn--accent" type="button">
+    {{- _sw_button -}}
+  </button>
+  <p id="afh-clear-status" class="cookies-clear-status" aria-live="polite" hidden></p>
+</div>

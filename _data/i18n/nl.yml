@@ -129,3 +129,16 @@ tags:
 footer:
   copyright: Alle rechten voorbehouden.
   disclaimer: Inhoud en meningen worden verstrekt voor informatieve doeleinden.
+
+storage_widget:
+  clear_button: Alle sitegegevens wissen
+  msg_confirm: Dit verwijdert alle voorkeuren en gecachte gegevens die door deze site in je browser zijn opgeslagen. Doorgaan?
+  msg_done: Alle sitegegevens zijn gewist.
+  msg_list: "Verwijderde items: {list}."
+  msg_nothing: Er zijn geen sitegegevens gevonden in je browser.
+  msg_total: Totaal
+  key_afh_lang: Taalvoorkeur
+  key_afh_theme: Themavoorkeur
+  key_search_data: Zoekcache
+  key_search_data_version: Versie zoekcache
+  key_afh_highlight_terms: Zoektermen markering

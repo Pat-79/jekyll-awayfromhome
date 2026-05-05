@@ -19,8 +19,8 @@ Beide helpen de site om instellingen te onthouden en basisfuncties goed te laten
 Dit thema kan kleine technische instellingen opslaan, bijvoorbeeld:
 
 - Je themavoorkeur (licht, donker of systeem)
+- Je taalvoorkeur
 - Tijdelijk opgeslagen zoekdata om zoeken sneller te maken
-- Kleine zoekgerelateerde voorkeuren
 
 Deze gegevens worden alleen gebruikt voor websitefuncties, niet om jou persoonlijk te identificeren.
 
@@ -33,6 +33,10 @@ Die cookies vallen onder het beleid van die externe partij, niet van dit thema.
 
 Je kunt cookies en lokale opslag altijd verwijderen via de instellingen van je browser.
 Na het wissen kunnen sommige voorkeuren opnieuw ingesteld moeten worden.
+
+Je kunt ook de knop hieronder gebruiken om alle door deze site opgeslagen gegevens direct uit je browser te verwijderen.
+
+{% include storage-widget.html %}
 
 ## Vragen
 

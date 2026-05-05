@@ -129,3 +129,16 @@ tags:
 footer:
   copyright: All rights reserved.
   disclaimer: Content and opinions are provided for informational purposes.
+
+storage_widget:
+  clear_button: Clear all site data
+  msg_confirm: This will delete all preferences and cached data stored by this site in your browser. Continue?
+  msg_done: All site data has been cleared.
+  msg_list: "Items removed: {list}."
+  msg_nothing: No site data was found in your browser.
+  msg_total: Total
+  key_afh_lang: Language preference
+  key_afh_theme: Theme preference
+  key_search_data: Search index cache
+  key_search_data_version: Search index version
+  key_afh_highlight_terms: Search highlight terms

@@ -19,8 +19,8 @@ Beides hilft der Website, Einstellungen zu merken und Grundfunktionen bereitzust
 Dieses Theme kann kleine technische Einstellungen speichern, zum Beispiel:
 
 - Deine Theme-Auswahl (hell, dunkel oder System)
+- Deine Spracheinstellung
 - Zwischengespeicherte Suchdaten, damit die Suche schneller ist
-- Kleine Such-Einstellungen
 
 Diese Daten werden nur fuer Website-Funktionen genutzt, nicht zur persoenlichen Identifizierung.
 
@@ -33,6 +33,10 @@ Diese Cookies werden vom Drittanbieter gesteuert, nicht von diesem Theme.
 
 Du kannst Cookies und lokalen Speicher jederzeit in deinen Browser-Einstellungen loeschen.
 Nach dem Loeschen muessen einige Einstellungen eventuell neu gesetzt werden.
+
+Du kannst auch die Schaltflaeche unten verwenden, um alle von dieser Website gespeicherten Daten sofort aus deinem Browser zu entfernen.
+
+{% include storage-widget.html %}
 
 ## Fragen
 
