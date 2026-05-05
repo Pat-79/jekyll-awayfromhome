@@ -1,16 +1,28 @@
 class SearchEngine {
   constructor() {
     this.worker = null;
+    this.workerVersion = '';
     this.loaded = false;
     this.messageId = 0;
     this.pendingRequests = new Map();
-    this.initWorker();
   }
 
-  initWorker() {
+  initWorker(version = '') {
+    if (this.worker && this.workerVersion === version) {
+      return;
+    }
+
+    if (this.worker) {
+      this.worker.terminate();
+      this.worker = null;
+      this.loaded = false;
+    }
+
     if (typeof Worker !== 'undefined') {
       try {
-        this.worker = new Worker('/assets/js/search-worker.js');
+        const workerUrl = `/assets/js/search-worker.js${version ? `?v=${encodeURIComponent(version)}` : ''}`;
+        this.worker = new Worker(workerUrl);
+        this.workerVersion = version;
         this.worker.onmessage = (e) => {
           const { messageId, type, results } = e.data;
           
@@ -31,8 +43,14 @@ class SearchEngine {
             }
           }
         };
+        this.worker.onerror = () => {
+          this.flushPendingRequests();
+          this.worker.terminate();
+          this.worker = null;
+          this.loaded = false;
+        };
       } catch (e) {
-        console.warn('Web Workers not supported, falling back to main thread search', e);
+        console.warn('Web Workers not supported for search', e);
       }
     }
   }
@@ -40,20 +58,21 @@ class SearchEngine {
   async load(version) {
     if (this.loaded) return;
 
+    this.initWorker(version);
+
     const STORAGE_KEY = 'searchData';
     const VERSION_KEY = 'searchDataVersion';
-    const TIME_KEY = 'searchDataTime';
-    const TTL = 1000 * 60 * 60 * 24;
+    let cachedVersion = null;
+    let cachedData = null;
 
-    const cachedVersion = localStorage.getItem(VERSION_KEY);
-    const cachedData = localStorage.getItem(STORAGE_KEY);
-    const cachedTime = localStorage.getItem(TIME_KEY);
-
-    const isExpired = !cachedTime || (Date.now() - cachedTime > TTL);
+    try {
+      cachedVersion = localStorage.getItem(VERSION_KEY);
+      cachedData = localStorage.getItem(STORAGE_KEY);
+    } catch (e) {}
 
     let data;
 
-    if (cachedData && cachedVersion === version && !isExpired) {
+    if (cachedData && cachedVersion === version) {
       data = JSON.parse(cachedData);
     } else {
       const res = await fetch(`/assets/data/search-data.json?v=${version}`, {
@@ -64,11 +83,9 @@ class SearchEngine {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         localStorage.setItem(VERSION_KEY, version);
-        localStorage.setItem(TIME_KEY, Date.now());
       } catch (e) {}
     }
 
-    // Send data to worker
     if (this.worker) {
       await new Promise((resolve) => {
         const messageId = ++this.messageId;
@@ -82,9 +99,7 @@ class SearchEngine {
 
   search(query) {
     if (!this.worker) {
-      // Fallback: return empty array if worker not available
-      // In production, you might want to implement fallback search logic
-      return [];
+      return Promise.resolve([]);
     }
 
     return new Promise((resolve) => {
@@ -92,6 +107,13 @@ class SearchEngine {
       this.pendingRequests.set(messageId, resolve);
       this.worker.postMessage({ messageId, type: 'SEARCH', payload: query });
     });
+  }
+
+  flushPendingRequests() {
+    for (const [messageId, resolve] of this.pendingRequests.entries()) {
+      this.pendingRequests.delete(messageId);
+      resolve();
+    }
   }
 }
 

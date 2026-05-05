@@ -6,19 +6,30 @@ class SearchEngine {
   }
 
   buildIndex(data) {
-    data.forEach(entry => {
-      const w = entry.w;
-      if (typeof w !== 'string' || !w) return;
-      const title = typeof entry.t === 'string' ? entry.t : '';
-      const excerpt = typeof entry.e === 'string' ? entry.e : '';
-      const image = typeof entry.i === 'string' ? entry.i : '';
-      const lang = typeof entry.l === 'string' ? entry.l : '';
-      const ref  = typeof entry.r === 'string' ? entry.r : '';
-      if (!this.index[w]) this.index[w] = [];
-      if (!this.index[w].some(e => e.url === entry.u)) {
-        this.index[w].push({ url: entry.u, title, excerpt, image, lang, ref });
-      }
+    this.index = Object.create(null);
+
+    const documents = Array.isArray(data && data.documents) ? data.documents : [];
+    const entries = Array.isArray(data && data.entries) ? data.entries : [];
+
+    entries.forEach(entry => {
+      if (!Array.isArray(entry) || entry.length < 2) return;
+
+      const word = entry[0];
+      const docId = entry[1];
+      const doc = documents[docId];
+      if (typeof word !== 'string' || !word || !doc) return;
+
+      if (!this.index[word]) this.index[word] = [];
+      this.index[word].push({
+        url: typeof doc.u === 'string' ? doc.u : '',
+        title: typeof doc.t === 'string' ? doc.t : '',
+        excerpt: typeof doc.e === 'string' ? doc.e : '',
+        image: typeof doc.i === 'string' ? doc.i : '',
+        lang: typeof doc.l === 'string' ? doc.l : '',
+        ref: typeof doc.r === 'string' ? doc.r : ''
+      });
     });
+
     this.loaded = true;
   }
 

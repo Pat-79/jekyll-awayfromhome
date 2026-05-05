@@ -4,6 +4,7 @@ permalink: /assets/data/search-data.json
 ---
 
 {%- assign all_docs = site.posts | concat: site.pages -%}
+{%- assign documents = "" | split: "" -%}
 {%- assign entries = "" | split: "" -%}
 {%- assign _sdata_all_paths = site.static_files | map: 'path' | join: '||' -%}
 {%- assign _sdata_all_paths = '||' | append: _sdata_all_paths | append: '||' -%}
@@ -181,9 +182,12 @@ permalink: /assets/data/search-data.json
   {%- else -%}
     {%- assign safe_excerpt = display_excerpt | truncatewords: 28 -%}
   {%- endif -%}
+  {%- assign doc_id = documents | size -%}
+  {%- capture document_entry -%}{"u": {{ doc.url | jsonify }}, "t": {{ display_title | jsonify }}, "e": {{ safe_excerpt | jsonify }}, "i": {{ safe_image | jsonify }}, "l": {{ safe_lang | jsonify }}, "r": {{ safe_ref | jsonify }}}{%- endcapture -%}
+  {%- assign documents = documents | push: document_entry -%}
   {%- for word in unique_words -%}
-    {%- capture entry -%}{"w": {{ word | jsonify }}, "u": {{ doc.url | jsonify }}, "t": {{ display_title | jsonify }}, "e": {{ safe_excerpt | jsonify }}, "i": {{ safe_image | jsonify }}, "l": {{ safe_lang | jsonify }}, "r": {{ safe_ref | jsonify }}}{%- endcapture -%}
+    {%- capture entry -%}[{{ word | jsonify }}, {{ doc_id }}]{%- endcapture -%}
     {%- assign entries = entries | push: entry -%}
   {%- endfor -%}
 {%- endfor -%}
-[{{ entries | join: "," }}]
+{"documents":[{{ documents | join: "," }}],"entries":[{{ entries | join: "," }}]}

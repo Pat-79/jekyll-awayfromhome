@@ -919,11 +919,11 @@ The theme includes a client-side full-text search engine. No external service, A
 
 ### How it works
 
-1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes language-specific stopwords (read from `_data/i18n/<lang>.yml` per document), and emits a weighted inverted-keyword index as `/assets/data/search-data.json`.
+1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes language-specific stopwords (read from `_data/i18n/<lang>.yml` per document), and emits a compact search payload as `/assets/data/search-data.json`: document metadata is stored once, and word entries point to document ids.
 
-2. **Runtime caching** — On first visit, `search.js` fetches `search-data.json` and stores it in `localStorage` for 24 hours, keyed by a build-time version hash. Subsequent searches in the same browser use the cached index without a network request.
+2. **Runtime caching** — On first visit, `search.js` fetches `search-data.json` and stores it in `localStorage`, keyed by a build-time version string. When that version changes on a later build, the cached payload is replaced.
 
-3. **Query matching** — The engine tokenises the query, looks up each token in the inverted index, and scores results (title and tag matches weighted higher than body matches). Results are returned sorted by relevance score.
+3. **Query matching** — The engine loads the compact payload into a web worker, tokenises the query, looks up each token in the inverted index, and scores results (title and tag matches weighted higher than body matches). Results are returned sorted by relevance score.
 
 4. **Two entry points:**
    - **`/search/`** — A dedicated full-page search powered by the `search` layout.
