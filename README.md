@@ -347,7 +347,7 @@ Point `src` at the image directory:
 %}
 ```
 
-A lightbox opens when a grid image is clicked. Caption and description fields are shown in the lightbox when `show_caption` and `show_description` are enabled.
+A lightbox opens when a grid image is clicked. Gallery titles render above the frame, gallery descriptions render below the frame, and per-image titles and descriptions render only when metadata exists. When `show_caption` and `show_description` are enabled, that per-image metadata is also shown in the lightbox.
 
 #### Carousel mode
 
@@ -362,7 +362,7 @@ A lightbox opens when a grid image is clicked. Caption and description fields ar
 %}
 ```
 
-With `mode="carousel"`, the widget renders a large stage image and a scrollable thumbnail strip below it. Autoplay cycles through slides automatically and pauses on hover, focus, or when the carousel scrolls out of the viewport.
+With `mode="carousel"`, the widget renders a large stage image and a scrollable thumbnail strip below it. Gallery titles stay above the frame, gallery descriptions stay below it, and per-image titles and descriptions sit inside the stage frame at the bottom when metadata exists. Autoplay cycles through slides automatically and pauses on hover, focus, or when the carousel scrolls out of the viewport.
 
 #### Sizing
 
@@ -406,7 +406,7 @@ The widget discovers `gallery.json` automatically when it sits alongside the ima
 | `src` | *(required)* | Directory path or single image path |
 | `mode` | `grid` | `grid` or `carousel` |
 | `title` | — | Gallery heading |
-| `description` | — | Gallery subheading |
+| `description` | — | Gallery description shown below the frame |
 | `align` | — | `left`, `center`, or `right` |
 | `max_width` | `site.gallery_widget.max_width` | Max width — any CSS unit |
 | `min_width` | `site.gallery_widget.min_width` | Min width — any CSS unit |

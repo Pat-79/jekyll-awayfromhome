@@ -164,10 +164,9 @@
     {% if _gw_json_url != '' %}data-gallery-json="{{ _gw_json_url }}"{% endif %}
     {% if _gw_style != '' %}style="{{ _gw_style }}"{% endif %}
   >
-    {%- if _gw_title != '' or _gw_description != '' -%}
+    {%- if _gw_title != '' -%}
       <header class="afh-gallery__header" data-gallery-header>
-        {%- if _gw_title != '' -%}<h2 class="afh-gallery__title" data-gallery-title>{{ _gw_title }}</h2>{%- endif -%}
-        {%- if _gw_description != '' -%}<p class="afh-gallery__description" data-gallery-description-text>{{ _gw_description }}</p>{%- endif -%}
+        <h2 class="afh-gallery__title" data-gallery-title>{{ _gw_title }}</h2>
       </header>
     {%- endif -%}
 
@@ -176,8 +175,6 @@
       {%- assign _gw_stage_src = '' -%}
       {%- assign _gw_stage_srcset = '' -%}
       {%- assign _gw_stage_alt = '' -%}
-      {%- assign _gw_stage_title = '' -%}
-      {%- assign _gw_stage_description = '' -%}
       {%- capture _gw_items_markup -%}
         {%- for _gw_image_path in _gw_images -%}
           {%- assign _gw_file_name = _gw_image_path | split: '/' | last -%}
@@ -248,20 +245,11 @@
             {%- assign _gw_item_alt = _gw_alt_prefix | append: ': ' | append: _gw_display_name -%}
           {%- endif -%}
 
-          {%- assign _gw_item_title = '' -%}
-          {%- assign _gw_item_description = '' -%}
-          {%- if _gw_count == 1 -%}
-            {%- assign _gw_item_title = _gw_title -%}
-            {%- assign _gw_item_description = _gw_description -%}
-          {%- endif -%}
-
           {%- if forloop.first -%}
             {%- assign _gw_stage_href = _gw_href -%}
             {%- assign _gw_stage_src = _gw_stage_preview_url -%}
             {%- assign _gw_stage_srcset = _gw_srcset -%}
             {%- assign _gw_stage_alt = _gw_item_alt -%}
-            {%- assign _gw_stage_title = _gw_item_title -%}
-            {%- assign _gw_stage_description = _gw_item_description -%}
           {%- endif -%}
 
           <article class="afh-gallery__item{% if _gw_mode == 'carousel' and forloop.first %} is-active{% endif %}" data-gallery-item data-gallery-file="{{ _gw_file_name | escape }}">
@@ -273,8 +261,6 @@
               data-gallery-file="{{ _gw_file_name | escape }}"
               data-gallery-alt="{{ _gw_item_alt | escape }}"
               data-gallery-base="{{ _gw_base_url }}"
-              {% if _gw_item_title != '' %}data-gallery-title="{{ _gw_item_title | escape }}"{% endif %}
-              {% if _gw_item_description != '' %}data-gallery-description="{{ _gw_item_description | escape }}"{% endif %}
               {% if _gw_srcset != '' %}data-gallery-srcset="{{ _gw_srcset }}"{% endif %}
               {% if _gw_mode == 'carousel' and forloop.first %}aria-current="true"{% endif %}
             >
@@ -287,12 +273,6 @@
                 decoding="{{ _gw_decoding }}"
               >
             </a>
-            {%- if _gw_mode != 'carousel' and (_gw_item_title != '' or _gw_item_description != '') -%}
-              <div class="afh-gallery__item-caption" data-gallery-item-caption>
-                {%- if _gw_item_title != '' -%}<p class="afh-gallery__item-title" data-gallery-item-title>{{ _gw_item_title }}</p>{%- endif -%}
-                {%- if _gw_item_description != '' -%}<p class="afh-gallery__item-description" data-gallery-item-description>{{ _gw_item_description }}</p>{%- endif -%}
-              </div>
-            {%- endif -%}
           </article>
         {%- endfor -%}
       {%- endcapture -%}
@@ -305,8 +285,6 @@
             data-gallery-stage-open
             data-gallery-alt="{{ _gw_stage_alt | escape }}"
             data-gallery-base="{{ _gw_stage_src }}"
-            {% if _gw_stage_title != '' %}data-gallery-title="{{ _gw_stage_title | escape }}"{% endif %}
-            {% if _gw_stage_description != '' %}data-gallery-description="{{ _gw_stage_description | escape }}"{% endif %}
             {% if _gw_stage_srcset != '' %}data-gallery-srcset="{{ _gw_stage_srcset }}"{% endif %}
           >
             <picture class="afh-gallery__stage-picture is-active" data-gallery-stage-picture>
@@ -364,10 +342,6 @@
           </div>
           <p class="afh-gallery__stage-meta" data-gallery-stage-counter>{{ 1 }} / {{ _gw_count }}</p>
         </div>
-        <div class="afh-gallery__stage-caption" data-gallery-stage-caption>
-          <p class="afh-gallery__stage-title" data-gallery-stage-title{% unless _gw_show_cap and _gw_stage_title != '' %} hidden{% endunless %}>{{ _gw_stage_title }}</p>
-          <p class="afh-gallery__stage-description" data-gallery-stage-description{% unless _gw_show_desc and _gw_stage_description != '' %} hidden{% endunless %}>{{ _gw_stage_description }}</p>
-        </div>
         <div class="afh-gallery__grid" data-gallery-grid>
           {{ _gw_items_markup }}
         </div>
@@ -378,6 +352,10 @@
       {%- endif -%}
     {%- else -%}
       <p class="afh-gallery__notice">{{ _gw_empty_text }}</p>
+    {%- endif -%}
+
+    {%- if _gw_description != '' -%}
+      <figcaption class="afh-gallery__description" data-gallery-description-text>{{ _gw_description }}</figcaption>
     {%- endif -%}
 
     <div class="afh-gallery__lightbox is-hidden" data-gallery-lightbox aria-hidden="true" role="dialog" aria-modal="true">
@@ -395,8 +373,6 @@
           <span class="sr-only">Next image</span>
         </button>
         <figcaption class="afh-gallery__caption">
-          <p class="afh-gallery__caption-title" data-gallery-caption-title></p>
-          <p class="afh-gallery__caption-description" data-gallery-caption-description></p>
           <p class="afh-gallery__caption-meta" data-gallery-counter></p>
         </figcaption>
       </figure>

@@ -76,8 +76,10 @@
 }
 
 .afh-gallery__description {
-  margin: 0.2rem 0 0;
+  margin: 0.65rem 0 0;
   color: var(--afh-gallery-muted);
+  font-size: 0.94rem;
+  font-style: italic;
 }
 
 .afh-gallery__grid {
@@ -169,12 +171,14 @@
 }
 
 .afh-gallery__stage-caption {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  align-items: baseline;
-  column-gap: 0;
-  row-gap: 0.35rem;
-  padding: 0 0.15rem;
+  row-gap: 0.2rem;
+  padding: 0.75rem 0.9rem 0.85rem;
+  pointer-events: none;
 }
 
 .afh-gallery__stage-controls {
@@ -212,15 +216,20 @@
 .afh-gallery__stage-title {
   grid-column: 1;
   margin: 0;
-  font-weight: 700;
-  color: var(--afh-gallery-caption-title);
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .afh-gallery__stage-description {
   grid-column: 1 / -1;
   margin: 0;
+  font-size: 0.94rem;
+  font-style: italic;
   line-height: 1.4;
-  color: var(--afh-gallery-caption-description);
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .afh-gallery__stage-meta {
@@ -348,27 +357,38 @@
 
 .afh-gallery__item {
   margin: 0;
+  position: relative;
   border-radius: $widget-media-radius;
   box-shadow: $shadow-gallery-item;
   overflow: hidden;
 }
 
 .afh-gallery__item-caption {
-  padding: 0.5rem 0.6rem 0.65rem;
-  color: var(--afh-gallery-caption-description);
-  background: transparent;
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  display: grid;
+  row-gap: 0.2rem;
+  padding: 0.75rem 0.8rem 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
 }
 
 .afh-gallery__item-title {
   margin: 0;
-  font-weight: 700;
-  color: var(--afh-gallery-caption-title);
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .afh-gallery__item-description {
-  margin: 0.3rem 0 0;
+  margin: 0;
+  font-size: 0.94rem;
+  font-style: italic;
   line-height: 1.4;
-  color: var(--afh-gallery-caption-description);
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .afh-gallery__link {
