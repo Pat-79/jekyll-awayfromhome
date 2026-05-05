@@ -1,4 +1,22 @@
 (function () {
+  function readMetaJson(metaEl) {
+    if (!metaEl) return null;
+
+    var raw = '';
+    if (metaEl.content && typeof metaEl.content.textContent === 'string') {
+      raw = metaEl.content.textContent;
+    }
+    if (!raw && typeof metaEl.innerHTML === 'string') {
+      raw = metaEl.innerHTML;
+    }
+    if (!raw && typeof metaEl.textContent === 'string') {
+      raw = metaEl.textContent;
+    }
+
+    raw = raw ? raw.trim() : '';
+    return raw ? JSON.parse(raw) : null;
+  }
+
   var list = document.querySelector('[data-archive-list]');
   if (!list) return;
 
@@ -50,7 +68,7 @@
   var metaEl = document.getElementById('afh-page-meta');
   if (metaEl) {
     try {
-      var meta = JSON.parse(metaEl.textContent);
+      var meta = readMetaJson(metaEl);
       var htmlLang = document.documentElement.lang;
       if (meta.i18n && htmlLang && htmlLang !== meta.currentLang) {
         var al = meta.i18n[htmlLang] && meta.i18n[htmlLang].archive;

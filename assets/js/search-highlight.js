@@ -4,6 +4,24 @@
 // so a reload or any subsequent page load starts clean.
 
 (function () {
+  function readMetaJson(metaEl) {
+    if (!metaEl) return null;
+
+    let raw = '';
+    if (metaEl.content && typeof metaEl.content.textContent === 'string') {
+      raw = metaEl.content.textContent;
+    }
+    if (!raw && typeof metaEl.innerHTML === 'string') {
+      raw = metaEl.innerHTML;
+    }
+    if (!raw && typeof metaEl.textContent === 'string') {
+      raw = metaEl.textContent;
+    }
+
+    raw = raw ? raw.trim() : '';
+    return raw ? JSON.parse(raw) : null;
+  }
+
   const STORAGE_KEY = 'afh-highlight-terms';
 
   let query = '';
@@ -27,7 +45,7 @@
   const metaEl = document.getElementById('afh-page-meta');
   if (metaEl) {
     try {
-      const meta = JSON.parse(metaEl.textContent);
+      const meta = readMetaJson(metaEl);
       const lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
       const defaultLang = (meta && meta.defaultLang) || 'en';
       const langI18n    = meta.i18n && (meta.i18n[lang]        || meta.i18n['en']);

@@ -18,6 +18,8 @@ nav:
 
 ui:
   language: اللغة
+  language_auto: تلقائي
+  language_auto_short: تلقائي
   search_placeholder: ابحث في القصص...
   open_menu: فتح قائمة الموقع
   latest_posts: أحدث المقالات

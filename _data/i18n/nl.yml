@@ -21,6 +21,8 @@ nav:
 
 ui:
   language: Taal
+  language_auto: Automatisch
+  language_auto_short: AUTO
   search_placeholder: Doorzoek verhalen...
   open_menu: Sitemenu openen
   latest_posts: Laatste berichten

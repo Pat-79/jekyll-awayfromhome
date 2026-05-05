@@ -11,6 +11,7 @@ This document describes the current structure of the jekyll-awayfromhome theme r
 jekyll-awayfromhome/
 ├── _data/
 │   ├── authors.yml                 # Author directory used by author-card.html
+│   ├── timezone_language_hints.yml # Build-time timezone → language hint map for auto-detection
 │   └── i18n/                       # Per-language UI strings and search settings
 │       ├── en.yml
 │       ├── ar.yml
@@ -156,6 +157,7 @@ jekyll-awayfromhome/
 - `base.html` computes `_lang_prefix`, directionality, and a JSON translations map for client-side code.
 - Page language defaults are assigned in `_config.yml` using `defaults` scopes for `theme/<lang>` and `_posts/<lang>`.
 - `lang-persist.js` handles browser-language detection and explicit user preference storage.
+- The language selector always reflects the current mode: **Automatic** (`🇺🇳`) is shown when no preference is stored; the chosen language is shown when one is. Selecting Automatic clears `localStorage('afh-lang')` and returns to auto-detection.
 
 ### Author Data Model
 

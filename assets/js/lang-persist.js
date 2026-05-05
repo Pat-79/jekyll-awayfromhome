@@ -8,56 +8,69 @@
  * When a real translation exists, redirects to it automatically.
  *
  * On first visit (no stored preference), auto-detects the best matching language
- * using: (1) browser language list, (2) timezone hint.
+ * using: (1) browser language list, (2) timezone hint list injected at build time.
  */
 
 var STORAGE_KEY = 'afh-lang';
+
+function afhReadMetaJson(metaEl) {
+  if (!metaEl) return null;
+
+  var raw = '';
+  if (metaEl.content && typeof metaEl.content.textContent === 'string') {
+    raw = metaEl.content.textContent;
+  }
+  if (!raw && typeof metaEl.innerHTML === 'string') {
+    raw = metaEl.innerHTML;
+  }
+  if (!raw && typeof metaEl.textContent === 'string') {
+    raw = metaEl.textContent;
+  }
+
+  raw = raw ? raw.trim() : '';
+  if (!raw) return null;
+
+  return JSON.parse(raw);
+}
+
+function afhReadStoredLang() {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch (e) {
+    return null;
+  }
+}
+
+function afhClearStoredLang() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {}
+}
+
+function afhUpdateLangSelect(select, lang, isAuto) {
+  if (!select) return;
+
+  for (var i = 0; i < select.options.length; i++) {
+    var opt = select.options[i];
+    var optIsAuto = opt.getAttribute('data-auto') === 'true';
+    opt.selected = isAuto ? optIsAuto : (opt.getAttribute('data-lang') === lang);
+  }
+}
 
 // Expose lang-change handler for the language selector's onchange attribute.
 // Defined at top level so it is immediately available as a global.
 window.afhLangChange = function (select) {
   var opt = select.options[select.selectedIndex];
   var lang = opt ? opt.getAttribute('data-lang') : null;
-  if (lang) {
-    try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+  var isAuto = opt && opt.getAttribute('data-auto') === 'true';
+  if (isAuto) {
+    afhClearStoredLang();
+  } else if (lang) {
+    try {
+      localStorage.setItem(STORAGE_KEY, lang);
+    } catch (e) {}
   }
   window.location.href = select.value;
-};
-
-// ── Timezone → language hint map ─────────────────────────────────────────────
-// Only covers languages that this theme supports. English is the default fallback
-// and does not need to be listed here.
-var AFH_TZ_LANG = {
-  // Dutch
-  'Europe/Amsterdam': 'nl',
-  'Europe/Brussels':  'nl',
-  // German
-  'Europe/Berlin':    'de',
-  'Europe/Vienna':    'de',
-  'Europe/Zurich':    'de',
-  'Europe/Vaduz':     'de',
-  // Arabic
-  'Asia/Riyadh':      'ar',
-  'Asia/Dubai':       'ar',
-  'Asia/Baghdad':     'ar',
-  'Asia/Beirut':      'ar',
-  'Asia/Amman':       'ar',
-  'Asia/Kuwait':      'ar',
-  'Asia/Qatar':       'ar',
-  'Asia/Aden':        'ar',
-  'Asia/Bahrain':     'ar',
-  'Asia/Muscat':      'ar',
-  'Asia/Damascus':    'ar',
-  'Asia/Gaza':        'ar',
-  'Asia/Hebron':      'ar',
-  'Asia/Sanaa':       'ar',
-  'Africa/Cairo':     'ar',
-  'Africa/Tunis':     'ar',
-  'Africa/Algiers':   'ar',
-  'Africa/Tripoli':   'ar',
-  'Africa/Khartoum':  'ar',
-  'Africa/Casablanca':'ar',
-  'Africa/Nouakchott':'ar',
 };
 
 /**
@@ -66,13 +79,13 @@ var AFH_TZ_LANG = {
  * Strategy (priority order):
  *   1. navigator.languages — BCP 47 list, user's explicit browser preference.
  *      For each entry: try exact match, then strip region subtag (nl-BE → nl).
- *   2. Timezone hint — weak geographic signal as tiebreaker.
+ *   2. Timezone hint list — weak geographic signal as tiebreaker.
  *
  * @param {string[]} available  Language codes configured for this site.
  * @param {string}   fallback   Default language code to return if nothing matches.
  * @returns {string}
  */
-function afhDetectLang(available, fallback) {
+function afhDetectLang(available, fallback, timezoneHints) {
   // 1. Browser language preferences
   var navLangs = [];
   try {
@@ -90,11 +103,22 @@ function afhDetectLang(available, fallback) {
     if (base !== tag && available.indexOf(base) >= 0) return base;
   }
 
-  // 2. Timezone hint
+  // 2. Timezone hint (ordered list per timezone). Missing or empty lists
+  // fall back to the site default language passed in as `fallback`.
   try {
     var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    var tzLang = AFH_TZ_LANG[tz];
-    if (tzLang && available.indexOf(tzLang) >= 0) return tzLang;
+    var tzCandidates = timezoneHints ? timezoneHints[tz] : null;
+
+    if (typeof tzCandidates === 'string') {
+      tzCandidates = [tzCandidates];
+    }
+
+    if (Array.isArray(tzCandidates)) {
+      for (var j = 0; j < tzCandidates.length; j++) {
+        var tzLang = tzCandidates[j];
+        if (available.indexOf(tzLang) >= 0) return tzLang;
+      }
+    }
   } catch (e) {}
 
   return fallback;
@@ -148,35 +172,47 @@ function afhApplyResponsiveLangLabels() {
   if (!metaEl) return;
 
   var meta;
-  try { meta = JSON.parse(metaEl.textContent); } catch (e) { return; }
+  try {
+    meta = afhReadMetaJson(metaEl);
+  } catch (e) { return; }
+  if (!meta) return;
 
   var pageLang    = meta.currentLang  || 'en';
   var defaultLang = meta.defaultLang  || 'en';
   var translations = meta.translations || {};
   var i18n         = meta.i18n         || {};
+  var timezoneHints = meta.timezoneHints || {};
+  var availableLangs = (meta.availableLangs && meta.availableLangs.length)
+    ? meta.availableLangs
+    : Object.keys(i18n);
+  var langSelect = document.querySelector('.lang-select');
 
-  // Pages served under a non-default language prefix are already in the right
-  // language — nothing to do. Do NOT save to localStorage here; only an explicit
-  // dropdown selection should persist a language preference.
-  if (pageLang !== defaultLang) {
-    return;
+  // Check for an explicit stored preference set only via the language selector.
+  var storedLang = afhReadStoredLang();
+  if (storedLang && availableLangs.indexOf(storedLang) < 0) {
+    storedLang = null;
+    afhClearStoredLang();
   }
 
-  // Page is in the default language. Check for an explicit stored preference
-  // (set only via the language selector dropdown).
-  var storedLang;
-  try { storedLang = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+  // Keep the selector aligned with preference state: explicit preference wins,
+  // otherwise show the automatic mode entry.
+  afhUpdateLangSelect(langSelect, storedLang, !storedLang);
+
+  // In automatic mode, a visitor who directly opens a translated URL should stay
+  // there. Auto-detection only redirects from the default-language page.
+  if (!storedLang && pageLang !== defaultLang) return;
 
   // No explicit preference — detect from browser on every visit (not saved).
   var targetLang = storedLang;
   if (!targetLang) {
-    var available = Object.keys(i18n);
-    var detected  = afhDetectLang(available, defaultLang);
-    console.log('[afh] auto-detected language:', detected);
+    var detected = afhDetectLang(availableLangs, defaultLang, timezoneHints);
     if (detected && detected !== defaultLang) {
       targetLang = detected;
     }
   }
+
+  // If an explicit preference already matches the current page, no redirect is needed.
+  if (storedLang && storedLang === pageLang) return;
 
   if (!targetLang || targetLang === pageLang) return;
 
@@ -235,14 +271,9 @@ function afhApplyResponsiveLangLabels() {
       if (pVal) pEl.placeholder = pVal;
     }
 
-    // Update language selector to visually reflect the override lang.
-    var langSelect = document.querySelector('.lang-select');
-    if (langSelect) {
-      for (var j = 0; j < langSelect.options.length; j++) {
-        var opt = langSelect.options[j];
-        opt.selected = (opt.getAttribute('data-lang') === lang);
-      }
-    }
+    // Update language selector: keep Auto if there is no stored preference,
+    // otherwise reflect the explicit stored language.
+    afhUpdateLangSelect(document.querySelector('.lang-select'), lang, !storedLang);
   }
 
   function getNestedKey(obj, keyPath) {

@@ -1,0 +1,1588 @@
+# Ordered official-language preference per IANA timezone.
+# Generated from all available system timezones, tzdb zone.tab/zone1970.tab,
+# and CLDR supplemental territoryInfo language populations.
+# Only official and de facto official languages are included.
+# Languages are sorted by estimated speaker count in the timezone area, high to low.
+# When the site builds, this file is filtered down to languages actually configured in site.languages.
+
+Africa/Abidjan:
+  - fr
+
+Africa/Accra:
+  - en
+
+Africa/Addis_Ababa:
+  - am
+
+Africa/Algiers:
+  - ar
+  - fr
+
+Africa/Asmara:
+  - ti
+  - en
+  - ar
+
+Africa/Bamako:
+  - fr
+
+Africa/Bangui:
+  - fr
+  - sg
+
+Africa/Banjul:
+  - en
+
+Africa/Bissau:
+  - pt
+
+Africa/Blantyre:
+  - en
+  - ny
+
+Africa/Brazzaville:
+  - fr
+
+Africa/Bujumbura:
+  - rn
+  - fr
+  - en
+
+Africa/Cairo:
+  - ar
+
+Africa/Casablanca:
+  - ar
+  - fr
+  - tzm
+
+Africa/Ceuta:
+  - es
+
+Africa/Conakry:
+  - fr
+
+Africa/Dakar:
+  - wo
+  - fr
+
+Africa/Dar_es_Salaam:
+  - sw
+  - en
+
+Africa/Djibouti:
+  - ar
+  - fr
+
+Africa/Douala:
+  - fr
+  - en
+
+Africa/El_Aaiun:
+  - ar
+
+Africa/Freetown:
+  - en
+
+Africa/Gaborone:
+  - en
+  - tn
+
+Africa/Harare:
+  - sn
+  - en
+  - nd
+
+Africa/Johannesburg:
+  - en
+
+Africa/Juba:
+  - en
+
+Africa/Kampala:
+  - sw
+  - en
+
+Africa/Khartoum:
+  - ar
+  - en
+
+Africa/Kigali:
+  - rw
+  - en
+  - fr
+
+Africa/Kinshasa:
+  - fr
+
+Africa/Lagos:
+  - en
+  - yo
+
+Africa/Libreville:
+  - fr
+
+Africa/Lome:
+  - fr
+
+Africa/Luanda:
+  - pt
+
+Africa/Lubumbashi:
+  - fr
+
+Africa/Lusaka:
+  - en
+
+Africa/Malabo:
+  - es
+  - fr
+  - pt
+
+Africa/Maputo:
+  - pt
+
+Africa/Maseru:
+  - st
+  - en
+
+Africa/Mbabane:
+  - en
+  - ss
+
+Africa/Mogadishu:
+  - so
+  - ar
+
+Africa/Monrovia:
+  - en
+
+Africa/Nairobi:
+  - sw
+  - en
+
+Africa/Ndjamena:
+  - fr
+  - ar
+
+Africa/Niamey:
+  - fr
+
+Africa/Nouakchott:
+  - ar
+
+Africa/Ouagadougou:
+  - fr
+
+Africa/Porto-Novo:
+  - fr
+
+Africa/Sao_Tome:
+  - pt
+
+Africa/Timbuktu:
+  - fr
+
+Africa/Tripoli:
+  - ar
+
+Africa/Tunis:
+  - ar
+  - fr
+
+Africa/Windhoek:
+  - en
+
+America/Adak:
+  - en
+
+America/Anchorage:
+  - en
+
+America/Anguilla:
+  - en
+
+America/Antigua:
+  - en
+
+America/Araguaina:
+  - pt
+
+America/Argentina/Buenos_Aires:
+  - es
+
+America/Argentina/Catamarca:
+  - es
+
+America/Argentina/Cordoba:
+  - es
+
+America/Argentina/Jujuy:
+  - es
+
+America/Argentina/La_Rioja:
+  - es
+
+America/Argentina/Mendoza:
+  - es
+
+America/Argentina/Rio_Gallegos:
+  - es
+
+America/Argentina/Salta:
+  - es
+
+America/Argentina/San_Juan:
+  - es
+
+America/Argentina/San_Luis:
+  - es
+
+America/Argentina/Tucuman:
+  - es
+
+America/Argentina/Ushuaia:
+  - es
+
+America/Aruba:
+  - nl
+  - pap
+
+America/Asuncion:
+  - gn
+  - es
+
+America/Atikokan:
+  - en
+  - fr
+
+America/Atka:
+  - en
+
+America/Bahia:
+  - pt
+
+America/Bahia_Banderas:
+  - es
+
+America/Barbados:
+  - en
+
+America/Belem:
+  - pt
+
+America/Belize:
+  - en
+
+America/Blanc-Sablon:
+  - en
+  - fr
+
+America/Boa_Vista:
+  - pt
+
+America/Bogota:
+  - es
+
+America/Boise:
+  - en
+
+America/Cambridge_Bay:
+  - en
+  - fr
+
+America/Campo_Grande:
+  - pt
+
+America/Cancun:
+  - es
+
+America/Caracas:
+  - es
+
+America/Cayenne:
+  - fr
+
+America/Cayman:
+  - en
+
+America/Chicago:
+  - en
+
+America/Chihuahua:
+  - es
+
+America/Ciudad_Juarez:
+  - es
+
+America/Coral_Harbour:
+  - en
+  - fr
+
+America/Costa_Rica:
+  - es
+
+America/Coyhaique:
+  - es
+
+America/Creston:
+  - en
+  - fr
+
+America/Cuiaba:
+  - pt
+
+America/Curacao:
+  - pap
+  - nl
+
+America/Danmarkshavn:
+  - kl
+
+America/Dawson:
+  - en
+  - fr
+
+America/Dawson_Creek:
+  - en
+  - fr
+
+America/Denver:
+  - en
+
+America/Detroit:
+  - en
+
+America/Dominica:
+  - en
+
+America/Edmonton:
+  - en
+  - fr
+
+America/Eirunepe:
+  - pt
+
+America/El_Salvador:
+  - es
+
+America/Ensenada:
+  - es
+
+America/Fort_Nelson:
+  - en
+  - fr
+
+America/Fortaleza:
+  - pt
+
+America/Glace_Bay:
+  - en
+  - fr
+
+America/Goose_Bay:
+  - en
+  - fr
+
+America/Grand_Turk:
+  - en
+
+America/Grenada:
+  - en
+
+America/Guadeloupe:
+  - fr
+
+America/Guatemala:
+  - es
+
+America/Guayaquil:
+  - es
+  - qu
+
+America/Guyana:
+  - en
+
+America/Halifax:
+  - en
+  - fr
+
+America/Havana:
+  - es
+
+America/Hermosillo:
+  - es
+
+America/Indiana/Indianapolis:
+  - en
+
+America/Indiana/Knox:
+  - en
+
+America/Indiana/Marengo:
+  - en
+
+America/Indiana/Petersburg:
+  - en
+
+America/Indiana/Tell_City:
+  - en
+
+America/Indiana/Vevay:
+  - en
+
+America/Indiana/Vincennes:
+  - en
+
+America/Indiana/Winamac:
+  - en
+
+America/Inuvik:
+  - en
+  - fr
+
+America/Iqaluit:
+  - en
+  - fr
+
+America/Jamaica:
+  - en
+
+America/Juneau:
+  - en
+
+America/Kentucky/Louisville:
+  - en
+
+America/Kentucky/Monticello:
+  - en
+
+America/Kralendijk:
+  - nl
+
+America/La_Paz:
+  - es
+  - qu
+  - ay
+
+America/Lima:
+  - es
+  - qu
+
+America/Los_Angeles:
+  - en
+
+America/Lower_Princes:
+  - en
+  - nl
+
+America/Maceio:
+  - pt
+
+America/Managua:
+  - es
+
+America/Manaus:
+  - pt
+
+America/Marigot:
+  - fr
+
+America/Martinique:
+  - fr
+
+America/Matamoros:
+  - es
+
+America/Mazatlan:
+  - es
+
+America/Menominee:
+  - en
+
+America/Merida:
+  - es
+
+America/Metlakatla:
+  - en
+
+America/Mexico_City:
+  - es
+
+America/Miquelon:
+  - fr
+
+America/Moncton:
+  - en
+  - fr
+
+America/Monterrey:
+  - es
+
+America/Montevideo:
+  - es
+
+America/Montreal:
+  - en
+  - fr
+
+America/Montserrat:
+  - en
+
+America/Nassau:
+  - en
+
+America/New_York:
+  - en
+
+America/Nipigon:
+  - en
+  - fr
+
+America/Nome:
+  - en
+
+America/Noronha:
+  - pt
+
+America/North_Dakota/Beulah:
+  - en
+
+America/North_Dakota/Center:
+  - en
+
+America/North_Dakota/New_Salem:
+  - en
+
+America/Nuuk:
+  - kl
+
+America/Ojinaga:
+  - es
+
+America/Panama:
+  - es
+
+America/Pangnirtung:
+  - en
+  - fr
+
+America/Paramaribo:
+  - nl
+
+America/Phoenix:
+  - en
+
+America/Port-au-Prince:
+  - ht
+  - fr
+
+America/Port_of_Spain:
+  - en
+
+America/Porto_Acre:
+  - pt
+
+America/Porto_Velho:
+  - pt
+
+America/Puerto_Rico:
+  - es
+  - en
+
+America/Punta_Arenas:
+  - es
+
+America/Rainy_River:
+  - en
+  - fr
+
+America/Rankin_Inlet:
+  - en
+  - fr
+
+America/Recife:
+  - pt
+
+America/Regina:
+  - en
+  - fr
+
+America/Resolute:
+  - en
+  - fr
+
+America/Rio_Branco:
+  - pt
+
+America/Santa_Isabel:
+  - es
+
+America/Santarem:
+  - pt
+
+America/Santiago:
+  - es
+
+America/Santo_Domingo:
+  - es
+
+America/Sao_Paulo:
+  - pt
+
+America/Scoresbysund:
+  - kl
+
+America/Shiprock:
+  - en
+
+America/Sitka:
+  - en
+
+America/St_Barthelemy:
+  - fr
+
+America/St_Johns:
+  - en
+  - fr
+
+America/St_Kitts:
+  - en
+
+America/St_Lucia:
+  - en
+
+America/St_Thomas:
+  - en
+
+America/St_Vincent:
+  - en
+
+America/Swift_Current:
+  - en
+  - fr
+
+America/Tegucigalpa:
+  - es
+
+America/Thule:
+  - kl
+
+America/Thunder_Bay:
+  - en
+  - fr
+
+America/Tijuana:
+  - es
+
+America/Toronto:
+  - en
+  - fr
+
+America/Tortola:
+  - en
+
+America/Vancouver:
+  - en
+  - fr
+
+America/Virgin:
+  - en
+
+America/Whitehorse:
+  - en
+  - fr
+
+America/Winnipeg:
+  - en
+  - fr
+
+America/Yakutat:
+  - en
+
+America/Yellowknife:
+  - en
+  - fr
+
+Antarctica/Casey: []
+
+Antarctica/Davis: []
+
+Antarctica/DumontDUrville: []
+
+Antarctica/Macquarie:
+  - en
+
+Antarctica/Mawson: []
+
+Antarctica/McMurdo: []
+
+Antarctica/Palmer: []
+
+Antarctica/Rothera: []
+
+Antarctica/Syowa: []
+
+Antarctica/Troll: []
+
+Antarctica/Vostok: []
+
+Arctic/Longyearbyen:
+  - nb
+
+Asia/Aden:
+  - ar
+
+Asia/Almaty:
+  - ru
+  - kk
+
+Asia/Amman:
+  - ar
+
+Asia/Anadyr:
+  - ru
+
+Asia/Aqtau:
+  - ru
+  - kk
+
+Asia/Aqtobe:
+  - ru
+  - kk
+
+Asia/Ashgabat:
+  - tk
+
+Asia/Atyrau:
+  - ru
+  - kk
+
+Asia/Baghdad:
+  - ar
+
+Asia/Bahrain:
+  - ar
+
+Asia/Baku:
+  - az
+
+Asia/Bangkok:
+  - th
+
+Asia/Barnaul:
+  - ru
+
+Asia/Beirut:
+  - ar
+
+Asia/Bishkek:
+  - ky
+  - ru
+
+Asia/Brunei:
+  - ms
+
+Asia/Chita:
+  - ru
+
+Asia/Choibalsan:
+  - mn
+
+Asia/Chongqing:
+  - zh
+
+Asia/Colombo:
+  - si
+  - ta
+
+Asia/Damascus:
+  - ar
+  - fr
+
+Asia/Dhaka:
+  - bn
+
+Asia/Dili:
+  - pt
+  - tet
+
+Asia/Dubai:
+  - ar
+
+Asia/Dushanbe:
+  - tg
+
+Asia/Famagusta:
+  - el
+  - tr
+
+Asia/Gaza:
+  - ar
+
+Asia/Harbin:
+  - zh
+
+Asia/Hebron:
+  - ar
+
+Asia/Ho_Chi_Minh:
+  - vi
+
+Asia/Hong_Kong:
+  - zh
+  - en
+
+Asia/Hovd:
+  - mn
+
+Asia/Irkutsk:
+  - ru
+
+Asia/Istanbul:
+  - tr
+
+Asia/Jakarta:
+  - id
+
+Asia/Jayapura:
+  - id
+
+Asia/Jerusalem:
+  - he
+  - ar
+
+Asia/Kabul:
+  - fa
+  - ps
+
+Asia/Kamchatka:
+  - ru
+
+Asia/Karachi:
+  - ur
+  - en
+
+Asia/Kashgar:
+  - zh
+
+Asia/Kathmandu:
+  - ne
+
+Asia/Khandyga:
+  - ru
+
+Asia/Kolkata:
+  - hi
+  - en
+
+Asia/Krasnoyarsk:
+  - ru
+
+Asia/Kuala_Lumpur:
+  - ms
+
+Asia/Kuching:
+  - ms
+
+Asia/Kuwait:
+  - ar
+
+Asia/Macau:
+  - zh
+  - pt
+
+Asia/Magadan:
+  - ru
+
+Asia/Makassar:
+  - id
+
+Asia/Manila:
+  - en
+  - fil
+
+Asia/Muscat:
+  - ar
+
+Asia/Nicosia:
+  - el
+  - tr
+
+Asia/Novokuznetsk:
+  - ru
+
+Asia/Novosibirsk:
+  - ru
+
+Asia/Omsk:
+  - ru
+
+Asia/Oral:
+  - ru
+  - kk
+
+Asia/Phnom_Penh:
+  - km
+
+Asia/Pontianak:
+  - id
+
+Asia/Pyongyang:
+  - ko
+
+Asia/Qatar:
+  - ar
+
+Asia/Qostanay:
+  - ru
+  - kk
+
+Asia/Qyzylorda:
+  - ru
+  - kk
+
+Asia/Riyadh:
+  - ar
+
+Asia/Sakhalin:
+  - ru
+
+Asia/Samarkand:
+  - uz
+
+Asia/Seoul:
+  - ko
+
+Asia/Shanghai:
+  - zh
+
+Asia/Singapore:
+  - en
+  - zh
+  - ms
+  - ta
+
+Asia/Srednekolymsk:
+  - ru
+
+Asia/Taipei:
+  - zh
+
+Asia/Tashkent:
+  - uz
+
+Asia/Tbilisi:
+  - ka
+
+Asia/Tehran:
+  - fa
+
+Asia/Tel_Aviv:
+  - he
+  - ar
+
+Asia/Thimphu:
+  - dz
+
+Asia/Tokyo:
+  - ja
+
+Asia/Tomsk:
+  - ru
+
+Asia/Ulaanbaatar:
+  - mn
+
+Asia/Urumqi:
+  - zh
+
+Asia/Ust-Nera:
+  - ru
+
+Asia/Vientiane:
+  - lo
+
+Asia/Vladivostok:
+  - ru
+
+Asia/Yakutsk:
+  - ru
+
+Asia/Yangon:
+  - my
+
+Asia/Yekaterinburg:
+  - ru
+
+Asia/Yerevan:
+  - hy
+
+Atlantic/Azores:
+  - pt
+
+Atlantic/Bermuda:
+  - en
+
+Atlantic/Canary:
+  - es
+
+Atlantic/Cape_Verde:
+  - pt
+
+Atlantic/Faroe:
+  - fo
+
+Atlantic/Jan_Mayen:
+  - nb
+
+Atlantic/Madeira:
+  - pt
+
+Atlantic/Reykjavik:
+  - is
+
+Atlantic/South_Georgia: []
+
+Atlantic/St_Helena:
+  - en
+
+Atlantic/Stanley:
+  - en
+
+Australia/Adelaide:
+  - en
+
+Australia/Brisbane:
+  - en
+
+Australia/Broken_Hill:
+  - en
+
+Australia/Canberra:
+  - en
+
+Australia/Currie:
+  - en
+
+Australia/Darwin:
+  - en
+
+Australia/Eucla:
+  - en
+
+Australia/Hobart:
+  - en
+
+Australia/Lindeman:
+  - en
+
+Australia/Lord_Howe:
+  - en
+
+Australia/Melbourne:
+  - en
+
+Australia/Perth:
+  - en
+
+Australia/Sydney:
+  - en
+
+Australia/Yancowinna:
+  - en
+
+CET: []
+
+CST6CDT: []
+
+EET: []
+
+EST: []
+
+EST5EDT: []
+
+Etc/GMT: []
+
+Etc/GMT+0: []
+
+Etc/GMT+1: []
+
+Etc/GMT+10: []
+
+Etc/GMT+11: []
+
+Etc/GMT+12: []
+
+Etc/GMT+2: []
+
+Etc/GMT+3: []
+
+Etc/GMT+4: []
+
+Etc/GMT+5: []
+
+Etc/GMT+6: []
+
+Etc/GMT+7: []
+
+Etc/GMT+8: []
+
+Etc/GMT+9: []
+
+Etc/GMT-0: []
+
+Etc/GMT-1: []
+
+Etc/GMT-10: []
+
+Etc/GMT-11: []
+
+Etc/GMT-12: []
+
+Etc/GMT-13: []
+
+Etc/GMT-14: []
+
+Etc/GMT-2: []
+
+Etc/GMT-3: []
+
+Etc/GMT-4: []
+
+Etc/GMT-5: []
+
+Etc/GMT-6: []
+
+Etc/GMT-7: []
+
+Etc/GMT-8: []
+
+Etc/GMT-9: []
+
+Etc/GMT0: []
+
+Etc/Greenwich: []
+
+Etc/UCT: []
+
+Etc/UTC: []
+
+Etc/Universal: []
+
+Etc/Zulu: []
+
+Europe/Amsterdam:
+  - nl
+
+Europe/Andorra:
+  - ca
+
+Europe/Astrakhan:
+  - ru
+
+Europe/Athens:
+  - el
+
+Europe/Belfast:
+  - en
+
+Europe/Belgrade:
+  - sr
+
+Europe/Berlin:
+  - de
+
+Europe/Bratislava:
+  - sk
+
+Europe/Brussels:
+  - nl
+  - fr
+  - de
+
+Europe/Bucharest:
+  - ro
+
+Europe/Budapest:
+  - hu
+
+Europe/Busingen:
+  - de
+
+Europe/Chisinau:
+  - ro
+
+Europe/Copenhagen:
+  - da
+
+Europe/Dublin:
+  - en
+  - ga
+
+Europe/Gibraltar:
+  - en
+
+Europe/Guernsey:
+  - en
+
+Europe/Helsinki:
+  - fi
+  - sv
+
+Europe/Isle_of_Man:
+  - en
+  - gv
+
+Europe/Istanbul:
+  - tr
+
+Europe/Jersey:
+  - en
+
+Europe/Kaliningrad:
+  - ru
+
+Europe/Kirov:
+  - ru
+
+Europe/Kyiv:
+  - uk
+  - ru
+
+Europe/Lisbon:
+  - pt
+
+Europe/Ljubljana:
+  - sl
+
+Europe/London:
+  - en
+
+Europe/Luxembourg:
+  - fr
+  - lb
+  - de
+
+Europe/Madrid:
+  - es
+
+Europe/Malta:
+  - mt
+  - en
+
+Europe/Mariehamn:
+  - sv
+
+Europe/Minsk:
+  - be
+  - ru
+
+Europe/Monaco:
+  - fr
+
+Europe/Moscow:
+  - ru
+
+Europe/Nicosia:
+  - el
+  - tr
+
+Europe/Oslo:
+  - nb
+  - no
+  - nn
+
+Europe/Paris:
+  - fr
+
+Europe/Podgorica:
+  - sr
+
+Europe/Prague:
+  - cs
+
+Europe/Riga:
+  - lv
+
+Europe/Rome:
+  - it
+
+Europe/Samara:
+  - ru
+
+Europe/San_Marino:
+  - it
+
+Europe/Sarajevo:
+  - bs
+  - sr
+  - hr
+
+Europe/Saratov:
+  - ru
+
+Europe/Simferopol:
+  - uk
+  - ru
+
+Europe/Skopje:
+  - mk
+
+Europe/Sofia:
+  - bg
+
+Europe/Stockholm:
+  - sv
+
+Europe/Tallinn:
+  - et
+
+Europe/Tirane:
+  - sq
+
+Europe/Tiraspol:
+  - ro
+
+Europe/Ulyanovsk:
+  - ru
+
+Europe/Vaduz:
+  - de
+  - gsw
+
+Europe/Vatican:
+  - it
+
+Europe/Vienna:
+  - de
+
+Europe/Vilnius:
+  - lt
+
+Europe/Volgograd:
+  - ru
+
+Europe/Warsaw:
+  - pl
+
+Europe/Zagreb:
+  - hr
+
+Europe/Zurich:
+  - de
+  - gsw
+  - fr
+  - it
+
+Factory: []
+
+GMT: []
+
+HST: []
+
+Indian/Antananarivo:
+  - mg
+  - fr
+  - en
+
+Indian/Chagos:
+  - en
+
+Indian/Christmas:
+  - en
+
+Indian/Cocos:
+  - en
+
+Indian/Comoro:
+  - ar
+  - fr
+  - zdj
+  - wni
+
+Indian/Kerguelen: []
+
+Indian/Mahe:
+  - fr
+  - en
+
+Indian/Maldives:
+  - dv
+
+Indian/Mauritius:
+  - en
+  - fr
+
+Indian/Mayotte:
+  - fr
+
+Indian/Reunion:
+  - fr
+
+MET: []
+
+MST: []
+
+MST7MDT: []
+
+PST8PDT: []
+
+Pacific/Apia:
+  - sm
+  - en
+
+Pacific/Auckland:
+  - en
+  - mi
+
+Pacific/Bougainville:
+  - tpi
+  - en
+  - ho
+
+Pacific/Chatham:
+  - en
+  - mi
+
+Pacific/Chuuk:
+  - en
+
+Pacific/Easter:
+  - es
+
+Pacific/Efate:
+  - bi
+  - en
+  - fr
+
+Pacific/Fakaofo:
+  - en
+  - tkl
+
+Pacific/Fiji:
+  - en
+  - hif
+  - fj
+
+Pacific/Funafuti:
+  - tvl
+  - en
+
+Pacific/Galapagos:
+  - es
+  - qu
+
+Pacific/Gambier:
+  - fr
+  - ty
+
+Pacific/Guadalcanal:
+  - en
+
+Pacific/Guam:
+  - en
+  - ch
+
+Pacific/Honolulu:
+  - en
+
+Pacific/Johnston:
+  - en
+
+Pacific/Kanton:
+  - en
+  - gil
+
+Pacific/Kiritimati:
+  - en
+  - gil
+
+Pacific/Kosrae:
+  - en
+
+Pacific/Kwajalein:
+  - en
+  - mh
+
+Pacific/Majuro:
+  - en
+  - mh
+
+Pacific/Marquesas:
+  - fr
+  - ty
+
+Pacific/Midway:
+  - en
+
+Pacific/Nauru:
+  - en
+  - na
+
+Pacific/Niue:
+  - en
+  - niu
+
+Pacific/Norfolk:
+  - en
+
+Pacific/Noumea:
+  - fr
+
+Pacific/Pago_Pago:
+  - sm
+  - en
+
+Pacific/Palau:
+  - pau
+  - en
+
+Pacific/Pitcairn:
+  - en
+
+Pacific/Pohnpei:
+  - en
+
+Pacific/Port_Moresby:
+  - tpi
+  - en
+  - ho
+
+Pacific/Rarotonga:
+  - en
+
+Pacific/Saipan:
+  - en
+
+Pacific/Samoa:
+  - sm
+  - en
+
+Pacific/Tahiti:
+  - fr
+  - ty
+
+Pacific/Tarawa:
+  - en
+  - gil
+
+Pacific/Tongatapu:
+  - to
+  - en
+
+Pacific/Wake:
+  - en
+
+Pacific/Wallis:
+  - fr
+
+Pacific/Yap:
+  - en
+
+UTC: []
+
+WET: []
+
+localtime:
+  - nl

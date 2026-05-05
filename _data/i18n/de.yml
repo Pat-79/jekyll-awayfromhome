@@ -21,6 +21,8 @@ nav:
 
 ui:
   language: Sprache
+  language_auto: Automatisch
+  language_auto_short: AUTO
   search_placeholder: Geschichten durchsuchen...
   open_menu: Websitemenü öffnen
   latest_posts: Neueste Beiträge

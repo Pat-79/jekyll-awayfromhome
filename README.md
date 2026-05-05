@@ -960,14 +960,25 @@ The theme includes a built-in multilingual system supporting any number of langu
 
 1. **UI strings** — Each language has a YAML file in `_data/i18n/` (e.g. `en.yml`, `nl.yml`). All templates resolve strings via `{% assign t = site.data.i18n[page.lang] | default: site.data.i18n.en %}`.
 
-2. **`afh-page-meta`** — A JSON blob injected into every page by `base.html`, containing `currentLang`, `defaultLang`, a `translations` map (language code → URL for this page's translations), and the full `i18n` object. All client-side scripts read from this.
+2. **`afh-page-meta`** — A JSON blob emitted into every page by `base.html` inside a non-executable `<template>` element, containing `currentLang`, `defaultLang`, `availableLangs`, a `translations` map (language code → URL for this page's translations), a build-time `timezoneHints` map, and the full `i18n` object. All client-side scripts read from this.
 
-3. **Language detection** — On first visit (no explicit preference stored), `lang-persist.js` detects the best matching language using:
+3. **Language detection** — In automatic mode (no explicit preference stored), `lang-persist.js` detects the best matching language using:
    - `navigator.languages` — browser language list (BCP 47); exact match first, then base language (`nl-BE` → `nl`, `en-US` → `en`)
-   - Timezone hint — `Intl.DateTimeFormat().resolvedOptions().timeZone` mapped to a language code as a weak tiebreaker
+   - Timezone hint list — `Intl.DateTimeFormat().resolvedOptions().timeZone` looked up in `_data/timezone_language_hints.yml`
+     - That file is generated for all available system timezone names and only keeps official/de facto official languages for the timezone's territory
+     - Timezone candidates are ordered by estimated speaker count in the territory, high to low
+     - Only languages configured in `site.languages` are considered from timezone hints at build time
+     - If a timezone has no usable language candidates after filtering, the build injects the default site language; if no default site language is configured, it falls back to `en`
    - The detected language is **not** saved to storage; detection re-runs on every visit until the user makes an explicit choice.
+   - In automatic mode, if the visitor opens a translated URL directly (e.g. `/nl/about/`), they stay on that page — auto-detection only redirects from the default-language page.
 
-4. **Explicit preference** — When the user picks a language from the dropdown, `localStorage('afh-lang')` is set and always takes priority over detection.
+4. **Language selector** — The dropdown always shows the current mode:
+   - **Automatic** (`🇺🇳 Automatic`) is shown when no preference is stored. This is the default state on first visit.
+   - The visitor's **explicit language** is shown when they have previously made a choice.
+   - Selecting **Automatic** from the dropdown clears the stored preference and navigates to the default-language version of the current page, returning to auto-detection mode.
+   - Selecting any other language stores it in `localStorage('afh-lang')` and navigates to the translated page.
+
+5. **Explicit preference** — When the user picks a named language from the dropdown, `localStorage('afh-lang')` is set and always takes priority over detection.
 
 5. **RTL support** — Languages in the RTL list (`ar`, `he`, `fa`, `ur`, and others) automatically receive `dir="rtl"` on `<html>`.
 
@@ -1046,6 +1057,16 @@ The `ref` field enables:
 ### i18n file structure
 
 Each `_data/i18n/<lang>.yml` must contain these top-level sections: `site`, `nav`, `ui`, `drawer`, `theme`, `archive`, `blog`, `browse`, `search`, `tags`, `footer`.
+
+Under `ui`, the language selector requires two keys for the Automatic option:
+
+```yaml
+ui:
+  language_auto: Automatic       # Full label shown in the dropdown
+  language_auto_short: AUTO      # Short label shown on narrow screens
+```
+
+These should be translated to each language (e.g. `Automatisch` in Dutch and German, `تلقائي` in Arabic).
 
 The `search` section has two keys used by the client-side highlighter:
 

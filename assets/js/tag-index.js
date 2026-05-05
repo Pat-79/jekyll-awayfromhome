@@ -1,4 +1,22 @@
 (function () {
+  function readMetaJson(metaEl) {
+    if (!metaEl) return null;
+
+    var raw = '';
+    if (metaEl.content && typeof metaEl.content.textContent === 'string') {
+      raw = metaEl.content.textContent;
+    }
+    if (!raw && typeof metaEl.innerHTML === 'string') {
+      raw = metaEl.innerHTML;
+    }
+    if (!raw && typeof metaEl.textContent === 'string') {
+      raw = metaEl.textContent;
+    }
+
+    raw = raw ? raw.trim() : '';
+    return raw ? JSON.parse(raw) : null;
+  }
+
   var tagPostsPage = document.querySelector("[data-tag-posts-page]");
 
   if (!tagPostsPage) {
@@ -47,7 +65,7 @@
   var metaEl = document.getElementById('afh-page-meta');
   if (metaEl) {
     try {
-      var meta = JSON.parse(metaEl.textContent);
+      var meta = readMetaJson(metaEl);
       var lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
       var langI18n = meta.i18n && (meta.i18n[lang] || meta.i18n[meta.currentLang]);
       if (langI18n && langI18n.tags) tagsI18n = langI18n.tags;
