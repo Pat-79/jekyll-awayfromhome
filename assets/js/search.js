@@ -64,21 +64,62 @@ class SearchEngine {
     const VERSION_KEY = 'searchDataVersion';
     let cachedVersion = null;
     let cachedData = null;
+    const expectedVersion = typeof version === 'string' ? version : '';
+
+    const hasExpectedPayloadVersion = (payload) => {
+      if (!expectedVersion) return true;
+      return !!(payload && typeof payload.version === 'string' && payload.version === expectedVersion);
+    };
 
     try {
       cachedVersion = localStorage.getItem(VERSION_KEY);
       cachedData = localStorage.getItem(STORAGE_KEY);
     } catch (e) {}
 
-    let data;
+    let data = null;
 
     if (cachedData && cachedVersion === version) {
-      data = JSON.parse(cachedData);
-    } else {
-      const res = await fetch(`/assets/data/search-data.json?v=${version}`, {
-        cache: 'no-cache'
-      });
-      data = await res.json();
+      try {
+        const parsedCachedData = JSON.parse(cachedData);
+        if (hasExpectedPayloadVersion(parsedCachedData)) {
+          data = parsedCachedData;
+        } else {
+          try {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(VERSION_KEY);
+          } catch (e) {}
+        }
+      } catch (e) {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(VERSION_KEY);
+        } catch (err) {}
+      }
+    }
+
+    if (!data) {
+      const fetchSearchData = async (cacheMode, extraParam = '') => {
+        const suffix = extraParam ? `&${extraParam}` : '';
+        const res = await fetch(`/assets/data/search-data.json?v=${version}${suffix}`, {
+          cache: cacheMode
+        });
+        return res.json();
+      };
+
+      data = await fetchSearchData('no-cache');
+
+      if (!hasExpectedPayloadVersion(data)) {
+        const retryData = await fetchSearchData('reload', `t=${Date.now()}`);
+        if (hasExpectedPayloadVersion(retryData)) {
+          data = retryData;
+        } else {
+          console.warn('Search payload version mismatch', {
+            expected: expectedVersion,
+            actual: retryData && typeof retryData.version === 'string' ? retryData.version : null
+          });
+          data = { version: expectedVersion, documents: [], entries: [] };
+        }
+      }
 
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));

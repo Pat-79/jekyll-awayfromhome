@@ -4,6 +4,7 @@ permalink: /assets/data/search-data.json
 ---
 
 {%- assign all_docs = site.posts | concat: site.pages -%}
+{%- assign search_data_version = site.time | date: '%Y%m%d%H%M%S' -%}
 {%- assign documents = "" | split: "" -%}
 {%- assign entries = "" | split: "" -%}
 {%- assign _sdata_all_paths = site.static_files | map: 'path' | join: '||' -%}
@@ -190,4 +191,4 @@ permalink: /assets/data/search-data.json
     {%- assign entries = entries | push: entry -%}
   {%- endfor -%}
 {%- endfor -%}
-{"documents":[{{ documents | join: "," }}],"entries":[{{ entries | join: "," }}]}
+{"version":{{ search_data_version | jsonify }},"documents":[{{ documents | join: "," }}],"entries":[{{ entries | join: "," }}]}

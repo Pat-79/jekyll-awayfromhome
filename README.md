@@ -919,7 +919,7 @@ The theme includes a client-side full-text search engine. No external service, A
 
 ### How it works
 
-1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes language-specific stopwords (read from `_data/i18n/<lang>.yml` per document), and emits a compact search payload as `/assets/data/search-data.json`: document metadata is stored once, and word entries point to document ids.
+1. **Index generation** — At build time, Jekyll processes `assets/data/search-data.md` through the `search-data` layout. This Liquid template crawls all posts and pages, strips HTML, removes language-specific stopwords (read from `_data/i18n/<lang>.yml` per document), and emits a compact search payload as `/assets/data/search-data.json`: a top-level build `version`, document metadata stored once, and word entries that point to document ids.
 
 2. **Runtime caching** — On first visit, `search.js` fetches `search-data.json` and stores it in `localStorage`, keyed by a build-time version string. When that version changes on a later build, the cached payload is replaced.
 
