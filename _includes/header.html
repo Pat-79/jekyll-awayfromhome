@@ -8,7 +8,7 @@
       {%- endif %}
       <span class="site-brand__text">{{ site.brand.title | default: site.title }}</span>
     </a>
-    <div class="site-header__search" aria-label="{{ t.ui.search_placeholder | default: 'Search' }}">
+    <div class="site-header__search" role="search" aria-label="{{ t.ui.search_placeholder | default: 'Search' }}">
       {% include search-widget.html id='site-header-search' class='search-widget--header' limit=6 placeholder=t.ui.search_placeholder sync_query=false %}
     </div>
     <button
