@@ -2,5 +2,14 @@
 {% include javascript-head.html %}
 {% include meta.html %}
 {% include font.html %}
+{%- assign _lcp_image = page.image | default: page.landing_image | default: site.home_landing.image -%}
+{%- if _lcp_image and _lcp_image != '' -%}
+  {%- if _lcp_image contains '://' -%}
+    {%- assign _lcp_image_url = _lcp_image -%}
+  {%- else -%}
+    {%- assign _lcp_image_url = _lcp_image | relative_url -%}
+  {%- endif -%}
+  <link rel="preload" as="image" href="{{ _lcp_image_url }}" fetchpriority="high">
+{%- endif -%}
 {% include css.html %}
 </head>
