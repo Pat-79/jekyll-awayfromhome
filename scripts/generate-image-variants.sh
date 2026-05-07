@@ -13,6 +13,7 @@ set -euo pipefail
 ROOT_DIR="assets/images"
 SCHEME="subdir"
 TARGET_FORMAT="webp"
+EXTRA_FORMATS=()
 QUALITY="82"
 DRY_RUN="false"
 VERBOSE="false"
@@ -41,6 +42,8 @@ Options:
   --allow-animated-gif   Allow converting animated GIF sources
   --update-content-refs  Update image references in posts/pages content files
   --state-file <path>    Processing state file path (default: assets/images/.image-variant-state.tsv)
+  --extra-format <ext>   Generate additional variants in this format alongside --target-format
+                         (e.g. --extra-format avif). Can be specified multiple times.
   --dry-run              Show what would be generated
   --verbose              Print skip reasons
   -h, --help             Show this help text
@@ -96,6 +99,10 @@ while [[ $# -gt 0 ]]; do
     --update-content-refs)
       UPDATE_CONTENT_REFS="true"
       shift
+      ;;
+    --extra-format)
+      EXTRA_FORMATS+=("${2,,}")
+      shift 2
       ;;
     --state-file)
       STATE_FILE="$2"
@@ -382,7 +389,7 @@ build_source_signature() {
   local src_size src_mtime
   src_size="$(stat -c '%s' "$src" 2>/dev/null || echo 0)"
   src_mtime="$(stat -c '%Y' "$src" 2>/dev/null || echo 0)"
-  printf '%s|%s|%s|%s|%s|%s' "$src_size" "$src_mtime" "$TARGET_FORMAT" "$QUALITY" "$SCHEME" "$ALLOW_ANIMATED_GIF"
+  printf '%s|%s|%s|%s|%s|%s|%s' "$src_size" "$src_mtime" "$TARGET_FORMAT" "$QUALITY" "$SCHEME" "$ALLOW_ANIMATED_GIF" "${EXTRA_FORMATS[*]}"
 }
 
 load_state_file() {
@@ -537,6 +544,35 @@ while IFS= read -r -d '' src; do
     mkdir -p "$(dirname "$dest")"
     create_variant "$effective_src" "$dest" "$max_width"
     ((generated+=1))
+  done
+
+  # Generate extra-format variants (e.g. avif) alongside the primary format.
+  # We skip has_alternative so both formats coexist in the same size directories.
+  for extra_fmt in "${EXTRA_FORMATS[@]}"; do
+    for size in thumb small medium large full; do
+      max_width="${WIDTHS[$size]}"
+      extra_dest="$(build_destination "$dir" "$stem" "$size" "$extra_fmt")"
+
+      if [[ -e "$extra_dest" ]]; then
+        vlog "[SKIP] extra format already exists: ${extra_dest#${ROOT_DIR%/}/}"
+        continue
+      fi
+
+      if [[ "$source_prepared" != "true" ]]; then
+        mkdir -p "$archive_dir"
+        if archive_original "$src" "$archive_path"; then
+          ((archived+=1))
+          if [[ "$DRY_RUN" != "true" ]]; then
+            effective_src="$archive_path"
+          fi
+        fi
+        source_prepared="true"
+      fi
+
+      mkdir -p "$(dirname "$extra_dest")"
+      create_variant "$effective_src" "$extra_dest" "$max_width"
+      ((generated+=1))
+    done
   done
 
   STATE_MAP["$src_key"]="$src_sig"

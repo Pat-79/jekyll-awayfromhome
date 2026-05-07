@@ -185,6 +185,38 @@
       {%- assign srcset_items = srcset_items | append: base_url | append: ' ' | append: base_width | append: 'w' -%}
     {%- endif -%}
 
-    <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+    {%- comment -%} AVIF lookup — separate pass so we can offer avif via <picture><source> with webp/jpeg <img> fallback {%- endcomment -%}
+    {%- assign avif_thumb_url = '' -%}
+    {%- assign avif_small_url = '' -%}
+    {%- assign avif_medium_url = '' -%}
+    {%- assign avif_large_url = '' -%}
+    {%- assign avif_full_url = '' -%}
+    {%- if variant_stem != '' and variant_stem != file_name -%}
+      {%- assign _av_thumb  = variant_root_dir | append: 'thumbs/' | append: variant_stem | append: '.avif' -%}
+      {%- assign _av_small  = variant_root_dir | append: 'small/'  | append: variant_stem | append: '.avif' -%}
+      {%- assign _av_medium = variant_root_dir | append: 'medium/' | append: variant_stem | append: '.avif' -%}
+      {%- assign _av_large  = variant_root_dir | append: 'large/'  | append: variant_stem | append: '.avif' -%}
+      {%- assign _av_full   = variant_root_dir | append: 'full/'   | append: variant_stem | append: '.avif' -%}
+      {%- assign _m = '||' | append: _av_thumb  | append: '||' -%}{%- if static_marker contains _m -%}{%- assign avif_thumb_url  = _av_thumb  | relative_url -%}{%- endif -%}
+      {%- assign _m = '||' | append: _av_small  | append: '||' -%}{%- if static_marker contains _m -%}{%- assign avif_small_url  = _av_small  | relative_url -%}{%- endif -%}
+      {%- assign _m = '||' | append: _av_medium | append: '||' -%}{%- if static_marker contains _m -%}{%- assign avif_medium_url = _av_medium | relative_url -%}{%- endif -%}
+      {%- assign _m = '||' | append: _av_large  | append: '||' -%}{%- if static_marker contains _m -%}{%- assign avif_large_url  = _av_large  | relative_url -%}{%- endif -%}
+      {%- assign _m = '||' | append: _av_full   | append: '||' -%}{%- if static_marker contains _m -%}{%- assign avif_full_url   = _av_full   | relative_url -%}{%- endif -%}
+    {%- endif -%}
+    {%- assign avif_srcset_items = '' -%}
+    {%- if avif_thumb_url  != '' -%}{%- if avif_srcset_items != '' -%}{%- assign avif_srcset_items = avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign avif_srcset_items = avif_srcset_items | append: avif_thumb_url  | append: ' 480w'  -%}{%- endif -%}
+    {%- if avif_small_url  != '' -%}{%- if avif_srcset_items != '' -%}{%- assign avif_srcset_items = avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign avif_srcset_items = avif_srcset_items | append: avif_small_url  | append: ' 768w'  -%}{%- endif -%}
+    {%- if avif_medium_url != '' -%}{%- if avif_srcset_items != '' -%}{%- assign avif_srcset_items = avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign avif_srcset_items = avif_srcset_items | append: avif_medium_url | append: ' 1200w' -%}{%- endif -%}
+    {%- if avif_large_url  != '' -%}{%- if avif_srcset_items != '' -%}{%- assign avif_srcset_items = avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign avif_srcset_items = avif_srcset_items | append: avif_large_url  | append: ' 1600w' -%}{%- endif -%}
+    {%- if avif_full_url   != '' -%}{%- if avif_srcset_items != '' -%}{%- assign avif_srcset_items = avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign avif_srcset_items = avif_srcset_items | append: avif_full_url   | append: ' 2200w' -%}{%- endif -%}
+
+    {%- if avif_srcset_items != '' -%}
+      <picture>
+        <source type="image/avif" srcset="{{ avif_srcset_items }}"{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}>
+        <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+      </picture>
+    {%- else -%}
+      <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+    {%- endif -%}
   {%- endif -%}
 {%- endif -%}

@@ -197,6 +197,30 @@
           {%- assign _gw_marker = '||' | append: _gw_large_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_large_url = _gw_large_path | relative_url -%}{%- endif -%}
           {%- assign _gw_marker = '||' | append: _gw_full_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_full_url = _gw_full_path | relative_url -%}{%- endif -%}
 
+          {%- comment -%} AVIF variant lookup for <picture><source> support {%- endcomment -%}
+          {%- assign _gw_file_stem = _gw_file_name | split: '.' | first -%}
+          {%- assign _gw_avif_thumb_path  = _gw_root_dir | append: 'thumbs/' | append: _gw_file_stem | append: '.avif' -%}
+          {%- assign _gw_avif_small_path  = _gw_root_dir | append: 'small/'  | append: _gw_file_stem | append: '.avif' -%}
+          {%- assign _gw_avif_medium_path = _gw_root_dir | append: 'medium/' | append: _gw_file_stem | append: '.avif' -%}
+          {%- assign _gw_avif_large_path  = _gw_root_dir | append: 'large/'  | append: _gw_file_stem | append: '.avif' -%}
+          {%- assign _gw_avif_full_path   = _gw_root_dir | append: 'full/'   | append: _gw_file_stem | append: '.avif' -%}
+          {%- assign _gw_avif_thumb_url  = '' -%}
+          {%- assign _gw_avif_small_url  = '' -%}
+          {%- assign _gw_avif_medium_url = '' -%}
+          {%- assign _gw_avif_large_url  = '' -%}
+          {%- assign _gw_avif_full_url   = '' -%}
+          {%- assign _gw_marker = '||' | append: _gw_avif_thumb_path  | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_avif_thumb_url  = _gw_avif_thumb_path  | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_avif_small_path  | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_avif_small_url  = _gw_avif_small_path  | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_avif_medium_path | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_avif_medium_url = _gw_avif_medium_path | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_avif_large_path  | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_avif_large_url  = _gw_avif_large_path  | relative_url -%}{%- endif -%}
+          {%- assign _gw_marker = '||' | append: _gw_avif_full_path   | append: '||' -%}{%- if _gw_all_static contains _gw_marker -%}{%- assign _gw_avif_full_url   = _gw_avif_full_path   | relative_url -%}{%- endif -%}
+          {%- assign _gw_avif_srcset = '' -%}
+          {%- if _gw_avif_thumb_url  != '' -%}{%- if _gw_avif_srcset != '' -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: _gw_avif_thumb_url  | append: ' 250w'  -%}{%- endif -%}
+          {%- if _gw_avif_small_url  != '' -%}{%- if _gw_avif_srcset != '' -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: _gw_avif_small_url  | append: ' 600w'  -%}{%- endif -%}
+          {%- if _gw_avif_medium_url != '' -%}{%- if _gw_avif_srcset != '' -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: _gw_avif_medium_url | append: ' 720w'  -%}{%- endif -%}
+          {%- if _gw_avif_large_url  != '' -%}{%- if _gw_avif_srcset != '' -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: _gw_avif_large_url  | append: ' 1080w' -%}{%- endif -%}
+          {%- if _gw_avif_full_url   != '' -%}{%- if _gw_avif_srcset != '' -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_avif_srcset = _gw_avif_srcset | append: _gw_avif_full_url   | append: ' 1600w' -%}{%- endif -%}
+
           {%- assign _gw_srcset = '' -%}
           {%- if _gw_thumb_url != '' -%}{%- assign _gw_srcset = _gw_thumb_url | append: ' 250w' -%}{%- endif -%}
           {%- if _gw_small_url != '' -%}{%- if _gw_srcset != '' -%}{%- assign _gw_srcset = _gw_srcset | append: ', ' -%}{%- endif -%}{%- assign _gw_srcset = _gw_srcset | append: _gw_small_url | append: ' 600w' -%}{%- endif -%}
@@ -264,6 +288,19 @@
               {% if _gw_srcset != '' %}data-gallery-srcset="{{ _gw_srcset }}"{% endif %}
               {% if _gw_mode == 'carousel' and forloop.first %}aria-current="true"{% endif %}
             >
+              {%- if _gw_avif_srcset != '' -%}
+              <picture>
+                <source type="image/avif" srcset="{{ _gw_avif_srcset }}" sizes="{% if _gw_mode == 'carousel' %}(max-width: 720px) 5.75rem, 7rem{% else %}{{ _gw_sizes }}{% endif %}">
+                <img
+                  class="afh-gallery__thumb"
+                  src="{{ _gw_preview_url }}"
+                  {% if _gw_srcset != '' %}srcset="{{ _gw_srcset }}" sizes="{% if _gw_mode == 'carousel' %}(max-width: 720px) 5.75rem, 7rem{% else %}{{ _gw_sizes }}{% endif %}"{% endif %}
+                  alt="{{ _gw_item_alt | escape }}"
+                  loading="{{ _gw_loading }}"
+                  decoding="{{ _gw_decoding }}"
+                >
+              </picture>
+              {%- else -%}
               <img
                 class="afh-gallery__thumb"
                 src="{{ _gw_preview_url }}"
@@ -272,6 +309,7 @@
                 loading="{{ _gw_loading }}"
                 decoding="{{ _gw_decoding }}"
               >
+              {%- endif -%}
             </a>
           </article>
         {%- endfor -%}
