@@ -69,7 +69,7 @@ defaults:
   - scope: { path: "", type: "posts" }
     values:
       lang: en
-      permalink: "/blog/:year-:month-:day_:title/"
+      permalink: "/en/blog/:year-:month-:day_:title/"
   - scope: { path: "" }
     values:
       lang: en
