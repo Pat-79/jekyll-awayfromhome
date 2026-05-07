@@ -1,0 +1,66 @@
+---
+layout: none
+permalink: /robots.txt
+---
+# robots.txt — {{ site.url }}
+
+# ── Standard crawlers ────────────────────────────────────────────────────────
+User-agent: *
+Allow: /
+
+Sitemap: {{ site.url }}/sitemap.xml
+
+# ── AI training crawlers ─────────────────────────────────────────────────────
+# OpenAI
+User-agent: GPTBot
+Disallow: /
+
+# OpenAI (browsing)
+User-agent: ChatGPT-User
+Disallow: /
+
+# Anthropic
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+# Google AI training
+User-agent: Google-Extended
+Disallow: /
+
+# Meta AI
+User-agent: FacebookBot
+Disallow: /
+
+# Apple AI
+User-agent: Applebot-Extended
+Disallow: /
+
+# Common Crawl (used by many AI training datasets)
+User-agent: CCBot
+Disallow: /
+
+# Bytedance / TikTok
+User-agent: Bytespider
+Disallow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Disallow: /
+
+# Amazon Alexa
+User-agent: Amazonbot
+Disallow: /
+
+# Diffbot
+User-agent: Diffbot
+Disallow: /
+
+# Cohere
+User-agent: cohere-ai
+Disallow: /
