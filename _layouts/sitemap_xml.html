@@ -4,17 +4,34 @@ permalink: /sitemap.xml
 ---
 
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   {%- assign all_items = site.pages | concat: site.posts -%}
+  {%- comment -%} Layouts that produce non-indexable utility pages {%- endcomment -%}
+  {%- assign _skip_layouts = 'search,search-data,social-media,sitemap,sitemap_xml,error' | split: ',' -%}
+  {%- comment -%} File extensions that are not HTML pages {%- endcomment -%}
+  {%- assign _skip_exts = 'css,js,json,xml,txt' | split: ',' -%}
   {%- for item in all_items -%}
     {%- assign include_item = true -%}
+    {%- comment -%} Skip items with no URL {%- endcomment -%}
     {%- if item.url == nil or item.url == "" -%}
       {%- assign include_item = false -%}
     {%- endif -%}
+    {%- comment -%} Skip items explicitly excluded via front matter {%- endcomment -%}
     {%- if item.sitemap == false -%}
       {%- assign include_item = false -%}
     {%- endif -%}
-    {%- if item.url == "/sitemap.xml" or item.url == "/search/" or item.url == "/404.html" -%}
+    {%- comment -%} Skip the XML sitemap itself and 404 {%- endcomment -%}
+    {%- if item.url == "/sitemap.xml" or item.url == "/404.html" -%}
+      {%- assign include_item = false -%}
+    {%- endif -%}
+    {%- comment -%} Skip non-HTML assets by URL file extension {%- endcomment -%}
+    {%- assign _url_ext = item.url | split: '.' | last | downcase -%}
+    {%- if _skip_exts contains _url_ext -%}
+      {%- assign include_item = false -%}
+    {%- endif -%}
+    {%- comment -%} Skip utility page layouts (search, social-media, etc.) {%- endcomment -%}
+    {%- if _skip_layouts contains item.layout -%}
       {%- assign include_item = false -%}
     {%- endif -%}
     {%- if include_item -%}
@@ -25,12 +42,20 @@ permalink: /sitemap.xml
       {%- elsif item.date -%}
       <lastmod>{{ item.date | date_to_xmlschema }}</lastmod>
       {%- endif -%}
-      {%- if item.layout == "post" -%}
-      <changefreq>weekly</changefreq>
-      <priority>0.8</priority>
-      {%- else -%}
-      <changefreq>monthly</changefreq>
-      <priority>0.6</priority>
+      {%- comment -%} hreflang alternate links for multilingual content {%- endcomment -%}
+      {%- if item.ref and item.ref != '' -%}
+        {%- assign _alts = all_items | where: 'ref', item.ref -%}
+        {%- for _alt in _alts -%}
+          {%- if _alt.sitemap != false -%}
+            {%- assign _alt_lang = _alt.lang | default: site.lang | default: 'en' -%}
+      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' }}"/>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- assign _default_lang = site.lang | default: 'en' -%}
+        {%- assign _x_default = _alts | where: 'lang', _default_lang | first -%}
+        {%- if _x_default and _x_default.sitemap != false -%}
+      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' }}"/>
+        {%- endif -%}
       {%- endif -%}
     </url>
     {%- endif -%}
