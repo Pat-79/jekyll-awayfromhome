@@ -9,6 +9,14 @@ sitemap: false
 User-agent: *
 Allow: /
 
+# WordPress admin paths — definitely not WordPress, definitely nothing to see here
+Disallow: /wp-admin
+Disallow: /wp-admin/
+Disallow: /wp-admin.php
+Disallow: /wp-login
+Disallow: /wp-login/
+Disallow: /wp-login.php
+
 Sitemap: {{ site.url }}/sitemap.xml
 
 # ── AI training crawlers ─────────────────────────────────────────────────────
