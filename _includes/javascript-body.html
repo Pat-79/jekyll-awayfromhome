@@ -52,3 +52,6 @@
 {%- if page.layout == 'archive' -%}
 <script src="{{ js_dir | append: 'archive' | append: js_ext | relative_url }}" defer></script>
 {%- endif -%}
+{%- if page.layout == 'blog' or page.layout == 'home' -%}
+<script src="{{ js_dir | append: 'blog-pagination' | append: js_ext | relative_url }}" defer></script>
+{%- endif -%}
