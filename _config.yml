@@ -101,6 +101,7 @@ remote_theme: pat-79/jekyll-awayfromhome
 theme: jekyll-awayfromhome
 plugins:
   - jekyll-feed
+  - jekyll-redirect-from
 
 navigation:
   - title: Home
