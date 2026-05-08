@@ -59,7 +59,7 @@ layout: page
       {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
       {%- assign _post_dir = 'ltr' -%}
       {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
-      {%- assign _post_t = site.data.i18n[_post_lang] | default: site.data.i18n.en -%}
+      {%- assign _post_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
       <a class="story-card story-card--blog" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}" data-blog-item>
         <div class="story-card__media">
           {%- include responsive-image.html

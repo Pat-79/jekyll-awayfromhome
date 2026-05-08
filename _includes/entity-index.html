@@ -243,7 +243,7 @@
               {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
               {%- assign _item_dir = 'ltr' -%}
               {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
-              {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
+              {%- assign _item_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
               <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
                   {%- include responsive-image.html
@@ -370,7 +370,7 @@
               {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
               {%- assign _item_dir = 'ltr' -%}
               {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
-              {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
+              {%- assign _item_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
               <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
                   {%- include responsive-image.html
@@ -497,7 +497,7 @@
               {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
               {%- assign _item_dir = 'ltr' -%}
               {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
-              {%- assign _item_t = site.data.i18n[_item_lang] | default: site.data.i18n.en -%}
+              {%- assign _item_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
               <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
                 <div class="story-card__media">
                   {%- include responsive-image.html

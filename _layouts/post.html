@@ -101,7 +101,7 @@ has_author: true
     {%- else -%}
       {%- assign _continue_dir = 'ltr' -%}
     {%- endif -%}
-    {%- assign _continue_t = site.data.i18n[_continue_lang] | default: site.data.i18n.en -%}
+    {%- assign _continue_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
     <section class="post-banner" lang="{{ _continue_lang }}" dir="{{ _continue_dir }}">
       <a class="post-banner__link" href="{{ continue_post.url | relative_url }}">
         <div class="post-banner__media">
