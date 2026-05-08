@@ -1,4 +1,4 @@
-import { SearchEngine, debounce } from '/assets/js/search.js';
+import { SearchEngine, debounce } from '/assets/js/full/search.js';
 
 function escapeHtml(value = '') {
   return String(value)

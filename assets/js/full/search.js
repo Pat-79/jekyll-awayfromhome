@@ -20,7 +20,7 @@ class SearchEngine {
 
     if (typeof Worker !== 'undefined') {
       try {
-        const workerUrl = `/assets/js/search-worker.js${version ? `?v=${encodeURIComponent(version)}` : ''}`;
+        const workerUrl = `/assets/js/full/search-worker.js${version ? `?v=${encodeURIComponent(version)}` : ''}`;
         this.worker = new Worker(workerUrl);
         this.workerVersion = version;
         this.worker.onmessage = (e) => {
