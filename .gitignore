@@ -18,3 +18,4 @@ _posts/*
 MEMORY.md
 assets/images/.image-variant-state.tsv
 design-gallery.md
+/node_modules
