@@ -393,6 +393,7 @@
 
     // Inline placeholder "Enable X Cookies" buttons — event delegation.
     // Clicking grants only that single category and activates its widgets inline.
+    // Also dismisses the banner — the click is an explicit consent action.
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-consent-enable]');
       if (!btn) return;
@@ -403,6 +404,7 @@
       storeRecord(ch);
       grantGate(catId);
       notifyChanged(ch);
+      hideBanner();
     });
 
     // Preferences widget on the cookies page
