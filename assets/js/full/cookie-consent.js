@@ -34,6 +34,55 @@
 
   var optionalCategories = categories.filter(function (c) { return !c.required; });
 
+  // ── Runtime i18n (banner language follows the user's UI language pref) ────────
+  // The banner HTML is baked at build time in page.lang, but the user may have
+  // switched to a different language via the language selector (stored in
+  // localStorage as 'afh-lang'). We embed all site languages' strings as
+  // data-i18n-{code} attributes and re-apply the right set at runtime.
+  var _pageLang = banner.getAttribute('data-page-lang') || 'en';
+  var _i18nByLang = {};
+  (banner.getAttribute('data-langs') || '').split(',').forEach(function (lc) {
+    lc = lc.trim();
+    if (!lc) return;
+    try { _i18nByLang[lc] = JSON.parse(banner.getAttribute('data-i18n-' + lc) || 'null'); } catch (_) {}
+  });
+
+  function applyI18n(s) {
+    if (!s) return;
+    var t;
+    t = banner.querySelector('.afh-cookie-banner__title');
+    if (t && s.banner_title) t.textContent = s.banner_title;
+    t = banner.querySelector('.afh-cookie-banner__intro');
+    if (t && s.banner_intro) t.textContent = s.banner_intro;
+    if (s.banner_title) banner.setAttribute('aria-label', s.banner_title);
+    t = document.getElementById('afh-cookie-manage-btn');
+    if (t && s.manage) t.textContent = s.manage;
+    t = document.getElementById('afh-cookie-accept-all');
+    if (t && s.accept_all) t.textContent = s.accept_all;
+    t = document.getElementById('afh-cookie-accept-essential');
+    if (t && s.accept_essential) t.textContent = s.accept_essential;
+    document.querySelectorAll('[data-cookie-decline-all]').forEach(function (b) {
+      if (s.decline_all) b.textContent = s.decline_all;
+    });
+    t = document.getElementById('afh-cookie-save-selected');
+    if (t && s.save) t.textContent = s.save;
+    banner.querySelectorAll('.afh-cookie-required-pill').forEach(function (p) {
+      if (s.always_on) p.textContent = s.always_on;
+    });
+    if (s.saved_message) banner.setAttribute('data-str-saved', s.saved_message);
+    if (s.categories) {
+      banner.querySelectorAll('.afh-cookie-category-row[data-category-id]').forEach(function (row) {
+        var catId = row.getAttribute('data-category-id');
+        var catStr = s.categories[catId];
+        if (!catStr) return;
+        t = row.querySelector('.afh-cookie-category-row__name');
+        if (t && catStr.name) t.textContent = catStr.name;
+        t = row.querySelector('.afh-cookie-category-row__description');
+        if (t && catStr.description !== undefined) t.textContent = catStr.description;
+      });
+    }
+  }
+
   function str(key) {
     return banner.getAttribute('data-str-' + key) || '';
   }
@@ -281,6 +330,15 @@
   // ── Wire DOM event handlers ─────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function () {
 
+    // Apply user's preferred UI language if it differs from the page's build-time language.
+    (function () {
+      var userLang = '';
+      try { userLang = localStorage.getItem('afh-lang') || ''; } catch (_) {}
+      if (userLang && userLang !== _pageLang && _i18nByLang[userLang]) {
+        applyI18n(_i18nByLang[userLang]);
+      }
+    }());
+
     // Accept All
     var acceptBtn = document.getElementById('afh-cookie-accept-all');
     if (acceptBtn) {
@@ -357,6 +415,14 @@
       if (bannerTrigger === 'always') {
         // Show to every new visitor unconditionally.
         shouldShow = true;
+      } else if (bannerTrigger === 'on_use_non_essential') {
+        // Show only when the page has a non-essential consent gate (map/video).
+        // Essential storage (theme, language, search) is allowed silently —
+        // the privacy statement covers it instead of a consent banner.
+        var hasNonEssentialGates = document.querySelectorAll('[data-consent-gate]').length > 0;
+        if (hasNonEssentialGates) {
+          shouldShow = true;
+        }
       } else {
         // 'on_use' (default): show only when the site is actually in use.
         // Triggered by:

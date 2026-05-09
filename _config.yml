@@ -196,15 +196,21 @@ cookie_consent:
   # Controls when the consent banner is automatically shown to visitors who
   # have not yet made a choice.
   #
-  #   always  — show to every new visitor on every page, immediately.
-  #   on_use  — show only when the page contains a consent gate (map/video
-  #             widget) OR the browser already holds essential site data
-  #             (theme, language, search cache). Visitors who have not yet
-  #             interacted with the site are not shown the banner.
-  #   never   — never show the banner automatically. Visitors can still manage
-  #             their preferences on the cookies page.
+  #   always             — show to every new visitor on every page, immediately.
+  #   on_use             — show only when the page contains a consent gate (map/video
+  #                        widget) OR the browser already holds essential site data
+  #                        (theme, language, search cache). Visitors who have not yet
+  #                        interacted with the site are not shown the banner.
+  #   on_use_non_essential — show only when the page contains a non-essential consent
+  #                        gate (map/video widget) AND the visitor has not yet made a
+  #                        consent choice. Essential cookies (theme, language, search)
+  #                        are stored silently without prompting. Use this when you
+  #                        cover essential-only storage in a privacy statement rather
+  #                        than through a consent banner.
+  #   never              — never show the banner automatically. Visitors can still manage
+  #                        their preferences on the cookies page.
   #
-  banner_trigger: on_use
+  banner_trigger: on_use_non_essential
 
   # Show an "Accept Essential" button on the banner. Clicking it accepts only
   # the required (essential) cookies and declines all optional ones, while

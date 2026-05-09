@@ -38,6 +38,14 @@
   data-categories="{{ _cb_cats_json | escape }}"
   data-str-saved="{{ _cb_cc.saved_message | default: 'Your preferences have been saved.' | escape }}"
   data-show-accept-essential="{{ site.cookie_consent.show_accept_essential | default: true | escape }}"
+  data-page-lang="{{ _cb_lang | escape }}"
+  {%- if site.languages -%}
+  data-langs="{{ site.languages | map: 'code' | join: ',' | escape }}"
+  {%- for _cb_lng in site.languages -%}
+  {%- assign _cb_lng_cc = site.data.i18n[_cb_lng.code].cookie_consent | default: site.data.i18n.en.cookie_consent -%}
+  data-i18n-{{ _cb_lng.code }}="{{ _cb_lng_cc | jsonify | escape }}"
+  {%- endfor -%}
+  {%- endif -%}
 >
   <div class="afh-cookie-banner__inner">
     <div class="afh-cookie-banner__header">
@@ -94,7 +102,7 @@
       <div class="afh-cookie-manage-panel__list">
         {%- for _cb_cat in site.cookie_consent.categories -%}
           {%- assign _cb_cat_str = _cb_cc.categories[_cb_cat.id] -%}
-          <div class="afh-cookie-category-row">
+          <div class="afh-cookie-category-row" data-category-id="{{ _cb_cat.id | escape }}">
             <div class="afh-cookie-category-row__info">
               <p class="afh-cookie-category-row__name">
                 {{- _cb_cat_str.name | default: _cb_cat.id -}}
