@@ -213,11 +213,19 @@ cookie_consent:
   # true = shown (default), false = hidden.
   show_accept_essential: true
 
+  # Show a "Decline All" button on the banner. Since Decline All and Accept
+  # Essential are functionally identical (both grant only essential cookies),
+  # showing both is redundant. Set to true only if your audience or legal
+  # requirements specifically expect a rejection button on the first layer.
+  # Decline All always remains available inside the Manage Cookies panel.
+  # true = shown, false = hidden (default).
+  show_decline_all: false
+
   # Which button is the default (primary) action — shown last in the row,
   # styled as the accent/primary button.
   #
-  #   accept_all        — [Decline All] [Manage Cookies] [Accept Essential] [Accept All]
-  #   accept_essential  — [Decline All] [Manage Cookies] [Accept All] [Accept Essential]
+  #   accept_all        — [Manage Cookies] [Accept Essential] [Accept All]
+  #   accept_essential  — [Manage Cookies] [Accept All] [Accept Essential]
   #
   default_action: accept_essential
 

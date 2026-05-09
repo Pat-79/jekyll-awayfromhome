@@ -47,11 +47,14 @@
 
 {%- assign _cb_default_action = site.cookie_consent.default_action | default: 'accept_essential' -%}
 {%- assign _cb_show_essential = site.cookie_consent.show_accept_essential | default: true -%}
+{%- assign _cb_show_decline = site.cookie_consent.show_decline_all | default: false -%}
 {%- comment -%}When default is accept_essential, Accept All comes first (non-default), then Accept Essential (default/last).{%- endcomment -%}
     <div class="afh-cookie-banner__actions">
+      {%- if _cb_show_decline -%}
       <button type="button" class="btn btn--ghost" data-cookie-decline-all>
         {{- _cb_cc.decline_all | default: 'Decline All' -}}
       </button>
+      {%- endif -%}
       {%- if _cb_has_optional -%}
       <button
         type="button"
