@@ -21,8 +21,25 @@ has_author: true
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
 {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- assign continue_post = nil -%}
-{%- assign _fallback_post = nil -%}
 {%- assign _passed_current = false -%}
+{%- comment -%}
+  Pre-collect refs that already have a same-language translation so that
+  fallback default-lang posts whose ref is "covered" are excluded — mirroring
+  the home/blog listing logic.
+{%- endcomment -%}
+{%- assign _seen_refs = '' | split: '' -%}
+{%- if _fallback and _page_lang != _default_lang -%}
+  {%- for _p in site.posts -%}
+    {%- assign _p_lang = _p.lang | default: _default_lang -%}
+    {%- if _p_lang == _page_lang and _p.ref and _p.ref != '' -%}
+      {%- assign _seen_refs = _seen_refs | push: _p.ref -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- comment -%}
+  Forward scan: find the chronologically next post (older) that qualifies.
+  Qualifies = same language OR (fallback enabled + default lang + ref not covered).
+{%- endcomment -%}
 {%- for _p in site.posts -%}
   {%- if _passed_current == false and _p.path == page.path -%}
     {%- assign _passed_current = true -%}
@@ -32,35 +49,48 @@ has_author: true
     {%- if page.ref and page.ref != '' and _p.ref == page.ref -%}{%- assign _same_ref = true -%}{%- endif -%}
     {%- unless _same_ref -%}
       {%- unless continue_post -%}
-        {%- if _p_lang == _page_lang -%}{%- assign continue_post = _p -%}{%- endif -%}
+        {%- assign _is_candidate = false -%}
+        {%- if _p_lang == _page_lang -%}
+          {%- assign _is_candidate = true -%}
+        {%- elsif _fallback and _page_lang != _default_lang and _p_lang == _default_lang -%}
+          {%- if _p.ref and _p.ref != '' -%}
+            {%- unless _seen_refs contains _p.ref -%}{%- assign _is_candidate = true -%}{%- endunless -%}
+          {%- else -%}
+            {%- assign _is_candidate = true -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if _is_candidate -%}{%- assign continue_post = _p -%}{%- endif -%}
       {%- endunless -%}
-      {%- if _fallback and _page_lang != _default_lang -%}
-        {%- unless _fallback_post -%}
-          {%- if _p_lang == _default_lang -%}{%- assign _fallback_post = _p -%}{%- endif -%}
-        {%- endunless -%}
-      {%- endif -%}
     {%- endunless -%}
   {%- endif -%}
 {%- endfor -%}
-{%- unless continue_post -%}{%- assign continue_post = _fallback_post -%}{%- endunless -%}
+{%- comment -%}
+  Wrap-around scan: if no qualifying post exists after the current one, wrap to
+  the most recent qualifying post (i.e., start of site.posts), skipping the
+  current post and its same-ref translations.
+{%- endcomment -%}
 {%- unless continue_post -%}
-  {%- assign _wrap_fallback = nil -%}
   {%- for _p in site.posts -%}
+    {%- if _p.path == page.path -%}{%- continue -%}{%- endif -%}
     {%- assign _p_lang = _p.lang | default: _default_lang -%}
     {%- assign _same_ref = false -%}
     {%- if page.ref and page.ref != '' and _p.ref == page.ref -%}{%- assign _same_ref = true -%}{%- endif -%}
     {%- unless _same_ref -%}
       {%- unless continue_post -%}
-        {%- if _p_lang == _page_lang -%}{%- assign continue_post = _p -%}{%- endif -%}
+        {%- assign _is_candidate = false -%}
+        {%- if _p_lang == _page_lang -%}
+          {%- assign _is_candidate = true -%}
+        {%- elsif _fallback and _page_lang != _default_lang and _p_lang == _default_lang -%}
+          {%- if _p.ref and _p.ref != '' -%}
+            {%- unless _seen_refs contains _p.ref -%}{%- assign _is_candidate = true -%}{%- endunless -%}
+          {%- else -%}
+            {%- assign _is_candidate = true -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- if _is_candidate -%}{%- assign continue_post = _p -%}{%- endif -%}
       {%- endunless -%}
-      {%- if _fallback and _page_lang != _default_lang -%}
-        {%- unless _wrap_fallback -%}
-          {%- if _p_lang == _default_lang -%}{%- assign _wrap_fallback = _p -%}{%- endif -%}
-        {%- endunless -%}
-      {%- endif -%}
     {%- endunless -%}
   {%- endfor -%}
-  {%- unless continue_post -%}{%- assign continue_post = _wrap_fallback -%}{%- endunless -%}
 {%- endunless -%}
 
 <article class="post-page{% unless continue_post %} post-page--no-continue{% endunless %}">
