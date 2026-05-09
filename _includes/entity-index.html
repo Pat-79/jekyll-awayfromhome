@@ -2,7 +2,6 @@
 {%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
-{%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
 {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- assign _all_docs_raw = site.posts | concat: site.pages -%}
@@ -234,43 +233,13 @@
               {%- assign item_author_slug = item_author_name | slugify -%}
             {%- endif -%}
             {%- if include_item and item_author_slug == author_slug -%}
-              {%- assign item_title = item.title | default: item.name | default: item.url -%}
-              {%- assign item_image = item.image | default: site.default_post_image -%}
-              {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
               {%- assign is_post = false -%}
               {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
-              {%- assign _item_lang = item.lang | default: _default_lang -%}
-              {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
-              {%- assign _item_dir = 'ltr' -%}
-              {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
-              {%- assign _item_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
-              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
-                <div class="story-card__media">
-                  {%- include responsive-image.html
-                    src=item_image
-                    class='story-card__media-image'
-                    alt=''
-                    loading='lazy'
-                    decoding='async'
-                    sizes='(max-width: 900px) 100vw, 420px'
-                    base_width=1600
-                    fallback=site.default_post_image
-                    all_static_paths=_all_static_paths
-                  -%}
-                </div>
-                <div class="story-card__body">
-                  <p class="story-card__meta">
-                    {%- if is_post and item.date -%}
-                      {%- include format-date.html date=item.date t=_item_t -%}
-                    {%- else -%}
-                      {{ t.browse.page_label | default: 'Page' }}
-                    {%- endif -%}
-                    {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
-                  </p>
-                  <h2>{{ item_title }}</h2>
-                  <p class="story-card__excerpt">{{ item_excerpt }}</p>
-                </div>
-              </a>
+              {%- if is_post -%}
+                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths item_attr="data-entity-item" show_author=true -%}
+              {%- else -%}
+                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true is_page=true -%}
+              {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
         <nav class="blog-pagination blog-pagination--hidden" data-entity-pagination aria-label="pagination">
@@ -360,44 +329,13 @@
             {%- endfor -%}
 
             {%- if include_item and matched_category -%}
-              {%- assign item_title = item.title | default: item.name | default: item.url -%}
-              {%- assign item_image = item.image | default: site.default_post_image -%}
-              {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
-              {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
               {%- assign is_post = false -%}
               {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
-              {%- assign _item_lang = item.lang | default: _default_lang -%}
-              {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
-              {%- assign _item_dir = 'ltr' -%}
-              {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
-              {%- assign _item_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
-              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
-                <div class="story-card__media">
-                  {%- include responsive-image.html
-                    src=item_image
-                    class='story-card__media-image'
-                    alt=''
-                    loading='lazy'
-                    decoding='async'
-                    sizes='(max-width: 900px) 100vw, 420px'
-                    base_width=1600
-                    fallback=site.default_post_image
-                    all_static_paths=_all_static_paths
-                  -%}
-                </div>
-                <div class="story-card__body">
-                  <p class="story-card__meta">
-                    {%- if is_post and item.date -%}
-                      {%- include format-date.html date=item.date t=_item_t -%}
-                    {%- else -%}
-                      {{ t.browse.page_label | default: 'Page' }}
-                    {%- endif -%}
-                    {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
-                  </p>
-                  <h2>{{ item_title }}</h2>
-                  <p class="story-card__excerpt">{{ item_excerpt }}</p>
-                </div>
-              </a>
+              {%- if is_post -%}
+                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths item_attr="data-entity-item" show_author=true -%}
+              {%- else -%}
+                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true is_page=true -%}
+              {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
         <nav class="blog-pagination blog-pagination--hidden" data-entity-pagination aria-label="pagination">
@@ -487,44 +425,13 @@
             {%- endfor -%}
 
             {%- if include_item and matched_tag -%}
-              {%- assign item_title = item.title | default: item.name | default: item.url -%}
-              {%- assign item_image = item.image | default: site.default_post_image -%}
-              {%- assign item_excerpt = item.excerpt | strip_html | default: item_title | truncatewords: 60 -%}
-              {%- assign item_author_name = item.author.name | default: item.author | default: site.author.name | default: '' | strip -%}
               {%- assign is_post = false -%}
               {%- if item.collection == 'posts' or item.layout == 'post' -%}{%- assign is_post = true -%}{%- endif -%}
-              {%- assign _item_lang = item.lang | default: _default_lang -%}
-              {%- assign _item_lang_base = _item_lang | split: '-' | first -%}
-              {%- assign _item_dir = 'ltr' -%}
-              {%- if _rtl_langs contains _item_lang_base -%}{%- assign _item_dir = 'rtl' -%}{%- endif -%}
-              {%- assign _item_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
-              <a class="story-card{% unless is_post %} story-card--blog{% endunless %}" href="{{ item.url | relative_url }}" lang="{{ _item_lang }}" dir="{{ _item_dir }}" data-entity-item>
-                <div class="story-card__media">
-                  {%- include responsive-image.html
-                    src=item_image
-                    class='story-card__media-image'
-                    alt=''
-                    loading='lazy'
-                    decoding='async'
-                    sizes='(max-width: 900px) 100vw, 420px'
-                    base_width=1600
-                    fallback=site.default_post_image
-                    all_static_paths=_all_static_paths
-                  -%}
-                </div>
-                <div class="story-card__body">
-                  <p class="story-card__meta">
-                    {%- if is_post and item.date -%}
-                      {%- include format-date.html date=item.date t=_item_t -%}
-                    {%- else -%}
-                      {{ t.browse.page_label | default: 'Page' }}
-                    {%- endif -%}
-                    {%- if item_author_name != '' -%} · {{ item_author_name }}{%- endif -%}
-                  </p>
-                  <h2>{{ item_title }}</h2>
-                  <p class="story-card__excerpt">{{ item_excerpt }}</p>
-                </div>
-              </a>
+              {%- if is_post -%}
+                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths item_attr="data-entity-item" show_author=true -%}
+              {%- else -%}
+                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true is_page=true -%}
+              {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
         <nav class="blog-pagination blog-pagination--hidden" data-entity-pagination aria-label="pagination">

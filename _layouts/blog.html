@@ -52,34 +52,16 @@ layout: page
     {%- if posts_limit and posts_limit != '' -%}
       {%- assign all_posts = all_posts | slice: 0, posts_limit -%}
     {%- endif -%}
-    {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
     {%- for post in all_posts -%}
-      {%- assign post_image = post.image | default: site.default_post_image -%}
-      {%- assign _post_lang = post.lang | default: _default_lang -%}
-      {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
-      {%- assign _post_dir = 'ltr' -%}
-      {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
-      {%- assign _post_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
-      <a class="story-card story-card--blog" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}" data-blog-item>
-        <div class="story-card__media">
-          {%- include responsive-image.html
-            src=post_image
-            class='story-card__media-image'
-            alt=''
-            loading='lazy'
-            decoding='async'
-            sizes='(max-width: 900px) 100vw, 420px'
-            base_width=1600
-            fallback=site.default_post_image
-            all_static_paths=_all_static_paths
-          -%}
-        </div>
-        <div class="story-card__body">
-          <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}</p>
-          <h2>{{ post.title }}</h2>
-          <p>{{ post.excerpt | strip_html | truncatewords: excerpt_words }}</p>
-        </div>
-      </a>
+      {%- include story-card.html
+        post=post
+        t=t
+        default_lang=_default_lang
+        all_static_paths=_all_static_paths
+        extra_class="story-card--blog"
+        item_attr="data-blog-item"
+        excerpt_words=excerpt_words
+      -%}
     {%- endfor -%}
 
     <nav class="blog-pagination blog-pagination--hidden" data-blog-pagination data-pagination-format="{{ t.blog.page_of }}" aria-label="{{ t.drawer.navigate | default: 'Blog pagination' }}">

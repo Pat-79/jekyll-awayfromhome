@@ -101,43 +101,17 @@ layout: page
       {%- assign lang_posts = lang_posts | sort: 'date' | reverse -%}
     {%- endif -%}
     {%- assign _default_lang = site.lang | default: 'en' -%}
-    {%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
     {%- for post in lang_posts -%}
-      {%- assign post_image = post.image | default: site.default_post_image -%}
-      {%- assign _post_lang = post.lang | default: _default_lang -%}
-      {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
-      {%- assign _post_dir = 'ltr' -%}
-      {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
-      {%- assign _post_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
-      <a
-        class="story-card story-card--blog"
-        href="{{ post.url | relative_url }}"
-        lang="{{ _post_lang }}"
-        dir="{{ _post_dir }}"
-        data-archive-item
-        data-archive-year="{{ post.date | date: '%Y' }}"
-        data-archive-month="{{ post.date | date: '%-m' }}"
-        data-archive-day="{{ post.date | date: '%-d' }}"
-      >
-        <div class="story-card__media">
-          {%- include responsive-image.html
-            src=post_image
-            class='story-card__media-image'
-            alt=''
-            loading='lazy'
-            decoding='async'
-            sizes='(max-width: 900px) 100vw, 420px'
-            base_width=1600
-            fallback=site.default_post_image
-            all_static_paths=_all_static_paths
-          -%}
-        </div>
-        <div class="story-card__body">
-          <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}</p>
-          <h2>{{ post.title }}</h2>
-          <p>{{ post.excerpt | strip_html | truncatewords: archive_excerpt_words }}</p>
-        </div>
-      </a>
+      {%- include story-card.html
+        post=post
+        t=t
+        default_lang=_default_lang
+        all_static_paths=_all_static_paths
+        extra_class="story-card--blog"
+        item_attr="data-archive-item"
+        archive_dates=true
+        excerpt_words=archive_excerpt_words
+      -%}
     {%- endfor -%}
 
     <p class="entity-filter-group__empty archive-empty" data-archive-empty hidden data-i18n="archive.no_results">{{ t.archive.no_results | default: 'No posts found for the selected date criteria.' }}</p>

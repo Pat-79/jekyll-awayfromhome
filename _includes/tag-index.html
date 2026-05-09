@@ -2,7 +2,6 @@
 {%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
 {%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _fallback = site.lang_fallback | default: false -%}
-{%- assign _rtl_langs = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
 {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- if _page_lang == _default_lang or _page_lang == '' -%}
@@ -125,37 +124,14 @@
           <p class="tag-section__summary">{% if tagged_posts.size == 1 %}{{ t.tags.post_count_one | default: '1 post' }}{% else %}{%- assign _tag_pc = t.tags.post_count | replace: '{count}', tagged_posts.size -%}{{ _tag_pc }}{% endif %}</p>
         </div>
         {%- for post in tagged_posts -%}
-          {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
-          {%- assign post_word_count = post.content | strip_html | number_of_words -%}
-          {%- assign post_image = post.image | default: site.default_post_image -%}
-          {%- assign _post_lang = post.lang | default: _default_lang -%}
-          {%- assign _post_lang_base = _post_lang | split: '-' | first -%}
-          {%- assign _post_dir = 'ltr' -%}
-          {%- if _rtl_langs contains _post_lang_base -%}{%- assign _post_dir = 'rtl' -%}{%- endif -%}
-          {%- assign _post_t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
-          <a class="story-card" href="{{ post.url | relative_url }}" lang="{{ _post_lang }}" dir="{{ _post_dir }}">
-            <div class="story-card__media">
-              {%- include responsive-image.html
-                src=post_image
-                class='story-card__media-image'
-                alt=''
-                loading='lazy'
-                decoding='async'
-                sizes='(max-width: 900px) 100vw, 420px'
-                base_width=1600
-                fallback=site.default_post_image
-                all_static_paths=_all_static_paths
-              -%}
-            </div>
-            <div class="story-card__body">
-              <p class="story-card__meta">{%- include format-date.html date=post.date t=_post_t -%}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
-              <h2>{{ post.title }}</h2>
-              <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
-              {%- if post_word_count > 60 -%}
-                <p class="story-card__read-more" data-i18n="tags.read_more">{{ t.tags.read_more | default: 'Read more...' }}</p>
-              {%- endif -%}
-            </div>
-          </a>
+          {%- include story-card.html
+              post=post
+              t=t
+              default_lang=_default_lang
+              all_static_paths=_all_static_paths
+              show_author=true
+              show_read_more=true
+            -%}
         {%- endfor -%}
       </div>
     {%- endfor -%}

@@ -1,0 +1,48 @@
+{%- comment -%}
+  story-card.html — Renders a single story-card (post or page preview).
+  Parameters:
+    post            — Post/page object (required)
+    t               — Page i18n translations, used for both UI strings and date
+                      formatting (required)
+    default_lang    — Site default language code, default 'en' (optional)
+    all_static_paths — Pipe-separated static file paths for responsive-image (required)
+    extra_class     — Extra CSS class(es) appended after .story-card, e.g.
+                      "story-card--blog" (optional)
+    item_attr       — Verbatim HTML attribute on <a>, e.g. "data-blog-item" (optional)
+    archive_dates   — Truthy: add data-archive-year/month/day attrs (optional)
+    show_author     — Truthy: show author name in meta line (optional)
+    show_read_more  — Truthy: show "Read more" link for long posts (optional)
+    excerpt_words   — Excerpt truncation word count, default 60 (optional)
+    is_page         — Truthy: show "Page" label instead of date (optional)
+{%- endcomment -%}
+{%- assign _sc_rtl = 'ar,he,fa,ur,dv,ku,ps,sd,ug,yi' | split: ',' -%}
+{%- assign _sc_lang = include.post.lang | default: include.default_lang | default: 'en' -%}
+{%- assign _sc_dir = 'ltr' -%}
+{%- if _sc_rtl contains (_sc_lang | split: '-' | first) -%}{%- assign _sc_dir = 'rtl' -%}{%- endif -%}
+{%- assign _sc_image = include.post.image | default: site.default_post_image -%}
+{%- assign _sc_words = include.excerpt_words | default: 60 -%}
+{%- assign _sc_author = include.post.author.name | default: include.post.author | default: site.author.name | default: '' -%}
+{%- assign _sc_wc = include.post.content | strip_html | number_of_words -%}
+<a class="story-card{% if include.extra_class %} {{ include.extra_class }}{% endif %}" href="{{ include.post.url | relative_url }}" lang="{{ _sc_lang }}" dir="{{ _sc_dir }}"{% if include.item_attr %} {{ include.item_attr }}{% endif %}{% if include.archive_dates %} data-archive-year="{{ include.post.date | date: '%Y' }}" data-archive-month="{{ include.post.date | date: '%-m' }}" data-archive-day="{{ include.post.date | date: '%-d' }}"{% endif %}>
+  <div class="story-card__media">
+    {%- include responsive-image.html
+      src=_sc_image
+      class='story-card__media-image'
+      alt=''
+      loading='lazy'
+      decoding='async'
+      sizes='(max-width: 900px) 100vw, 420px'
+      base_width=1600
+      fallback=site.default_post_image
+      all_static_paths=include.all_static_paths
+    -%}
+  </div>
+  <div class="story-card__body">
+    <p class="story-card__meta">{%- if include.is_page -%}{{ include.t.browse.page_label | default: 'Page' }}{%- elsif include.post.date -%}{%- include format-date.html date=include.post.date t=include.t -%}{%- endif -%}{%- if include.show_author and _sc_author != '' -%} · {{ _sc_author }}{%- endif -%}</p>
+    <h2>{{ include.post.title | default: include.post.name | default: include.post.url }}</h2>
+    <p class="story-card__excerpt">{{ include.post.excerpt | strip_html | default: include.post.title | truncatewords: _sc_words }}</p>
+    {%- if include.show_read_more and _sc_wc > 60 -%}
+      <p class="story-card__read-more">{{ include.t.ui.read_more | default: 'Read more...' }}</p>
+    {%- endif -%}
+  </div>
+</a>
