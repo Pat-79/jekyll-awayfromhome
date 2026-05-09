@@ -401,6 +401,11 @@
   }
 }
 
+// Map placeholder icon is slightly larger — the world map glyph reads small at default size.
+[data-consent-gate="maps"] .afh-consent-placeholder__icon {
+  font-size: 3rem;
+}
+
 
 // ── Clear widget container ────────────────────────────────────────────────────
 
