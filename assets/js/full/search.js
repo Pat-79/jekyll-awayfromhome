@@ -58,6 +58,18 @@ class SearchEngine {
   async load(version) {
     if (this.loaded) return;
 
+    // Guard against concurrent load() calls while an async fetch is in-flight.
+    // All callers await the same promise instead of spawning multiple fetches.
+    if (this._loadingPromise) return this._loadingPromise;
+    this._loadingPromise = this._doLoad(version).finally(() => {
+      this._loadingPromise = null;
+    });
+    return this._loadingPromise;
+  }
+
+  async _doLoad(version) {
+    if (this.loaded) return;
+
     this.initWorker(version);
 
     const STORAGE_KEY = 'searchData';
