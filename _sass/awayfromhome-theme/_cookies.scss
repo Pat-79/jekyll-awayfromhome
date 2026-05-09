@@ -208,10 +208,6 @@
   overflow: hidden;
   max-width: 54rem;
 
-  &__list {
-    // no extra styles needed — rows handle borders
-  }
-
   &__actions {
     display: flex;
     flex-wrap: wrap;
