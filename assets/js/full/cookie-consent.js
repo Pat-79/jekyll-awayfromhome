@@ -106,9 +106,14 @@
   function applyGates() {
     document.querySelectorAll('[data-consent-gate]').forEach(function (gate) {
       var cat = gate.getAttribute('data-consent-gate');
+      var gated = gate.querySelector('.afh-consent-gated');
       if (isCategoryGranted(cat)) {
+        if (gated) gated.removeAttribute('hidden');
         injectDeferredTemplate(gate);
         gate.classList.add('afh-consent-gate--granted');
+      } else {
+        // Reinforce the HTML hidden attribute so gates work even if CSS is not yet loaded.
+        if (gated) gated.setAttribute('hidden', '');
       }
     });
   }
@@ -116,6 +121,8 @@
   function grantGate(categoryId) {
     document.querySelectorAll('[data-consent-gate="' + categoryId + '"]').forEach(function (gate) {
       if (!gate.classList.contains('afh-consent-gate--granted')) {
+        var gated = gate.querySelector('.afh-consent-gated');
+        if (gated) gated.removeAttribute('hidden');
         injectDeferredTemplate(gate);
         gate.classList.add('afh-consent-gate--granted');
       }
@@ -125,6 +132,8 @@
   function revokeGate(categoryId) {
     document.querySelectorAll('[data-consent-gate="' + categoryId + '"]').forEach(function (gate) {
       gate.classList.remove('afh-consent-gate--granted');
+      var gated = gate.querySelector('.afh-consent-gated');
+      if (gated) gated.setAttribute('hidden', '');
     });
   }
 
@@ -195,7 +204,7 @@
     banner.classList.add('afh-cookie-banner--visible');
     setBodyPadding();
     startObservingBannerSize();
-    banner.focus();
+    banner.focus({ preventScroll: true });
   }
 
   function hideBanner() {

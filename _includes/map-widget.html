@@ -73,7 +73,7 @@
       {{- _mw_cc.placeholder_maps_btn | default: 'Enable Maps Cookies' -}}
     </button>
   </div>
-  <div class="afh-consent-gated">
+  <div class="afh-consent-gated" hidden>
 {%- endif -%}
 <section
   class="afh-map{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} afh-map--bare{% endif %}"
