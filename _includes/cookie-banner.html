@@ -34,8 +34,10 @@
   aria-label="{{ _cb_cc.banner_title | default: 'Cookie Preferences' | escape }}"
   data-version="{{ site.cookie_consent.version | default: 1 | escape }}"
   data-lifetime-days="{{ site.cookie_consent.lifetime_days | default: 365 | escape }}"
+  data-banner-trigger="{{ site.cookie_consent.banner_trigger | default: 'on_use' | escape }}"
   data-categories="{{ _cb_cats_json | escape }}"
   data-str-saved="{{ _cb_cc.saved_message | default: 'Your preferences have been saved.' | escape }}"
+  data-show-accept-essential="{{ site.cookie_consent.show_accept_essential | default: true | escape }}"
 >
   <div class="afh-cookie-banner__inner">
     <div class="afh-cookie-banner__header">
@@ -43,6 +45,9 @@
       <p class="afh-cookie-banner__intro">{{- _cb_cc.banner_intro | default: 'We use cookies to power site features. Some content (maps, videos) requires third-party cookies. You can change this at any time on the cookies page.' -}}</p>
     </div>
 
+{%- assign _cb_default_action = site.cookie_consent.default_action | default: 'accept_essential' -%}
+{%- assign _cb_show_essential = site.cookie_consent.show_accept_essential | default: true -%}
+{%- comment -%}When default is accept_essential, Accept All comes first (non-default), then Accept Essential (default/last).{%- endcomment -%}
     <div class="afh-cookie-banner__actions">
       <button type="button" class="btn btn--ghost" data-cookie-decline-all>
         {{- _cb_cc.decline_all | default: 'Decline All' -}}
@@ -58,9 +63,27 @@
         {{- _cb_cc.manage | default: 'Manage Cookies' -}}
       </button>
       {%- endif -%}
+      {%- if _cb_has_optional and _cb_show_essential != false -%}
+        {%- if _cb_default_action == 'accept_essential' -%}
+      <button type="button" class="btn btn--outline" id="afh-cookie-accept-all">
+        {{- _cb_cc.accept_all | default: 'Accept All' -}}
+      </button>
+      <button type="button" class="btn btn--accent" id="afh-cookie-accept-essential">
+        {{- _cb_cc.accept_essential | default: 'Accept Essential' -}}
+      </button>
+        {%- else -%}
+      <button type="button" class="btn btn--outline" id="afh-cookie-accept-essential">
+        {{- _cb_cc.accept_essential | default: 'Accept Essential' -}}
+      </button>
       <button type="button" class="btn btn--accent" id="afh-cookie-accept-all">
         {{- _cb_cc.accept_all | default: 'Accept All' -}}
       </button>
+        {%- endif -%}
+      {%- else -%}
+      <button type="button" class="btn btn--accent" id="afh-cookie-accept-all">
+        {{- _cb_cc.accept_all | default: 'Accept All' -}}
+      </button>
+      {%- endif -%}
     </div>
 
     {%- if _cb_has_optional -%}

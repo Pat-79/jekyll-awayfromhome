@@ -148,6 +148,7 @@ cookie_consent:
   banner_title: "Cookie Preferences"
   banner_intro: "We use cookies to power site features. Some content (maps, videos) requires third-party cookies. You can change your preferences at any time on the cookies page."
   accept_all: "Accept All"
+  accept_essential: "Accept Essential"
   decline_all: "Decline All"
   manage: "Manage Cookies"
   save: "Save My Preferences"

@@ -148,6 +148,7 @@ cookie_consent:
   banner_title: "Cookie-Einstellungen"
   banner_intro: "Wir verwenden Cookies, um Funktionen dieser Website bereitzustellen. Einige Inhalte (Karten, Videos) erfordern Drittanbieter-Cookies. Du kannst deine Einstellungen jederzeit auf der Cookie-Seite ändern."
   accept_all: "Alle akzeptieren"
+  accept_essential: "Nur Notwendige akzeptieren"
   decline_all: "Alle ablehnen"
   manage: "Cookies verwalten"
   save: "Meine Einstellungen speichern"

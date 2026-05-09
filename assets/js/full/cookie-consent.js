@@ -24,8 +24,10 @@
   if (!banner) return; // cookie_consent.enabled is false — nothing to do
 
   // ── Configuration from data attributes ─────────────────────────────────────
-  var configVersion = parseInt(banner.getAttribute('data-version') || '1', 10);
-  var lifetimeDays  = parseInt(banner.getAttribute('data-lifetime-days') || '365', 10);
+  var configVersion  = parseInt(banner.getAttribute('data-version') || '1', 10);
+  var lifetimeDays   = parseInt(banner.getAttribute('data-lifetime-days') || '365', 10);
+  var bannerTrigger  = (banner.getAttribute('data-banner-trigger') || 'on_use').trim();
+  // bannerTrigger: 'always' | 'on_use' | 'never'
 
   var categories = [];
   try { categories = JSON.parse(banner.getAttribute('data-categories') || '[]'); } catch (_) {}
@@ -280,6 +282,17 @@
       });
     }
 
+    // Accept Essential — same storage effect as Decline All (all optional = false)
+    // but framed positively so the visitor understands essential cookies are accepted.
+    var acceptEssentialBtn = document.getElementById('afh-cookie-accept-essential');
+    if (acceptEssentialBtn) {
+      acceptEssentialBtn.addEventListener('click', function () {
+        applyAndNotify(buildAllDeclined());
+        closeManagePanel();
+        hideBanner();
+      });
+    }
+
     // Decline All (present in both compact bar and manage panel)
     document.querySelectorAll('[data-cookie-decline-all]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -328,9 +341,37 @@
     // Preferences widget on the cookies page
     initPrefsWidget();
 
-    // Show banner if no valid consent exists and there are optional categories
-    if (optionalCategories.length > 0 && !isValid(loadRecord())) {
-      showBanner();
+    // Decide whether to show the banner based on banner_trigger setting.
+    if (optionalCategories.length > 0 && !isValid(loadRecord()) && bannerTrigger !== 'never') {
+      var shouldShow = false;
+
+      if (bannerTrigger === 'always') {
+        // Show to every new visitor unconditionally.
+        shouldShow = true;
+      } else {
+        // 'on_use' (default): show only when the site is actually in use.
+        // Triggered by:
+        //   (a) page contains a consent gate (map/video widget), OR
+        //   (b) browser already holds essential site data (theme, language, search cache)
+        var hasConsentGates = document.querySelectorAll('[data-consent-gate]').length > 0;
+        if (hasConsentGates) {
+          shouldShow = true;
+        } else {
+          var essentialKeys = ['afh-lang', 'afh-theme', 'searchData', 'afh-highlight-terms'];
+          try {
+            for (var _ei = 0; _ei < essentialKeys.length; _ei++) {
+              if (localStorage.getItem(essentialKeys[_ei]) !== null) {
+                shouldShow = true;
+                break;
+              }
+            }
+          } catch (_) {}
+        }
+      }
+
+      if (shouldShow) {
+        showBanner();
+      }
     }
   });
 

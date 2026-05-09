@@ -148,6 +148,7 @@ cookie_consent:
   banner_title: "Cookie-instellingen"
   banner_intro: "We gebruiken cookies om functies van deze site te bieden. Sommige inhoud (kaarten, video's) vereist cookies van derden. Je kunt je voorkeuren op elk moment wijzigen op de cookiepagina."
   accept_all: "Alles accepteren"
+  accept_essential: "Alleen noodzakelijke accepteren"
   decline_all: "Alles weigeren"
   manage: "Cookies beheren"
   save: "Mijn voorkeuren opslaan"

@@ -146,7 +146,8 @@ home_landing:
 
 map_widget:
   #tile_url: https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}
-  tile_url: https://{s}.openstreetmap.org/{z}/{x}/{y}.png
+  #tile_url: https://{s}.openstreetmap.org/{z}/{x}/{y}.png
+  tile_url: https://tile.openstreetmap.org/{z}/{x}/{y}.png
   tile_attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   tile_subdomains:
   tile_max_zoom: 19
@@ -191,6 +192,34 @@ cookie_consent:
   # How long (in days) consent is stored. The lifetime renews on every visit,
   # so only visitors who don't return within this period will be asked again.
   lifetime_days: 365
+
+  # Controls when the consent banner is automatically shown to visitors who
+  # have not yet made a choice.
+  #
+  #   always  — show to every new visitor on every page, immediately.
+  #   on_use  — show only when the page contains a consent gate (map/video
+  #             widget) OR the browser already holds essential site data
+  #             (theme, language, search cache). Visitors who have not yet
+  #             interacted with the site are not shown the banner.
+  #   never   — never show the banner automatically. Visitors can still manage
+  #             their preferences on the cookies page.
+  #
+  banner_trigger: on_use
+
+  # Show an "Accept Essential" button on the banner. Clicking it accepts only
+  # the required (essential) cookies and declines all optional ones, while
+  # still dismissing the banner. The user can enable individual optional
+  # categories later via the widget placeholder buttons or the cookies page.
+  # true = shown (default), false = hidden.
+  show_accept_essential: true
+
+  # Which button is the default (primary) action — shown last in the row,
+  # styled as the accent/primary button.
+  #
+  #   accept_all        — [Decline All] [Manage Cookies] [Accept Essential] [Accept All]
+  #   accept_essential  — [Decline All] [Manage Cookies] [Accept All] [Accept Essential]
+  #
+  default_action: accept_essential
 
   # Cookie categories. 'id' is a slug used in code and i18n keys.
   # required: true  → always on, no consent needed, no toggle shown.
