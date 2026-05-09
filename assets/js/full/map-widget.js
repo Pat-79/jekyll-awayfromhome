@@ -92,6 +92,13 @@
   }
 
   function createMap(root) {
+    // Skip if already initialized.
+    if (root._afhMapInit) return;
+    // Skip if inside a consent gate that has not been granted.
+    var gate = root.closest('[data-consent-gate]');
+    if (gate && !gate.classList.contains('afh-consent-gate--granted')) return;
+    root._afhMapInit = true;
+
     var canvas = root.querySelector('[data-map-canvas]');
     if (!canvas) return;
 
@@ -185,4 +192,9 @@
   }
 
   initAllMaps();
+
+  // Re-initialize when consent is granted for the maps category.
+  document.addEventListener('afh:consent-changed', function () {
+    initAllMaps();
+  });
 })();

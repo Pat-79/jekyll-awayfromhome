@@ -1,5 +1,8 @@
 {%- assign page_content = page.content | default: '' -%}
 {%- if jekyll.environment == 'production' -%}{%- assign js_dir = '/assets/js/' -%}{%- assign js_ext = '.min.js' -%}{%- else -%}{%- assign js_dir = '/assets/js/full/' -%}{%- assign js_ext = '.js' -%}{%- endif -%}
+{%- if site.cookie_consent.enabled -%}
+<script src="{{ js_dir | append: 'cookie-consent' | append: js_ext | relative_url }}" defer></script>
+{%- endif -%}
 {%- assign has_gallery_widget = false -%}
 {%- assign has_map_widget = false -%}
 {%- assign has_video_widget = false -%}

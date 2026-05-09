@@ -36,6 +36,8 @@ permalink: /ar/cookies/
 
 يمكنك أيضاً استخدام الزر أدناه لإزالة جميع البيانات المخزَّنة من قِبَل هذا الموقع في متصفحك فوراً.
 
+{% include cookie-preferences.html %}
+
 {% include storage-widget.html %}
 
 ## أسئلة

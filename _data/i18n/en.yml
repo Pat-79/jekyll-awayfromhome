@@ -142,3 +142,28 @@ storage_widget:
   key_search_data: Search index cache
   key_search_data_version: Search index version
   key_afh_highlight_terms: Search highlight terms
+  key_afh_cookie_consent: Cookie consent preferences
+
+cookie_consent:
+  banner_title: "Cookie Preferences"
+  banner_intro: "We use cookies to power site features. Some content (maps, videos) requires third-party cookies. You can change your preferences at any time on the cookies page."
+  accept_all: "Accept All"
+  decline_all: "Decline All"
+  manage: "Manage Cookies"
+  save: "Save My Preferences"
+  always_on: "Always on"
+  saved_message: "Your preferences have been saved."
+  placeholder_maps: "Map hidden — enable \"Maps\" cookies to view this map."
+  placeholder_maps_btn: "Enable Maps Cookies"
+  placeholder_video: "Video hidden — enable \"Video\" cookies to view this content."
+  placeholder_video_btn: "Enable Video Cookies"
+  categories:
+    essential:
+      name: "Essential"
+      description: "Stores your theme preference, language choice, and search cache. No personal data is collected."
+    maps:
+      name: "Maps"
+      description: "Loads interactive maps via a third-party tile provider. The tile server may set its own cookies."
+    video:
+      name: "Video"
+      description: "Enables embedded YouTube videos and other video embeds. These services may set tracking cookies."

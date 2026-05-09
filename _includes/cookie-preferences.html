@@ -1,0 +1,62 @@
+{%- comment -%}
+  _includes/cookie-preferences.html
+  Inline preferences panel for the cookies page.
+  Only rendered when site.cookie_consent.enabled = true AND optional categories exist.
+  cookie-consent.js populates current choices and wires the Save button.
+{%- endcomment -%}
+{%- if site.cookie_consent.enabled -%}
+{%- assign _cp_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign _cp_t = site.data.i18n[_cp_lang] | default: site.data.i18n.en -%}
+{%- assign _cp_cc = _cp_t.cookie_consent -%}
+
+{%- assign _cp_has_optional = false -%}
+{%- for _cp_cat in site.cookie_consent.categories -%}
+  {%- unless _cp_cat.required -%}{%- assign _cp_has_optional = true -%}{%- endunless -%}
+{%- endfor -%}
+
+{%- if _cp_has_optional -%}
+<div id="afh-cookie-preferences" class="afh-cookie-preferences">
+  <div class="afh-cookie-manage-panel">
+    {%- for _cp_cat in site.cookie_consent.categories -%}
+      {%- assign _cp_cat_str = _cp_cc.categories[_cp_cat.id] -%}
+      <div class="afh-cookie-category-row">
+        <div class="afh-cookie-category-row__info">
+          <p class="afh-cookie-category-row__name">
+            {{- _cp_cat_str.name | default: _cp_cat.id -}}
+          </p>
+          <p class="afh-cookie-category-row__description">
+            {{- _cp_cat_str.description -}}
+          </p>
+        </div>
+        <div class="afh-cookie-category-row__control">
+          {%- if _cp_cat.required -%}
+            <span class="afh-cookie-required-pill">
+              {{- _cp_cc.always_on | default: 'Always on' -}}
+            </span>
+          {%- else -%}
+            <label
+              class="afh-toggle"
+              aria-label="{{ _cp_cat_str.name | default: _cp_cat.id | escape }}"
+            >
+              <input type="checkbox" data-consent-toggle="{{ _cp_cat.id | escape }}">
+              <span class="afh-toggle__track" aria-hidden="true"></span>
+            </label>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+  <div class="afh-cookie-preferences__actions">
+    <button type="button" class="btn btn--accent" id="afh-cookie-prefs-save">
+      {{- _cp_cc.save | default: 'Save My Preferences' -}}
+    </button>
+  </div>
+  <p
+    id="afh-cookie-prefs-status"
+    class="cookies-clear-status"
+    aria-live="polite"
+    hidden
+  ></p>
+</div>
+{%- endif -%}
+{%- endif -%}

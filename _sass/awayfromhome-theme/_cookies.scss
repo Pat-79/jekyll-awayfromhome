@@ -36,6 +36,370 @@
   }
 }
 
+.btn--outline {
+  background: transparent;
+  border-color: var(--accent);
+  color: var(--accent);
+
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    text-decoration: none;
+  }
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+
+  &:hover {
+    background: var(--surface-muted);
+    text-decoration: none;
+  }
+}
+
+// ── Clear widget container ────────────────────────────────────────────────────
+
+#afh-clear-data-block {
+  margin-block: 1.5rem;
+}
+
+// ── Storage summary frame ─────────────────────────────────────────────────────
+
+#afh-storage-summary {
+  margin-bottom: 1.1rem;
+  max-width: 36rem;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.cookies-summary__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  box-shadow: #{$shadow-widget};
+  overflow: hidden;
+
+  // table itself can't have border-radius without overflow:hidden on a wrapper;
+  // wrap visually via a display trick
+  display: table;
+
+  td {
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--text);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.cookies-summary__total td {
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--border) 25%, transparent);
+}
+
+.cookies-summary__label {
+  line-height: 1.35;
+}
+
+.cookies-summary__key {
+  display: inline-block;
+  margin-top: 0.2em;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+  padding: 0.05em 0.35em;
+  border-radius: 0.25rem;
+}
+
+.cookies-summary__size {
+  text-align: end;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  padding-inline-start: 1.5rem;
+}
+
+.cookies-summary__empty {
+  color: var(--muted);
+  font-style: italic;
+  margin: 0;
+}
+
+// ── Status message ────────────────────────────────────────────────────────────
+
+.cookies-clear-status {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+// ── Cookie consent banner (bottom bar) ───────────────────────────────────────
+
+.afh-cookie-banner {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 900;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.12);
+  padding-block: 1rem;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+
+  &--visible {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: none; // Banner is focusable for aria, visual focus not needed
+  }
+}
+
+.afh-cookie-banner__inner {
+  max-width: $layout-max-width;
+  margin-inline: auto;
+}
+
+.afh-cookie-banner__title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  color: var(--text);
+}
+
+.afh-cookie-banner__intro {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin: 0 0 0.875rem;
+  max-width: 60rem;
+  line-height: 1.5;
+}
+
+.afh-cookie-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+// ── Manage panel (expandable inside banner) ───────────────────────────────────
+
+.afh-cookie-manage-panel {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  max-width: 54rem;
+
+  &__list {
+    // no extra styles needed — rows handle borders
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface-muted);
+  }
+}
+
+// ── Category row (shared by banner manage panel and preferences widget) ───────
+
+.afh-cookie-category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0;
+    color: var(--text);
+  }
+
+  &__description {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    margin: 0.2em 0 0;
+    line-height: 1.4;
+  }
+
+  &__control {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.afh-cookie-required-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--border) 60%, transparent);
+  padding: 0.2em 0.65em;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+// ── Toggle switch ─────────────────────────────────────────────────────────────
+
+.afh-toggle {
+  display: inline-block;
+  position: relative;
+  width: 2.75rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &__track {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--border);
+    cursor: pointer;
+    transition: background $motion-fast ease;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0.2rem;
+      left: 0.2rem;
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      transition: transform $motion-fast ease;
+    }
+  }
+
+  input:checked + &__track {
+    background: var(--accent);
+
+    &::after {
+      transform: translateX(1.25rem);
+    }
+  }
+
+  input:focus-visible + &__track {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  input:disabled + &__track {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ── Preferences widget (cookies page) ────────────────────────────────────────
+
+.afh-cookie-preferences {
+  margin-block: 1.5rem;
+  max-width: 54rem;
+
+  &__actions {
+    margin-top: 1rem;
+  }
+}
+
+// ── Consent gate wrappers ─────────────────────────────────────────────────────
+//
+// <div class="afh-consent-gate" data-consent-gate="maps">
+//   <div class="afh-consent-placeholder">…</div>    ← visible when not granted
+//   <div class="afh-consent-gated">…</div>          ← hidden when not granted
+// </div>
+//
+// cookie-consent.js adds .afh-consent-gate--granted when consent is given.
+
+.afh-consent-gate:not(.afh-consent-gate--granted) .afh-consent-gated {
+  display: none;
+}
+
+.afh-consent-gate--granted .afh-consent-placeholder {
+  display: none;
+}
+
+// ── Consent placeholder ───────────────────────────────────────────────────────
+
+.afh-consent-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2.5rem 1.5rem;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  text-align: center;
+  min-height: 180px;
+
+  &__icon {
+    font-size: 2rem;
+    opacity: 0.35;
+    margin: 0;
+    line-height: 1;
+  }
+
+  &__message {
+    font-size: 0.9375rem;
+    color: var(--muted);
+    max-width: 28rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__description {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    max-width: 28rem;
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+
 // ── Clear widget container ────────────────────────────────────────────────────
 
 #afh-clear-data-block {

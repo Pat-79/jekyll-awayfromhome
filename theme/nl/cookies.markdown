@@ -36,6 +36,8 @@ Na het wissen kunnen sommige voorkeuren opnieuw ingesteld moeten worden.
 
 Je kunt ook de knop hieronder gebruiken om alle door deze site opgeslagen gegevens direct uit je browser te verwijderen.
 
+{% include cookie-preferences.html %}
+
 {% include storage-widget.html %}
 
 ## Vragen

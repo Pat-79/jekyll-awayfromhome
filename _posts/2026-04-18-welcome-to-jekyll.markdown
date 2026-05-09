@@ -27,3 +27,36 @@ Check out the [Jekyll docs][jekyll-docs] for more info on how to get the most ou
 [jekyll-docs]: https://jekyllrb.com/docs/home
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-talk]: https://talk.jekyllrb.com/
+
+
+## Video tests
+
+### Local HSL
+
+{% include video-widget.html
+  src="https://pat-79.github.io/assets/streams/sample/sample_stream.m3u8"
+  aspect_ratio="16:9"
+  controls="true"
+  max_width="1000px"
+%}
+
+### YouTube
+
+{% include video-widget.html
+  provider="youtube"
+  youtube_id="SOvwLxGRib8"
+  aspect_ratio="16:9"
+  controls="true"
+  privacy_mode="true"
+  max_width="1000px"
+%}
+
+## Map
+
+{% include map-widget.html
+center="46.500236603850006, 11.745906080463328"
+locked="true"
+zoom=8
+pins='[{"lat":46.500236603850006,"lng":11.745906080463328,"name":"Rifugio Friedrich August"}]'
+max_width="1000px"
+%}

@@ -20,7 +20,7 @@
   var block = document.getElementById('afh-clear-data-block');
   if (!block) return;
 
-  var KEYS = ['afh-lang', 'afh-theme', 'searchData', 'searchDataVersion', 'afh-highlight-terms'];
+  var KEYS = ['afh-lang', 'afh-theme', 'searchData', 'searchDataVersion', 'afh-highlight-terms', 'afh-cookie-consent'];
 
   var KEY_LABELS = {};
   try { KEY_LABELS = JSON.parse(block.getAttribute('data-key-labels') || '{}'); } catch (e) {}

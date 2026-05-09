@@ -145,8 +145,8 @@ home_landing:
   hls_url: https://pat-79.github.io/assets/streams/sample/sample_stream.m3u8
 
 map_widget:
-  tile_url: https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}
-  #tile_url: https://{s}.openstreetmap.org/{z}/{x}/{y}.png
+  #tile_url: https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}
+  tile_url: https://{s}.openstreetmap.org/{z}/{x}/{y}.png
   tile_attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   tile_subdomains:
   tile_max_zoom: 19
@@ -179,6 +179,29 @@ video_widget:
   privacy_mode: true
   referrer_policy: strict-origin-when-cross-origin
   poster: /assets/images/default-hero.svg
+
+cookie_consent:
+  # Master switch — set to true to enable the consent banner.
+  enabled: true
+
+  # Bump this number whenever you add a new cookie category. Returning visitors
+  # will see the banner again so they can review the new category.
+  version: 1
+
+  # How long (in days) consent is stored. The lifetime renews on every visit,
+  # so only visitors who don't return within this period will be asked again.
+  lifetime_days: 365
+
+  # Cookie categories. 'id' is a slug used in code and i18n keys.
+  # required: true  → always on, no consent needed, no toggle shown.
+  # required: false → user must actively consent; defaults to off (opt-in).
+  categories:
+    - id: essential
+      required: true
+    - id: maps
+      required: false
+    - id: video
+      required: false
 
 gallery_widget:
   max_width: 900px

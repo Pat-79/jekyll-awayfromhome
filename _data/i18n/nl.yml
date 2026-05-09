@@ -142,3 +142,28 @@ storage_widget:
   key_search_data: Zoekcache
   key_search_data_version: Versie zoekcache
   key_afh_highlight_terms: Zoektermen markering
+  key_afh_cookie_consent: Cookie-toestemmingsvoorkeuren
+
+cookie_consent:
+  banner_title: "Cookie-instellingen"
+  banner_intro: "We gebruiken cookies om functies van deze site te bieden. Sommige inhoud (kaarten, video's) vereist cookies van derden. Je kunt je voorkeuren op elk moment wijzigen op de cookiepagina."
+  accept_all: "Alles accepteren"
+  decline_all: "Alles weigeren"
+  manage: "Cookies beheren"
+  save: "Mijn voorkeuren opslaan"
+  always_on: "Altijd actief"
+  saved_message: "Je voorkeuren zijn opgeslagen."
+  placeholder_maps: "Kaart verborgen — schakel \"Kaarten\"-cookies in om deze kaart te bekijken."
+  placeholder_maps_btn: "Kaartcookies inschakelen"
+  placeholder_video: "Video verborgen — schakel \"Video\"-cookies in om deze inhoud te bekijken."
+  placeholder_video_btn: "Videocookies inschakelen"
+  categories:
+    essential:
+      name: "Noodzakelijk"
+      description: "Slaat je themavoorkeur, taalinstelling en zoekcache op. Er worden geen persoonsgegevens verzameld."
+    maps:
+      name: "Kaarten"
+      description: "Laadt interactieve kaarten via een externe kaarttegeldienst. Die dienst kan eigen cookies plaatsen."
+    video:
+      name: "Video"
+      description: "Maakt ingesloten YouTube-video's en andere video-embeds mogelijk. Deze diensten kunnen trackers plaatsen."

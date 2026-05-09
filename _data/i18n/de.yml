@@ -142,3 +142,28 @@ storage_widget:
   key_search_data: Suchindex-Cache
   key_search_data_version: Suchindex-Version
   key_afh_highlight_terms: Suchbegriff-Markierung
+  key_afh_cookie_consent: Cookie-Einwilligungseinstellungen
+
+cookie_consent:
+  banner_title: "Cookie-Einstellungen"
+  banner_intro: "Wir verwenden Cookies, um Funktionen dieser Website bereitzustellen. Einige Inhalte (Karten, Videos) erfordern Drittanbieter-Cookies. Du kannst deine Einstellungen jederzeit auf der Cookie-Seite ändern."
+  accept_all: "Alle akzeptieren"
+  decline_all: "Alle ablehnen"
+  manage: "Cookies verwalten"
+  save: "Meine Einstellungen speichern"
+  always_on: "Immer aktiv"
+  saved_message: "Deine Einstellungen wurden gespeichert."
+  placeholder_maps: "Karte ausgeblendet — aktiviere \"Karten\"-Cookies, um diese Karte anzuzeigen."
+  placeholder_maps_btn: "Karten-Cookies aktivieren"
+  placeholder_video: "Video ausgeblendet — aktiviere \"Video\"-Cookies, um diesen Inhalt anzuzeigen."
+  placeholder_video_btn: "Video-Cookies aktivieren"
+  categories:
+    essential:
+      name: "Notwendig"
+      description: "Speichert deine Theme-Auswahl, Spracheinstellung und den Suchcache. Es werden keine persönlichen Daten erhoben."
+    maps:
+      name: "Karten"
+      description: "Lädt interaktive Karten über einen Drittanbieter-Kartendienst. Dieser Dienst kann eigene Cookies setzen."
+    video:
+      name: "Video"
+      description: "Ermöglicht eingebettete YouTube-Videos und andere Video-Embeds. Diese Dienste können Tracking-Cookies setzen."

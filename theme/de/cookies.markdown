@@ -36,6 +36,8 @@ Nach dem Loeschen muessen einige Einstellungen eventuell neu gesetzt werden.
 
 Du kannst auch die Schaltflaeche unten verwenden, um alle von dieser Website gespeicherten Daten sofort aus deinem Browser zu entfernen.
 
+{% include cookie-preferences.html %}
+
 {% include storage-widget.html %}
 
 ## Fragen

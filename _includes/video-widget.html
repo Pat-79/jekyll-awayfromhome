@@ -104,6 +104,35 @@
   {%- assign youtube_host = 'https://www.youtube-nocookie.com' -%}
 {%- endif -%}
 
+{%- comment -%}Determine whether this video needs a consent gate (YouTube/Vimeo only).{%- endcomment -%}
+{%- assign _vw_consent_gate = false -%}
+{%- if site.cookie_consent.enabled and (video_provider == 'youtube' or video_provider == 'vimeo') -%}
+  {%- for _vw_cat in site.cookie_consent.categories -%}
+    {%- if _vw_cat.id == 'video' and _vw_cat.required != true -%}
+      {%- assign _vw_consent_gate = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- if _vw_consent_gate -%}
+  {%- assign _vw_lang = page.lang | default: site.lang | default: 'en' -%}
+  {%- assign _vw_t = site.data.i18n[_vw_lang] | default: site.data.i18n.en -%}
+  {%- assign _vw_cc = _vw_t.cookie_consent -%}
+{%- endif -%}
+
+{%- if _vw_consent_gate -%}
+<div class="afh-consent-gate" data-consent-gate="video">
+  <div class="afh-consent-placeholder">
+    <p class="afh-consent-placeholder__icon" aria-hidden="true">&#9654;&#65039;</p>
+    <p class="afh-consent-placeholder__message">{{- _vw_cc.placeholder_video | default: 'Video hidden — enable "Video" cookies to view this content.' -}}</p>
+    {%- if _vw_cc.categories.video.description and _vw_cc.categories.video.description != '' -%}
+    <p class="afh-consent-placeholder__description">{{- _vw_cc.categories.video.description -}}</p>
+    {%- endif -%}
+    <button type="button" class="btn btn--outline" data-consent-enable="video">
+      {{- _vw_cc.placeholder_video_btn | default: 'Enable Video Cookies' -}}
+    </button>
+  </div>
+  <template class="afh-consent-deferred">
+{%- endif -%}
 <section
   class="afh-video{% if is_bare_video %} afh-video--bare{% endif %}{% if is_fixed_height_video %} afh-video--fixed-height{% endif %}"
   data-video-widget
@@ -156,3 +185,7 @@
     {%- endif -%}
   </div>
 </section>
+{%- if _vw_consent_gate -%}
+  </template>
+</div>
+{%- endif -%}

@@ -26,6 +26,21 @@
 {%- assign map_tile_referrer_policy = include.tile_referrer_policy | default: site.map_widget.tile_referrer_policy | default: 'strict-origin-when-cross-origin' -%}
 {%- assign map_tile_cross_origin = include.tile_cross_origin | default: site.map_widget.tile_cross_origin | default: '' -%}
 
+{%- comment -%}Determine whether this map needs a consent gate.{%- endcomment -%}
+{%- assign _mw_consent_gate = false -%}
+{%- if site.cookie_consent.enabled -%}
+  {%- for _mw_cat in site.cookie_consent.categories -%}
+    {%- if _mw_cat.id == 'maps' and _mw_cat.required != true -%}
+      {%- assign _mw_consent_gate = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- if _mw_consent_gate -%}
+  {%- assign _mw_lang = page.lang | default: site.lang | default: 'en' -%}
+  {%- assign _mw_t = site.data.i18n[_mw_lang] | default: site.data.i18n.en -%}
+  {%- assign _mw_cc = _mw_t.cookie_consent -%}
+{%- endif -%}
+
 {%- assign map_width_css = map_width_raw -%}
 {%- if map_width_css != '' and map_width_css contains 'px' == false and map_width_css contains '%' == false and map_width_css contains 'rem' == false and map_width_css contains 'em' == false and map_width_css contains 'vw' == false and map_width_css contains 'vh' == false and map_width_css contains 'ch' == false and map_width_css contains 'calc(' == false -%}
   {%- assign map_width_css = map_width_css | append: 'px' -%}
@@ -46,6 +61,20 @@
   {%- assign map_max_height_css = map_max_height_css | append: 'px' -%}
 {%- endif -%}
 
+{%- if _mw_consent_gate -%}
+<div class="afh-consent-gate" data-consent-gate="maps">
+  <div class="afh-consent-placeholder">
+    <p class="afh-consent-placeholder__icon" aria-hidden="true">&#128506;</p>
+    <p class="afh-consent-placeholder__message">{{- _mw_cc.placeholder_maps | default: 'Map hidden — enable "Maps" cookies to view this map.' -}}</p>
+    {%- if _mw_cc.categories.maps.description and _mw_cc.categories.maps.description != '' -%}
+    <p class="afh-consent-placeholder__description">{{- _mw_cc.categories.maps.description -}}</p>
+    {%- endif -%}
+    <button type="button" class="btn btn--outline" data-consent-enable="maps">
+      {{- _mw_cc.placeholder_maps_btn | default: 'Enable Maps Cookies' -}}
+    </button>
+  </div>
+  <div class="afh-consent-gated">
+{%- endif -%}
 <section
   class="afh-map{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} afh-map--bare{% endif %}"
   data-map-widget
@@ -80,3 +109,7 @@
     <div class="afh-map__canvas" data-map-canvas role="img" aria-label="Interactive map"></div>
   </div>
 </section>
+{%- if _mw_consent_gate -%}
+  </div>
+</div>
+{%- endif -%}

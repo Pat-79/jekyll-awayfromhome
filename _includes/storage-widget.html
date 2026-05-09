@@ -6,7 +6,7 @@
 {% assign _sw_nothing = w.msg_nothing | default: "No site data was found in your browser." %}
 {% assign _sw_total   = w.msg_total   | default: "Total" %}
 {% assign _sw_button  = w.clear_button | default: "Clear all site data" %}
-{% capture _sw_key_labels %}{"afh-lang":{{ w.key_afh_lang | default: "Language preference" | jsonify }},"afh-theme":{{ w.key_afh_theme | default: "Theme preference" | jsonify }},"searchData":{{ w.key_search_data | default: "Search index cache" | jsonify }},"searchDataVersion":{{ w.key_search_data_version | default: "Search index version" | jsonify }},"afh-highlight-terms":{{ w.key_afh_highlight_terms | default: "Search highlight terms" | jsonify }}}{% endcapture %}
+{% capture _sw_key_labels %}{"afh-lang":{{ w.key_afh_lang | default: "Language preference" | jsonify }},"afh-theme":{{ w.key_afh_theme | default: "Theme preference" | jsonify }},"searchData":{{ w.key_search_data | default: "Search index cache" | jsonify }},"searchDataVersion":{{ w.key_search_data_version | default: "Search index version" | jsonify }},"afh-highlight-terms":{{ w.key_afh_highlight_terms | default: "Search highlight terms" | jsonify }},"afh-cookie-consent":{{ w.key_afh_cookie_consent | default: "Cookie consent preferences" | jsonify }}}{% endcapture %}
 <div id="afh-clear-data-block"
   data-key-labels="{{ _sw_key_labels | escape }}"
   data-msg-confirm="{{ _sw_confirm | escape }}"

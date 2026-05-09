@@ -1,0 +1,110 @@
+{%- comment -%}
+  _includes/cookie-banner.html
+  Bottom consent bar — only rendered when site.cookie_consent.enabled = true.
+  All UI strings come from the i18n file for the current page language.
+  The banner is hidden by default; cookie-consent.js shows it when needed.
+{%- endcomment -%}
+{%- if site.cookie_consent.enabled -%}
+{%- assign _cb_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign _cb_t = site.data.i18n[_cb_lang] | default: site.data.i18n.en -%}
+{%- assign _cb_cc = _cb_t.cookie_consent -%}
+
+{%- comment -%}Build categories JSON for cookie-consent.js{%- endcomment -%}
+{%- assign _cb_cat_pieces = '' | split: '' -%}
+{%- for _cb_cat in site.cookie_consent.categories -%}
+  {%- if _cb_cat.required -%}{%- assign _cb_req_val = 'true' -%}{%- else -%}{%- assign _cb_req_val = 'false' -%}{%- endif -%}
+  {%- capture _cb_cat_piece -%}{"id":{{ _cb_cat.id | jsonify }},"required":{{ _cb_req_val }}}{%- endcapture -%}
+  {%- assign _cb_cat_pieces = _cb_cat_pieces | push: _cb_cat_piece -%}
+{%- endfor -%}
+{%- assign _cb_cats_body = _cb_cat_pieces | join: ',' -%}
+{%- assign _cb_cats_json = '[' | append: _cb_cats_body | append: ']' -%}
+
+{%- comment -%}Check if any category is optional (non-required){%- endcomment -%}
+{%- assign _cb_has_optional = false -%}
+{%- for _cb_cat in site.cookie_consent.categories -%}
+  {%- unless _cb_cat.required -%}{%- assign _cb_has_optional = true -%}{%- endunless -%}
+{%- endfor -%}
+
+<div
+  id="afh-cookie-banner"
+  class="afh-cookie-banner"
+  hidden
+  role="region"
+  tabindex="-1"
+  aria-label="{{ _cb_cc.banner_title | default: 'Cookie Preferences' | escape }}"
+  data-version="{{ site.cookie_consent.version | default: 1 | escape }}"
+  data-lifetime-days="{{ site.cookie_consent.lifetime_days | default: 365 | escape }}"
+  data-categories="{{ _cb_cats_json | escape }}"
+  data-str-saved="{{ _cb_cc.saved_message | default: 'Your preferences have been saved.' | escape }}"
+>
+  <div class="afh-cookie-banner__inner">
+    <div class="afh-cookie-banner__header">
+      <p class="afh-cookie-banner__title">{{- _cb_cc.banner_title | default: 'Cookie Preferences' -}}</p>
+      <p class="afh-cookie-banner__intro">{{- _cb_cc.banner_intro | default: 'We use cookies to power site features. Some content (maps, videos) requires third-party cookies. You can change this at any time on the cookies page.' -}}</p>
+    </div>
+
+    <div class="afh-cookie-banner__actions">
+      <button type="button" class="btn btn--ghost" data-cookie-decline-all>
+        {{- _cb_cc.decline_all | default: 'Decline All' -}}
+      </button>
+      {%- if _cb_has_optional -%}
+      <button
+        type="button"
+        class="btn btn--outline"
+        id="afh-cookie-manage-btn"
+        aria-controls="afh-cookie-manage-panel"
+        aria-expanded="false"
+      >
+        {{- _cb_cc.manage | default: 'Manage Cookies' -}}
+      </button>
+      {%- endif -%}
+      <button type="button" class="btn btn--accent" id="afh-cookie-accept-all">
+        {{- _cb_cc.accept_all | default: 'Accept All' -}}
+      </button>
+    </div>
+
+    {%- if _cb_has_optional -%}
+    <div id="afh-cookie-manage-panel" class="afh-cookie-manage-panel" hidden>
+      <div class="afh-cookie-manage-panel__list">
+        {%- for _cb_cat in site.cookie_consent.categories -%}
+          {%- assign _cb_cat_str = _cb_cc.categories[_cb_cat.id] -%}
+          <div class="afh-cookie-category-row">
+            <div class="afh-cookie-category-row__info">
+              <p class="afh-cookie-category-row__name">
+                {{- _cb_cat_str.name | default: _cb_cat.id -}}
+              </p>
+              <p class="afh-cookie-category-row__description">
+                {{- _cb_cat_str.description -}}
+              </p>
+            </div>
+            <div class="afh-cookie-category-row__control">
+              {%- if _cb_cat.required -%}
+                <span class="afh-cookie-required-pill">
+                  {{- _cb_cc.always_on | default: 'Always on' -}}
+                </span>
+              {%- else -%}
+                <label
+                  class="afh-toggle"
+                  aria-label="{{ _cb_cat_str.name | default: _cb_cat.id | escape }}"
+                >
+                  <input type="checkbox" data-consent-toggle="{{ _cb_cat.id | escape }}">
+                  <span class="afh-toggle__track" aria-hidden="true"></span>
+                </label>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+      <div class="afh-cookie-manage-panel__actions">
+        <button type="button" class="btn btn--ghost" data-cookie-decline-all>
+          {{- _cb_cc.decline_all | default: 'Decline All' -}}
+        </button>
+        <button type="button" class="btn btn--accent" id="afh-cookie-save-selected">
+          {{- _cb_cc.save | default: 'Save My Preferences' -}}
+        </button>
+      </div>
+    </div>
+    {%- endif -%}
+  </div>
+</div>
+{%- endif -%}

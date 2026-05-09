@@ -159,6 +159,8 @@
   }
 
   function initHlsVideo(video) {
+    if (video._afhVideoInit) return;
+    video._afhVideoInit = true;
     var hlsSource = video.getAttribute('data-video-hls-src');
     if (!hlsSource) {
       return;
@@ -219,6 +221,8 @@
   }
 
   function initYouTubeVideo(iframe) {
+    if (iframe._afhVideoInit) return;
+    iframe._afhVideoInit = true;
     if (!iframe || typeof window.IntersectionObserver !== 'function') {
       return;
     }
@@ -302,4 +306,9 @@
   }
 
   initAllVideoWidgets();
+
+  // Re-initialize when consent is granted for the video category.
+  document.addEventListener('afh:consent-changed', function () {
+    initAllVideoWidgets();
+  });
 }());
