@@ -163,6 +163,8 @@ $light-muted: #5a677a !default;
 $light-border: rgba(16, 32, 51, 0.12) !default;
 $light-accent: #11b8bd !default;
 $light-accent-strong: #0e8793 !default;
+$light-accent-btn: #0c7d83 !default;       // 4.9:1 vs white — WCAG AA interactive
+$light-accent-btn-hover: #0a6e74 !default; // 6.0:1 vs white — WCAG AA hover
 $light-header: rgba(255, 255, 255, 0.24) !default;
 $light-header-scrolled: rgba(17, 26, 39, 0.72) !default;
 $light-drawer: #0f151d !default;

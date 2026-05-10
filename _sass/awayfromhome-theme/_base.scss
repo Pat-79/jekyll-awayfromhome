@@ -96,6 +96,9 @@
   --border: #{$light-border};
   --accent: #{$light-accent};
   --accent-strong: #{$light-accent-strong};
+  --accent-btn: #{$light-accent-btn};               // 4.9:1 vs white — WCAG AA
+  --accent-btn-hover: #{$light-accent-btn-hover};   // 6.0:1 vs white — WCAG AA
+  --accent-btn-fg: #{$color-white};
   --link-color: #{$light-accent};
   --link-color-visited: #{$light-accent-strong};
   --header-bg: #{$light-header};
@@ -119,6 +122,9 @@ html[data-theme="dark"] {
   --border: #{$dark-border};
   --accent: #{$dark-accent};
   --accent-strong: #{$dark-accent-strong};
+  --accent-btn: #{$dark-accent};               // bright teal: 7.3:1 vs dark surface — WCAG AA
+  --accent-btn-hover: #{$dark-accent-strong};  // brighter teal for hover
+  --accent-btn-fg: #{$color-accent-ink};       // dark ink on bright teal bg
   --link-color: #{$dark-accent};
   --link-color-visited: #{$dark-accent-strong};
   --header-bg: #{$dark-header};
@@ -143,6 +149,9 @@ html[data-theme="dark"] {
     --border: #{$dark-border};
     --accent: #{$dark-accent};
     --accent-strong: #{$dark-accent-strong};
+    --accent-btn: #{$dark-accent};
+    --accent-btn-hover: #{$dark-accent-strong};
+    --accent-btn-fg: #{$color-accent-ink};
     --link-color: #{$dark-accent};
     --link-color-visited: #{$dark-accent-strong};
     --header-bg: #{$dark-header};

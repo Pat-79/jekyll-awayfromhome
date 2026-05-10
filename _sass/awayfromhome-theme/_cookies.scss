@@ -24,25 +24,25 @@
 }
 
 .btn--accent {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: var(--accent-btn);
+  border-color: var(--accent-btn);
+  color: var(--accent-btn-fg);
 
   &:hover {
-    background: var(--accent-strong);
-    border-color: var(--accent-strong);
-    color: #fff;
+    background: var(--accent-btn-hover);
+    border-color: var(--accent-btn-hover);
+    color: var(--accent-btn-fg);
     text-decoration: none;
   }
 }
 
 .btn--outline {
   background: transparent;
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-btn);
+  color: var(--accent-btn);
 
   &:hover {
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    background: color-mix(in srgb, var(--accent-btn) 10%, transparent);
     text-decoration: none;
   }
 }
@@ -311,7 +311,7 @@
   }
 
   input:checked + &__track {
-    background: var(--accent);
+    background: var(--accent-btn);
 
     &::after {
       transform: translateX(1.25rem);
