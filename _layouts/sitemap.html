@@ -120,10 +120,18 @@ layout: page
     {%- for year in years -%}
       {%- assign year_url = _archive_base | append: '?year=' | append: year -%}
       {%- assign year_count = 0 -%}
+      {%- assign _seen_refs = '' | split: '' -%}
       {%- for post in site.posts -%}
         {%- assign archive_post_year = post.date | date: '%Y' -%}
         {%- if archive_post_year == year -%}
-          {%- assign year_count = year_count | plus: 1 -%}
+          {%- if post.ref -%}
+            {%- unless _seen_refs contains post.ref -%}
+              {%- assign year_count = year_count | plus: 1 -%}
+              {%- assign _seen_refs = _seen_refs | push: post.ref -%}
+            {%- endunless -%}
+          {%- else -%}
+            {%- assign year_count = year_count | plus: 1 -%}
+          {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
       <a class="story-card story-card--blog" href="{{ year_url | relative_url }}">
