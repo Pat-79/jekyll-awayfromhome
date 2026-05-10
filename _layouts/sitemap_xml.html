@@ -1,6 +1,5 @@
 ---
 layout: none
-permalink: /sitemap.xml
 ---
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -36,7 +35,7 @@ permalink: /sitemap.xml
     {%- endif -%}
     {%- if include_item -%}
     <url>
-      <loc>{{ site.url }}{{ item.url | replace: "index.html", "" }}</loc>
+      <loc>{{ site.url }}{{ item.url | replace: "index.html", "" | replace: '&', '&amp;' }}</loc>
       {%- if item.last_modified_at -%}
       <lastmod>{{ item.last_modified_at | date_to_xmlschema }}</lastmod>
       {%- elsif item.date -%}
@@ -48,13 +47,13 @@ permalink: /sitemap.xml
         {%- for _alt in _alts -%}
           {%- if _alt.sitemap != false -%}
             {%- assign _alt_lang = _alt.lang | default: site.lang | default: 'en' -%}
-      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' }}"/>
+      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' | replace: '&', '&amp;' }}"/>
           {%- endif -%}
         {%- endfor -%}
         {%- assign _default_lang = site.lang | default: 'en' -%}
         {%- assign _x_default = _alts | where: 'lang', _default_lang | first -%}
         {%- if _x_default and _x_default.sitemap != false -%}
-      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' }}"/>
+      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' | replace: '&', '&amp;' }}"/>
         {%- endif -%}
       {%- endif -%}
     </url>
