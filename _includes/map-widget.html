@@ -65,7 +65,7 @@
 <div class="afh-consent-gate" data-consent-gate="maps">
   <div class="afh-consent-placeholder">
     <p class="afh-consent-placeholder__icon" aria-hidden="true">&#128506;</p>
-    <p class="afh-consent-placeholder__message">{{- _mw_cc.placeholder_maps | default: 'Map hidden — enable "Maps" cookies to view this map.' -}}</p>
+    <p class="afh-consent-placeholder__message">{{- _mw_cc.placeholder_maps | default: 'Map hidden: enable "Maps" cookies to view this map.' -}}</p>
     {%- if _mw_cc.categories.maps.description and _mw_cc.categories.maps.description != '' -%}
     <p class="afh-consent-placeholder__description">{{- _mw_cc.categories.maps.description -}}</p>
     {%- endif -%}

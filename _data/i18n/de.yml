@@ -154,9 +154,9 @@ cookie_consent:
   save: "Meine Einstellungen speichern"
   always_on: "Immer aktiv"
   saved_message: "Deine Einstellungen wurden gespeichert."
-  placeholder_maps: "Karte ausgeblendet — aktiviere \"Karten\"-Cookies, um diese Karte anzuzeigen."
+  placeholder_maps: "Karte ausgeblendet: aktiviere \"Karten\"-Cookies, um diese Karte anzuzeigen."
   placeholder_maps_btn: "Karten-Cookies aktivieren"
-  placeholder_video: "Video ausgeblendet — aktiviere \"Video\"-Cookies, um diesen Inhalt anzuzeigen."
+  placeholder_video: "Video ausgeblendet: aktiviere \"Video\"-Cookies, um diesen Inhalt anzuzeigen."
   placeholder_video_btn: "Video-Cookies aktivieren"
   categories:
     essential:

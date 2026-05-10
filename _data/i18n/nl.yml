@@ -154,9 +154,9 @@ cookie_consent:
   save: "Mijn voorkeuren opslaan"
   always_on: "Altijd actief"
   saved_message: "Je voorkeuren zijn opgeslagen."
-  placeholder_maps: "Kaart verborgen — schakel \"Kaarten\"-cookies in om deze kaart te bekijken."
+  placeholder_maps: "Kaart verborgen: schakel \"Kaarten\"-cookies in om deze kaart te bekijken."
   placeholder_maps_btn: "Kaartcookies inschakelen"
-  placeholder_video: "Video verborgen — schakel \"Video\"-cookies in om deze inhoud te bekijken."
+  placeholder_video: "Video verborgen: schakel \"Video\"-cookies in om deze inhoud te bekijken."
   placeholder_video_btn: "Videocookies inschakelen"
   categories:
     essential:

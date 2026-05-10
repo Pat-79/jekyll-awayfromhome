@@ -154,9 +154,9 @@ cookie_consent:
   save: "Save My Preferences"
   always_on: "Always on"
   saved_message: "Your preferences have been saved."
-  placeholder_maps: "Map hidden — enable \"Maps\" cookies to view this map."
+  placeholder_maps: "Map hidden: enable \"Maps\" cookies to view this map."
   placeholder_maps_btn: "Enable Maps Cookies"
-  placeholder_video: "Video hidden — enable \"Video\" cookies to view this content."
+  placeholder_video: "Video hidden: enable \"Video\" cookies to view this content."
   placeholder_video_btn: "Enable Video Cookies"
   categories:
     essential:
