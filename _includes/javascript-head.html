@@ -1,6 +1,30 @@
 <script data-cfasync="false" type="text/javascript">
   // Inline theme detection: must run before CSS to prevent flash of wrong theme.
+  // Also applies query-string overrides (?theme=, ?lang=) for testing/PageSpeed.
   (function () {
+    // ── Query-string overrides ────────────────────────────────────────────────
+    // ?theme=light|dark|auto  mirrors the flyout theme selector
+    // ?lang=<code>            mirrors the flyout language selector
+    // Both write the same localStorage keys so the UI stays in sync.
+    try {
+      if (window.URLSearchParams && window.location.search) {
+        var qs = new URLSearchParams(window.location.search);
+
+        var qsTheme = qs.get('theme');
+        if (qsTheme === 'light' || qsTheme === 'dark') {
+          localStorage.setItem('afh-theme', qsTheme);
+        } else if (qsTheme === 'auto') {
+          localStorage.removeItem('afh-theme');
+        }
+
+        var qsLang = qs.get('lang');
+        if (qsLang) {
+          localStorage.setItem('afh-lang', qsLang);
+        }
+      }
+    } catch (e) {}
+
+    // ── Theme application (FOUC prevention) ──────────────────────────────────
     var savedTheme = localStorage.getItem("afh-theme");
     var defaultTheme = "auto";
     var explicitTheme = (savedTheme === "light" || savedTheme === "dark")
