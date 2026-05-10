@@ -23,6 +23,7 @@ A demo website is available at [demo.awayfromhome.nl](https://demo.awayfromhome.
 - **Mobile-first responsive layout** — single-column on phones, expanding to a sidebar+content layout on wider screens
 - **Accessible** — semantic HTML5, ARIA labels, keyboard-navigable drawer and search
 - **GitHub Pages compatible** — works with Jekyll 3.10.0 and the `github-pages ~> 232` gem; no unsupported plugins
+- **Cookie consent** — GDPR-ready consent banner with configurable categories, consent gates on map/video widgets, and a dedicated cookies preferences page
 - **No build pipeline** — plain ES6 modules and SCSS `@import`; everything compiles inside Jekyll
 
 ---
@@ -87,7 +88,18 @@ bundle exec jekyll serve
 
 Open `http://localhost:4000` in your browser.
 
-### 4. Deploy to GitHub Pages
+### 4. Minify assets before committing
+
+Production builds serve pre-compiled, minified CSS and JS from `assets/css/*.min.css` and `assets/js/*.min.js`. These files must be regenerated whenever you change any `.scss` or `.js` source file:
+
+```bash
+npm install          # first time only
+./scripts/minify.sh  # rebuild Jekyll and minify all CSS + JS
+```
+
+Then commit the updated `assets/css/main.min.css` and `assets/js/*.min.js` files along with your source changes. Without this step, the live site continues to serve the old compiled assets.
+
+### 5. Deploy to GitHub Pages
 
 Push your site repository to GitHub. In **Settings → Pages**, set the source branch to `main` and the folder to `/` (root). GitHub will build and publish the site automatically within about a minute.
 
@@ -203,6 +215,23 @@ sidebar:
     enabled: true                                     # Show or hide the ARCHIVE section in the drawer
     mode: year-month-tree                             # 'year' | 'month-year' | 'year-month-tree'
     show_post_counts: false                           # Show post counts next to year/month labels
+
+# ── Cookie consent ─────────────────────────────────────────────────────────────
+cookie_consent:
+  enabled: false               # Set to true to enable the consent banner
+  version: 1                   # Bump when adding a new category to re-prompt returning visitors
+  lifetime_days: 365           # How long consent is stored (renews on each visit)
+  banner_trigger: on_use_non_essential  # 'always' | 'on_use' | 'on_use_non_essential' | 'never'
+  show_accept_essential: true  # Show an "Accept Essential" button on the banner
+  show_decline_all: false      # Show a "Decline All" button on the banner
+  default_action: accept_essential  # Which button is styled as primary
+  categories:
+    - id: essential
+      required: true           # Always-on; no toggle shown
+    - id: maps
+      required: false          # Opt-in; controls map widget consent gate
+    - id: video
+      required: false          # Opt-in; controls video widget consent gate
 
 # ── Plugins ────────────────────────────────────────────────────────────────────
 plugins:
@@ -550,6 +579,69 @@ Only include the platforms you actively use. Icons are rendered as a responsive 
 
 ---
 
+## Cookie Consent
+
+The theme includes an opt-in GDPR-friendly cookie consent system. Enable it in `_config.yml` by setting `cookie_consent.enabled: true`.
+
+### How it works
+
+- A configurable banner appears at the bottom of the page when consent is needed, driven by `banner_trigger`.
+- Cookie categories (`essential`, `maps`, `video`) control which widgets are gated.
+- Map and video widgets show a placeholder with a consent prompt until the visitor grants the relevant category.
+- Preferences are stored in `localStorage` under the key `afh-cookie-consent`.
+- A dedicated **cookies page** (layout: `page`, include `cookie-preferences.html` and `storage-widget.html`) lets visitors review and change their choices at any time.
+- All UI strings are translatable via `_data/i18n/<lang>.yml` under the `cookie_consent` key.
+
+### `banner_trigger` options
+
+| Value | Behaviour |
+|---|---|
+| `always` | Banner shown to every new visitor on every page immediately |
+| `on_use` | Banner shown when the page has a consent gate OR when the browser already holds essential site data |
+| `on_use_non_essential` | Banner shown only when a non-essential gate is present and the visitor has not yet chosen |
+| `never` | Banner never shown automatically; visitors manage preferences on the cookies page only |
+
+### Cookies page
+
+Create a cookies page in your site's `theme/cookies.markdown` (and `theme/<lang>/cookies.markdown` for each language):
+
+```markdown
+---
+layout: page
+title: Cookies
+permalink: /cookies/
+lang: en
+---
+
+{% include cookie-preferences.html %}
+{% include storage-widget.html %}
+```
+
+---
+
+## Query-String Overrides
+
+Append `?theme=` or `?lang=` to any page URL to override the active theme or language. These parameters mirror the flyout menu controls and are useful for testing and tools such as PageSpeed Insights.
+
+| Parameter | Values | Effect |
+|---|---|---|
+| `?theme=light` | `light` | Force light mode |
+| `?theme=dark` | `dark` | Force dark mode |
+| `?theme=auto` | `auto` | Reset to system preference |
+| `?lang=<code>` | e.g. `nl`, `de`, `ar` | Switch to that language |
+
+The override writes to the same `localStorage` keys as the flyout (`afh-theme`, `afh-lang`), so the UI reflects the selection and it persists across subsequent page loads until changed.
+
+**Examples:**
+
+```
+https://example.com/nl/cookies/?theme=dark
+https://example.com/?lang=ar
+https://example.com/about/?theme=light
+```
+
+---
+
 ## Theme Structure
 
 The `theme/` directory contains route-level page sources that render site URLs.
@@ -780,11 +872,15 @@ $font-body:    'Lato', 'Helvetica Neue', Arial, sans-serif;
 $radius-small: 0.25rem;
 $radius-large: 0.5rem;
 
-// ── Theme import ─────────────────────────────────────────────────────────────
+// ── Theme imports ─────────────────────────────────────────────────────────────
 @import "awayfromhome-theme/base";
 @import "awayfromhome-theme/layout";
 @import "awayfromhome-theme/search-widget";
 @import "awayfromhome-theme/post";
+@import "awayfromhome-theme/gallery";
+@import "awayfromhome-theme/map-widget";
+@import "awayfromhome-theme/video-widget";
+@import "awayfromhome-theme/cookies";
 @import "awayfromhome-theme/print";
 ```
 

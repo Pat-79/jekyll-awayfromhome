@@ -37,6 +37,9 @@ jekyll-awayfromhome/
 │   ├── post-hero.html              # Post hero banner
 │   ├── responsive-image.html       # Responsive image include with existence-aware srcset
 │   ├── search-widget.html          # Inline search field widget
+│   ├── cookie-banner.html          # Cookie consent bottom bar (injected by base.html)
+│   ├── cookie-preferences.html     # Inline preferences panel for the cookies page
+│   ├── storage-widget.html         # localStorage summary and clear-all widget
 │   ├── sidebar.html                # Drawer/sidebar contents
 │   ├── social-links.html           # Social icon row
 │   ├── tag-cloud-page.html         # Full-page tag cloud block
@@ -70,6 +73,7 @@ jekyll-awayfromhome/
 ├── _sass/
 │   └── awayfromhome-theme/
 │       ├── _base.scss             # Base element styling
+│       ├── _cookies.scss          # Cookie consent banner, buttons, toggle switch
 │       ├── _gallery.scss          # Gallery widget styles
 │       ├── _layout.scss           # Header, footer, drawer, grids, site structure
 │       ├── _map-widget.scss       # Map widget styles
@@ -81,7 +85,11 @@ jekyll-awayfromhome/
 │
 ├── assets/
 │   ├── css/
-│   │   └── main.scss              # Main SCSS entrypoint
+│   │   ├── main.scss              # Main SCSS entrypoint
+│   │   ├── main.min.css           # Pre-compiled production CSS (committed; regenerate with scripts/minify.sh)
+│   │   ├── gallery-widget.min.css
+│   │   ├── map-widget.min.css
+│   │   └── video-widget.min.css
 │   ├── data/
 │   │   ├── home-landing-chapters.json
 │   │   └── search-data.md         # Source file that builds search-data.json
@@ -96,6 +104,8 @@ jekyll-awayfromhome/
 │   └── js/
 │       ├── archive.js             # Archive filtering and pagination
 │       ├── blog-pagination.js     # Blog page pagination
+│       ├── cookie-consent.js      # Cookie consent banner + consent gate logic
+│       ├── cookies-clear.js       # Storage summary and clear-all runtime
 │       ├── entity-index.js        # Browse filtering
 │       ├── gallery-widget.js      # Gallery behavior
 │       ├── home-landing.js        # Home hero runtime
@@ -112,13 +122,16 @@ jekyll-awayfromhome/
 │       └── video-widget.js        # Video widget runtime
 │
 ├── scripts/
-│   └── generate-image-variants.sh # ImageMagick helper for responsive image variants
+│   ├── generate-image-variants.sh # ImageMagick helper for responsive image variants
+│   ├── minify.sh                  # Build + minify all CSS and JS; run before committing CSS/JS changes
+│   └── generate_timezone_language_hints.py  # Rebuild _data/timezone_language_hints.yml
 │
 ├── theme/                         # Route source pages shipped by the theme
 │   ├── about.markdown             # /about/
 │   ├── archive.markdown           # /archive/
 │   ├── blog.md                    # /blog/
 │   ├── browse.md                  # /browse/
+│   ├── cookies.markdown           # /cookies/ — includes cookie-preferences.html + storage-widget.html
 │   ├── index.markdown             # /
 │   ├── search.md                  # /search/
 │   ├── sitemap_html.md            # /sitemap/
@@ -158,6 +171,7 @@ jekyll-awayfromhome/
 - Page language defaults are assigned in `_config.yml` using `defaults` scopes for `theme/<lang>` and `_posts/<lang>`.
 - `lang-persist.js` handles browser-language detection and explicit user preference storage.
 - The language selector always reflects the current mode: **Automatic** (`🇺🇳`) is shown when no preference is stored; the chosen language is shown when one is. Selecting Automatic clears `localStorage('afh-lang')` and returns to auto-detection.
+- Appending `?theme=light|dark|auto` or `?lang=<code>` to any URL overrides the respective setting in the same inline head script, writing to the same `localStorage` keys. Useful for testing and external tools such as PageSpeed Insights.
 
 ### Author Data Model
 
@@ -209,8 +223,20 @@ When Jekyll builds the site, the main outputs include:
 2. `_site/about/index.html`, `_site/archive/index.html`, and other route pages from `theme/`
 3. `_site/nl/`, `_site/de/`, `_site/ar/` for translated page trees
 4. `_site/assets/data/search-data.json` from `assets/data/search-data.md` + `_layouts/search-data.html`
-5. `_site/assets/css/main.css` from `assets/css/main.scss`
+5. `_site/assets/css/main.css` from `assets/css/main.scss` (compiled SCSS)
 6. Copied assets from `assets/js/` and `assets/images/`
+
+> **Important:** Production builds serve `assets/css/main.min.css` and `assets/js/*.min.js` — pre-compiled, minified files committed to the repository. Run `./scripts/minify.sh` after any SCSS or JS change and commit the updated minified files.
+
+## Cookie Consent Architecture
+
+Enabled via `cookie_consent.enabled: true` in `_config.yml`.
+
+- `cookie-banner.html` is injected by `base.html` and hidden by default; `cookie-consent.js` shows it when the `banner_trigger` condition is met.
+- Cookie categories (`essential`, `maps`, `video`) correspond to consent gates. Map and video widgets wrap third-party content in `<div class="afh-consent-gate" data-consent-gate="maps|video">`. When consent is granted, `cookie-consent.js` adds `.afh-consent-gate--granted` to unlock the content.
+- `cookie-preferences.html` and `storage-widget.html` are placed on the cookies page to let visitors manage and clear their choices.
+- `afh:consent-changed` is dispatched on `document` whenever preferences change; `map-widget.js` and `video-widget.js` listen for it to re-initialize gated widgets without a page reload.
+- Preferences are stored in `localStorage` under `afh-cookie-consent` as JSON.
 
 ## Adding a New Language
 
