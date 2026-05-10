@@ -5,6 +5,13 @@ layout: page
 {%- assign sitemap_intro = page.sitemap_intro | default: 'Browse every page, post, and yearly archive using the same card layout as the homepage.' -%}
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
 {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign _site_lang = site.lang | default: 'en' -%}
+{%- if _page_lang == _site_lang -%}
+  {%- assign _archive_base = '/archive/' -%}
+{%- else -%}
+  {%- assign _archive_base = '/' | append: _page_lang | append: '/archive/' -%}
+{%- endif -%}
 
 <section class="page-section">
   <div class="container sitemap-index">
@@ -14,6 +21,44 @@ layout: page
     {% if sitemap_intro and sitemap_intro != '' %}
       <p>{{ sitemap_intro }}</p>
     {% endif %}
+  </div>
+</section>
+
+<section class="page-section page-section--spaced">
+  <div class="container story-list">
+    <div class="home-section-head">
+      <h2>Blog</h2>
+    </div>
+    {%- for post in site.posts -%}
+      {%- unless post.sitemap == false -%}
+        {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
+        {%- assign post_word_count = post.content | strip_html | number_of_words -%}
+        {%- assign post_image = post.image | default: site.default_post_image -%}
+        <a class="story-card" href="{{ post.url | relative_url }}">
+          <div class="story-card__media">
+            {%- include responsive-image.html
+              src=post_image
+              class='story-card__media-image'
+              alt=''
+              loading='lazy'
+              decoding='async'
+              sizes='(max-width: 900px) 100vw, 420px'
+              base_width=1600
+              fallback=site.default_post_image
+              all_static_paths=_all_static_paths
+            -%}
+          </div>
+          <div class="story-card__body">
+            <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
+            <h2>{{ post.title }}</h2>
+            <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
+            {%- if post_word_count > 60 -%}
+              <p class="story-card__read-more">Read more...</p>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endunless -%}
+    {%- endfor -%}
   </div>
 </section>
 
@@ -62,44 +107,6 @@ layout: page
 <section class="page-section page-section--spaced">
   <div class="container story-list">
     <div class="home-section-head">
-      <h2>Blog</h2>
-    </div>
-    {%- for post in site.posts -%}
-      {%- unless post.sitemap == false -%}
-        {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
-        {%- assign post_word_count = post.content | strip_html | number_of_words -%}
-        {%- assign post_image = post.image | default: site.default_post_image -%}
-        <a class="story-card" href="{{ post.url | relative_url }}">
-          <div class="story-card__media">
-            {%- include responsive-image.html
-              src=post_image
-              class='story-card__media-image'
-              alt=''
-              loading='lazy'
-              decoding='async'
-              sizes='(max-width: 900px) 100vw, 420px'
-              base_width=1600
-              fallback=site.default_post_image
-              all_static_paths=_all_static_paths
-            -%}
-          </div>
-          <div class="story-card__body">
-            <p class="story-card__meta">{{ post.date | date: '%B %-d, %Y' }}{%- if post_author_name %} · {{ post_author_name }}{%- endif %}</p>
-            <h2>{{ post.title }}</h2>
-            <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
-            {%- if post_word_count > 60 -%}
-              <p class="story-card__read-more">Read more...</p>
-            {%- endif -%}
-          </div>
-        </a>
-      {%- endunless -%}
-    {%- endfor -%}
-  </div>
-</section>
-
-<section class="page-section page-section--spaced">
-  <div class="container story-list">
-    <div class="home-section-head">
       <h2>Archive</h2>
     </div>
     {%- assign years = '' | split: '' -%}
@@ -111,7 +118,7 @@ layout: page
     {%- endfor -%}
     {%- assign years = years | sort | reverse -%}
     {%- for year in years -%}
-      {%- assign year_url = '/' | append: year | append: '/' -%}
+      {%- assign year_url = _archive_base | append: '?year=' | append: year -%}
       {%- assign year_count = 0 -%}
       {%- for post in site.posts -%}
         {%- assign archive_post_year = post.date | date: '%Y' -%}
