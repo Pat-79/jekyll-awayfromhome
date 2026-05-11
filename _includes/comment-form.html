@@ -1,0 +1,68 @@
+<div class="afh-comment-form-wrap" id="afh-comment-form-wrap" hidden>
+  <h3 class="afh-comment-form__title">{{ t.comments.leave_comment }}</h3>
+
+  <form
+    class="afh-comment-form"
+    id="afh-comment-form"
+    data-worker="{{ site.comments.worker_url }}"
+    data-post-ref="{{ include.comment_key | default: page.ref }}"
+    data-post-title="{{ page.title | default: '' | strip_html | strip_newlines | escape }}"
+    data-post-url="{{ page.url | absolute_url }}"
+    data-date-format="{{ site.comments.date_format | default: 'long' | escape }}"
+    data-date-locale="{{ site.comments.date_locale | default: 'page' | escape }}"
+    data-msg-success="{{ t.comments.success | default: 'Thank you! Your comment is awaiting moderation.' | escape }}"
+    data-msg-error="{{ t.comments.error | default: 'Something went wrong. Please try again.' | escape }}"
+    data-msg-replying-to="{{ t.comments.replying_to | default: 'Replying to %s' | escape }}">
+
+    <input
+      type="text"
+      name="url"
+      tabindex="-1"
+      autocomplete="off"
+      style="position:absolute;left:-9999px;width:1px;height:1px;"
+      aria-hidden="true">
+
+    <input type="hidden" name="reply_to" value="">
+
+    <div class="afh-comment-form__reply-banner" hidden>
+      <span class="afh-comment-form__reply-to-name"></span>
+    </div>
+
+    <label>
+      {{ t.comments.form_name }}
+      <input type="text" name="name" required maxlength="80" autocomplete="name" autocapitalize="words">
+    </label>
+
+    <label>
+      {{ t.comments.form_email }}
+      <input
+        type="email"
+        name="email"
+        required
+        autocomplete="email"
+        inputmode="email"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false">
+      <small>{{ t.comments.email_note }}</small>
+    </label>
+
+    <label>
+      {{ t.comments.form_comment }}
+      <textarea name="text" required minlength="1" maxlength="2000" rows="5"></textarea>
+    </label>
+
+    <div class="cf-turnstile" data-sitekey="{{ site.comments.turnstile_sitekey }}" data-theme="auto"></div>
+
+    <div class="afh-comment-form__actions">
+      <button type="submit" class="btn btn--accent afh-comment-form__submit-btn">
+        {{ t.comments.form_submit }}
+      </button>
+      <button type="button" class="afh-comment-form__cancel-reply btn btn--ghost">
+        {{ t.comments.cancel_reply | default: 'Cancel' }}
+      </button>
+    </div>
+
+    <div class="afh-comment-form__status" aria-live="polite" hidden></div>
+  </form>
+</div>

@@ -1,0 +1,294 @@
+@import "variables";
+
+.afh-comments {
+  width: min(calc(100% - (2 * var(--page-gutter))), var(--reading-width));
+  margin: 2.25rem auto 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.afh-comments__heading {
+  margin-bottom: 1.2rem;
+}
+
+.afh-comments__count {
+  margin-inline-start: 0.4rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.afh-comments__actions {
+  margin: 0 0 1rem;
+}
+
+.afh-comments__leave-btn.btn {
+  padding: 0.4em 0.95em;
+}
+
+.afh-comments__empty,
+.afh-comments__closed {
+  margin-bottom: 1.15rem;
+  color: var(--muted);
+}
+
+.afh-comments__list,
+.afh-comment__replies {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.afh-comment {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.afh-comment--reply {
+  margin-top: 0.85rem;
+  margin-bottom: 0;
+}
+
+.afh-comment__avatar img {
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.afh-comment__body {
+  --afh-comment-bubble-bg: color-mix(in srgb, var(--surface) 88%, transparent);
+  position: relative;
+  background: var(--afh-comment-bubble-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  padding: 0.8rem 0.9rem;
+}
+
+.afh-comment__body::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  inset-inline-start: -0.45rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  transform: rotate(45deg);
+  background: var(--afh-comment-bubble-bg);
+  border-inline-start: 1px solid var(--border);
+  border-block-end: 1px solid var(--border);
+}
+
+.afh-comment__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.afh-comment__name {
+  font-size: 0.98rem;
+}
+
+.afh-comment__date {
+  font-size: 0.87rem;
+  color: var(--muted);
+}
+
+.afh-comment__text {
+  margin-bottom: 0.65rem;
+  line-height: 1.5;
+}
+
+.afh-comment__reply-btn.btn {
+  padding: 0.35em 0.8em;
+  font-size: 0.82rem;
+}
+
+.afh-comment__replies {
+  grid-column: 2;
+  margin-inline-start: 1rem;
+  padding-inline-start: 0.9rem;
+  border-inline-start: 2px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+}
+
+.afh-comment-form-wrap {
+  margin-top: 0;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--surface) 90%, var(--accent) 3%);
+  padding: 0.9rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.afh-comment-form-wrap.is-replying {
+  border-color: color-mix(in srgb, var(--accent) 66%, white 10%);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.afh-comment-form-wrap[hidden] {
+  display: none;
+}
+
+.afh-comment-form-host {
+  margin-bottom: 0;
+}
+
+.afh-comment-form-host:empty {
+  display: none;
+}
+
+.afh-comment-form-host--inline {
+  grid-column: 2;
+  margin: 0.4rem 0 1rem;
+}
+
+.afh-comment-form-host--inline .afh-comment-form-wrap {
+  //width: min(100%, 38rem);
+  margin-right: auto;
+  position: relative;
+}
+
+//.afh-comment--reply .afh-comment-form-host--inline .afh-comment-form-wrap {
+//  width: min(100%, 34rem);
+//}
+
+.afh-comment-form-host--inline .afh-comment-form-wrap::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  inset-inline-start: -0.5rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  transform: rotate(45deg);
+  background: color-mix(in srgb, var(--surface) 90%, var(--accent) 3%);
+  border-inline-start: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-block-end: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+}
+
+.afh-comment-form-host--inline .afh-comment-form-wrap.is-replying::before {
+  border-inline-start-color: color-mix(in srgb, var(--accent) 66%, white 10%);
+  border-block-end-color: color-mix(in srgb, var(--accent) 66%, white 10%);
+}
+
+.afh-comment-form-host .afh-comment-form-wrap:not([hidden]) {
+  margin-bottom: 1rem;
+}
+
+.afh-comment-form__title {
+  margin-bottom: 0.7rem;
+}
+
+.afh-comment-form {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.afh-comment-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.afh-comment-form__submit-btn.btn,
+.afh-comment-form__cancel-reply.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: auto;
+  min-width: 8.5rem;
+}
+
+.afh-comment-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.afh-comment-form input,
+.afh-comment-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.62rem 0.72rem;
+}
+
+.afh-comment-form textarea {
+  resize: vertical;
+}
+
+.afh-comment-form small {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.afh-comment-form__reply-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.afh-comment-form__reply-banner[hidden] {
+  display: none;
+}
+
+.afh-comment-form__reply-to-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.afh-comment-form__status {
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--border);
+}
+
+.afh-comment-form__status.is-success {
+  border-color: color-mix(in srgb, #2d9961 48%, var(--border));
+  background: color-mix(in srgb, #2d9961 12%, transparent);
+}
+
+.afh-comment-form__status.is-error {
+  border-color: color-mix(in srgb, #c45757 52%, var(--border));
+  background: color-mix(in srgb, #c45757 12%, transparent);
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .afh-comment {
+    gap: 0.65rem;
+  }
+
+  .afh-comment__replies {
+    margin-inline-start: 0.3rem;
+    padding-inline-start: 0.7rem;
+  }
+
+  .afh-comment-form-wrap {
+    padding: 0.78rem;
+  }
+
+  .afh-comment-form-host--inline .afh-comment-form-wrap::before {
+    display: none;
+  }
+
+  .afh-comment-form__actions {
+    gap: 0.45rem;
+  }
+
+  .afh-comment-form__submit-btn.btn,
+  .afh-comment-form__cancel-reply.btn {
+    min-width: 0;
+  }
+}

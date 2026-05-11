@@ -119,6 +119,18 @@ has_author: true
   {%- if author_name and author_name != empty -%}
   {%- include author-card.html name=author_name avatar=author_avatar bio=author_bio location=author_location page_url=author_page_url social_links=author_social_links %}
   {%- endif -%}
+  {%- if site.comments.enabled and page.comments_visible != false and page.ref -%}
+    {%- assign _comments_closed = false -%}
+    {%- if page.comments == false -%}
+      {%- assign _comments_closed = true -%}
+    {%- endif -%}
+    {%- assign _comment_key = page.ref -%}
+    {%- if site.comments.per_language -%}
+      {%- assign _comment_key = page.ref | append: '--' | append: _page_lang -%}
+    {%- endif -%}
+    {%- assign _post_comments = site.data.comments[_comment_key] -%}
+    {%- include comment-list.html comments=_post_comments comment_key=_comment_key closed=_comments_closed -%}
+  {%- endif -%}
   {%- if continue_post %}
     {%- assign continue_image = continue_post.image | default: site.default_post_image -%}
     {%- assign _continue_lang = continue_post.lang | default: _default_lang -%}

@@ -7,6 +7,7 @@
 {%- assign has_map_widget = false -%}
 {%- assign has_video_widget = false -%}
 {%- assign has_storage_widget = false -%}
+{%- assign has_comments = false -%}
 {%- if page_content contains 'include gallery-widget.html' or page_content contains 'data-gallery' -%}
 	{%- assign has_gallery_widget = true -%}
 {%- endif -%}
@@ -18,6 +19,9 @@
 {%- endif -%}
 {%- if page_content contains 'include storage-widget.html' or page_content contains 'afh-clear-data-block' -%}
 	{%- assign has_storage_widget = true -%}
+{%- endif -%}
+{%- if page.layout == 'post' and site.comments.enabled and page.comments_visible != false and page.ref and page.comments != false -%}
+	{%- assign has_comments = true -%}
 {%- endif -%}
 <script src="{{ js_dir | append: 'theme' | append: js_ext | relative_url }}" defer></script>
 <script src="{{ js_dir | append: 'lang-persist' | append: js_ext | relative_url }}" defer></script>
@@ -34,6 +38,9 @@
 {%- endif -%}
 {%- if has_storage_widget -%}
 <script src="{{ js_dir | append: 'cookies-clear' | append: js_ext | relative_url }}" defer></script>
+{%- endif -%}
+{%- if has_comments -%}
+<script src="{{ js_dir | append: 'comments' | append: js_ext | relative_url }}" defer></script>
 {%- endif -%}
 <script type="module" src="{{ js_dir | append: 'search-widget' | append: js_ext | relative_url }}"></script>
 {%- if page.layout == 'home' -%}

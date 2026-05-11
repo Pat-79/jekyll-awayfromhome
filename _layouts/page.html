@@ -32,6 +32,17 @@ layout: base
 {%- if hero_author_name or hero_date -%}
   {%- assign hero_show_meta = true -%}
 {%- endif -%}
+{%- assign hero_comment_count = 0 -%}
+{%- if is_post_layout and site.comments.enabled and page.comments_visible != false and page.ref -%}
+  {%- assign _hero_comment_key = page.ref -%}
+  {%- if site.comments.per_language -%}
+    {%- assign _hero_comment_key = page.ref | append: '--' | append: _page_lang -%}
+  {%- endif -%}
+  {%- assign hero_comment_count = site.data.comments[_hero_comment_key] | size -%}
+{%- endif -%}
+{%- if hero_comment_count > 0 -%}
+  {%- assign hero_show_meta = true -%}
+{%- endif -%}
 
 {%- include post-hero.html
   title=page.title
@@ -40,6 +51,7 @@ layout: base
   show_meta=hero_show_meta
   author_name=hero_author_name
   date=hero_date
+  comment_count=hero_comment_count
 -%}
 
 {%- if page.layout == 'page' -%}

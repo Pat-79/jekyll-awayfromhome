@@ -130,6 +130,24 @@ footer:
   copyright: Alle rechten voorbehouden.
   disclaimer: Inhoud en meningen worden verstrekt voor informatieve doeleinden.
 
+comments:
+  heading: "Reacties"
+  be_first: "Wees de eerste die reageert."
+  leave_comment: "Laat een reactie achter"
+  closed: "Reacties zijn gesloten."
+  form_name: "Naam"
+  form_email: "E-mail"
+  email_note: "Je e-mailadres wordt nooit gepubliceerd. Het wordt alleen gebruikt voor je avatar."
+  form_comment: "Reactie"
+  form_submit: "Verzenden"
+  reply: "Antwoorden"
+  cancel_reply: "Antwoord annuleren"
+  replying_to: "Je antwoordt op %s"
+  success: "Bedankt! Je reactie wacht op moderatie."
+  error: "Er ging iets mis. Probeer het opnieuw."
+  count_label: "reactie"
+  count_label_plural: "reacties"
+
 storage_widget:
   clear_button: Alle sitegegevens wissen
   msg_confirm: Dit verwijdert alle voorkeuren en gecachte gegevens die door deze site in je browser zijn opgeslagen. Doorgaan?

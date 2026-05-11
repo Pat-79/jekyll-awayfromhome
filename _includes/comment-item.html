@@ -1,0 +1,91 @@
+{%- assign _avatar_count = site.comments.avatar_count | default: 8 -%}
+{%- assign _avatar_index = include.comment.avatar_index | default: 0 | plus: 0 -%}
+{%- if _avatar_count > 0 -%}
+  {%- assign _avatar_index = _avatar_index | modulo: _avatar_count -%}
+{%- endif -%}
+{%- assign _avatar_src = '/assets/images/avatars/avatar-' | append: _avatar_index | append: '.svg' | relative_url -%}
+
+<li class="afh-comment" id="comment-{{ include.id }}">
+  <div class="afh-comment__avatar">
+    {%- if site.comments.gravatar and include.comment.gravatar -%}
+      <img
+        src="https://www.gravatar.com/avatar/{{ include.comment.gravatar }}?s=48&d=mp"
+        alt=""
+        width="48"
+        height="48"
+        loading="lazy">
+    {%- else -%}
+      <img src="{{ _avatar_src }}" alt="" width="48" height="48" loading="lazy">
+    {%- endif -%}
+  </div>
+
+  <div class="afh-comment__body">
+    <p class="afh-comment__meta">
+      <strong class="afh-comment__name">{{ include.comment.name | default: 'Anonymous' | escape }}</strong>
+      <time class="afh-comment__date" datetime="{{ include.comment.date | date_to_xmlschema }}">
+        {%- include format-date.html date=include.comment.date -%}
+      </time>
+    </p>
+
+    <div class="afh-comment__text">{{ include.comment.text | escape | newline_to_br }}</div>
+
+    {%- unless include.closed -%}
+      <button
+        type="button"
+        class="afh-comment__reply-btn btn btn--ghost btn--sm"
+        data-reply-to="{{ include.id }}"
+        data-reply-name="{{ include.comment.name | default: 'Anonymous' | escape }}">
+        {{ t.comments.reply }}
+      </button>
+    {%- endunless -%}
+  </div>
+
+  {%- if include.replies and include.replies.size > 0 -%}
+    <ol class="afh-comment__replies">
+      {%- for _rp in include.replies -%}
+        {%- assign _r_avatar_index = _rp[1].avatar_index | default: 0 | plus: 0 -%}
+        {%- if _avatar_count > 0 -%}
+          {%- assign _r_avatar_index = _r_avatar_index | modulo: _avatar_count -%}
+        {%- endif -%}
+        {%- assign _r_avatar_src = '/assets/images/avatars/avatar-' | append: _r_avatar_index | append: '.svg' | relative_url -%}
+
+        <li class="afh-comment afh-comment--reply" id="comment-{{ _rp[0] }}">
+          <div class="afh-comment__avatar">
+            {%- if site.comments.gravatar and _rp[1].gravatar -%}
+              <img
+                src="https://www.gravatar.com/avatar/{{ _rp[1].gravatar }}?s=40&d=mp"
+                alt=""
+                width="40"
+                height="40"
+                loading="lazy">
+            {%- else -%}
+              <img src="{{ _r_avatar_src }}" alt="" width="40" height="40" loading="lazy">
+            {%- endif -%}
+          </div>
+
+          <div class="afh-comment__body">
+            <p class="afh-comment__meta">
+              <strong class="afh-comment__name">{{ _rp[1].name | default: 'Anonymous' | escape }}</strong>
+              {%- assign _rp_date = _rp[1].date -%}
+              <time class="afh-comment__date" datetime="{{ _rp[1].date | date_to_xmlschema }}">
+                {%- include format-date.html date=_rp_date -%}
+              </time>
+            </p>
+
+            <div class="afh-comment__text">{{ _rp[1].text | escape | newline_to_br }}</div>
+
+            {%- unless include.closed -%}
+              <button
+                type="button"
+                class="afh-comment__reply-btn btn btn--ghost btn--sm"
+                data-reply-to="{{ include.id }}"
+                data-reply-name="{{ include.comment.name | default: 'Anonymous' | escape }}">
+                {{ t.comments.reply }}
+              </button>
+            {%- endunless -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+  {%- endif -%}
+</li>

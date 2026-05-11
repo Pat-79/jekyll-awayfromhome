@@ -1,0 +1,63 @@
+{%- assign _all_comments = include.comments -%}
+{%- if _all_comments == nil -%}
+  {%- assign _all_comments = '' | split: '' -%}
+{%- endif -%}
+
+{%- assign _root_comments = '' | split: '' -%}
+{%- assign _replies = '' | split: '' -%}
+
+{%- for _pair in _all_comments -%}
+  {%- assign _c = _pair[1] -%}
+  {%- if _c.reply_to and _c.reply_to != '' -%}
+    {%- assign _replies = _replies | push: _pair -%}
+  {%- else -%}
+    {%- assign _root_comments = _root_comments | push: _pair -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign _root_comments = _root_comments | sort -%}
+{%- assign _total = _all_comments | size -%}
+
+<section class="afh-comments" id="afh-comments">
+  <h2 class="afh-comments__heading">
+    {{ t.comments.heading }}
+    {%- if _total > 0 -%}
+      <span class="afh-comments__count">&nbsp;({{ _total }})</span>
+    {%- endif -%}
+  </h2>
+
+  {%- unless include.closed -%}
+    <div class="afh-comments__actions">
+      <button type="button" class="afh-comments__leave-btn btn btn--ghost btn--sm">
+        {{ t.comments.leave_comment }}
+      </button>
+    </div>
+
+    <div class="afh-comment-form-host" id="afh-comment-form-host-root">
+      {%- include comment-form.html comment_key=include.comment_key -%}
+    </div>
+  {%- endunless -%}
+
+  {%- if _root_comments.size == 0 -%}
+    <p class="afh-comments__empty">{{ t.comments.be_first }}</p>
+  {%- else -%}
+    <ol class="afh-comments__list">
+      {%- for _pair in _root_comments -%}
+        {%- assign _id = _pair[0] -%}
+        {%- assign _c = _pair[1] -%}
+        {%- assign _my_replies = '' | split: '' -%}
+        {%- for _rp in _replies -%}
+          {%- if _rp[1].reply_to == _id -%}
+            {%- assign _my_replies = _my_replies | push: _rp -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- assign _my_replies = _my_replies | sort -%}
+        {%- include comment-item.html id=_id comment=_c replies=_my_replies closed=include.closed -%}
+      {%- endfor -%}
+    </ol>
+  {%- endif -%}
+
+  {%- if include.closed -%}
+    <p class="afh-comments__closed">{{ t.comments.closed }}</p>
+  {%- endif -%}
+</section>

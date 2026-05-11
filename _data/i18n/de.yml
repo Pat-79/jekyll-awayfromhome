@@ -130,6 +130,24 @@ footer:
   copyright: Alle Rechte vorbehalten.
   disclaimer: Inhalte und Meinungen dienen nur zu Informationszwecken.
 
+comments:
+  heading: "Kommentare"
+  be_first: "Sei der erste mit einem Kommentar."
+  leave_comment: "Einen Kommentar schreiben"
+  closed: "Kommentare sind geschlossen."
+  form_name: "Name"
+  form_email: "E-Mail"
+  email_note: "Deine E-Mail-Adresse wird nie veröffentlicht. Sie wird nur für deinen Avatar verwendet."
+  form_comment: "Kommentar"
+  form_submit: "Absenden"
+  reply: "Antworten"
+  cancel_reply: "Antwort abbrechen"
+  replying_to: "Antwort auf %s"
+  success: "Danke! Dein Kommentar wartet auf Freigabe."
+  error: "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  count_label: "Kommentar"
+  count_label_plural: "Kommentare"
+
 storage_widget:
   clear_button: Alle Website-Daten löschen
   msg_confirm: Dadurch werden alle von dieser Website in deinem Browser gespeicherten Einstellungen und zwischengespeicherten Daten gelöscht. Fortfahren?

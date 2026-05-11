@@ -130,6 +130,24 @@ footer:
   copyright: All rights reserved.
   disclaimer: Content and opinions are provided for informational purposes.
 
+comments:
+  heading: "Comments"
+  be_first: "Be the first to comment."
+  leave_comment: "Leave a comment"
+  closed: "Comments are closed."
+  form_name: "Name"
+  form_email: "Email"
+  email_note: "Your email address is never published. It is only used for your avatar."
+  form_comment: "Comment"
+  form_submit: "Submit"
+  reply: "Reply"
+  cancel_reply: "Cancel reply"
+  replying_to: "Replying to %s"
+  success: "Thank you! Your comment is awaiting moderation."
+  error: "Something went wrong. Please try again."
+  count_label: "comment"
+  count_label_plural: "comments"
+
 storage_widget:
   clear_button: Clear all site data
   msg_confirm: This will delete all preferences and cached data stored by this site in your browser. Continue?

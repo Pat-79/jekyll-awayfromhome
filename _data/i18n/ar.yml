@@ -127,6 +127,24 @@ footer:
   copyright: جميع الحقوق محفوظة.
   disclaimer: المحتوى والآراء مقدَّمة لأغراض إعلامية فحسب.
 
+comments:
+  heading: "التعليقات"
+  be_first: "كن أول من يعلّق."
+  leave_comment: "اترك تعليقاً"
+  closed: "تم إغلاق التعليقات."
+  form_name: "الاسم"
+  form_email: "البريد الإلكتروني"
+  email_note: "لن يتم نشر بريدك الإلكتروني أبداً. يُستخدم فقط لصورتك الرمزية."
+  form_comment: "التعليق"
+  form_submit: "إرسال"
+  reply: "رد"
+  cancel_reply: "إلغاء الرد"
+  replying_to: "أنت ترد على %s"
+  success: "شكراً لك! تعليقك بانتظار المراجعة."
+  error: "حدث خطأ ما. حاول مرة أخرى."
+  count_label: "تعليق"
+  count_label_plural: "تعليقات"
+
 storage_widget:
   clear_button: مسح جميع بيانات الموقع
   msg_confirm: سيؤدي هذا إلى حذف جميع التفضيلات والبيانات المخزنة مؤقتاً من قِبَل هذا الموقع في متصفحك. هل تريد المتابعة؟

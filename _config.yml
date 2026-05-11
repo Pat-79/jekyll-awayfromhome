@@ -246,6 +246,37 @@ cookie_consent:
     - id: video
       required: false
 
+comments:
+  # Master switch for file-based comments.
+  enabled: true
+
+  # Cloudflare Worker endpoint that receives submissions.
+  worker_url: https://my-comments-worker.example.com
+  # Cloudflare Turnstile site key (public key).
+  # NOTE: this must be a site key (for example, 0x4... or 1x0000... test key),
+  # not the dummy verification token "XXXX.DUMMY.TOKEN.XXXX".
+  turnstile_sitekey: 0x000000000000000000000AA
+
+  # false: all translations share one thread via page.ref
+  # true: comments are split by page.ref--lang
+  per_language: false
+
+  # Optional Gravatar rendering (privacy-sensitive; disabled by default).
+  gravatar: false
+
+  # Number of bundled fallback avatars in assets/images/avatars.
+  avatar_count: 8
+
+  # Date display format for comment timestamps in the browser.
+  # Supported values: long (default), medium, short, date-only, iso.
+  date_format: long
+
+  # Locale source used for non-ISO comment date rendering.
+  # page: use the page language (document lang)
+  # browser: use the visitor browser locale
+  # locale tag (for example nl-NL): force one locale everywhere
+  #date_locale: nl-NL
+
 gallery_widget:
   max_width: 900px
   max_height:
@@ -272,6 +303,9 @@ gallery_widget:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+#exclude:
+#  - COMMENTS_DESIGN.md
 
 social_links:
   - platform: youtube
