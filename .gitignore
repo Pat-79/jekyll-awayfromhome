@@ -21,3 +21,4 @@ design-gallery.md
 /node_modules
 package-lock.json
 package.json
+_config.local.yml
