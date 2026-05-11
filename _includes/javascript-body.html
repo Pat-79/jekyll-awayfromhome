@@ -65,6 +65,6 @@
 {%- if page.layout == 'blog' or page.layout == 'home' -%}
 <script src="{{ js_dir | append: 'blog-pagination' | append: js_ext | relative_url }}" defer></script>
 {%- endif -%}
-{% if site.comments.enabled and page.comments_visible != false %}
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-{% endif %}
+{%- if page.layout == 'post' and site.comments.enabled and page.comments_visible != false %}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{%- endif -%}
