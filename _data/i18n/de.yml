@@ -150,6 +150,7 @@ comments:
   email_note: "Deine E-Mail-Adresse wird nie veröffentlicht. Sie wird nur für deinen Avatar verwendet."
   form_comment: "Kommentar"
   form_submit: "Absenden"
+  markdown_hint: "Markdown wird unterstützt. Links öffnen sich in einem neuen Tab."
   reply: "Antworten"
   cancel_reply: "Antwort abbrechen"
   replying_to: "Antwort auf %s"

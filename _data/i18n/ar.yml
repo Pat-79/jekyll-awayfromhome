@@ -147,6 +147,7 @@ comments:
   email_note: "لن يتم نشر بريدك الإلكتروني أبداً. يُستخدم فقط لصورتك الرمزية."
   form_comment: "التعليق"
   form_submit: "إرسال"
+  markdown_hint: "تدعم Markdown. الروابط تفتح في علامة تبويب جديدة."
   reply: "رد"
   cancel_reply: "إلغاء الرد"
   replying_to: "أنت ترد على %s"
