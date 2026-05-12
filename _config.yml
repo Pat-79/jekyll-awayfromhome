@@ -162,6 +162,13 @@ brand:
 
 default_post_image: /assets/images/default-hero.svg
 
+sitemap_page:
+  # Language scope for _layouts/sitemap.html
+  # all: show entries from all languages
+  # current_with_fallback: show current sitemap language; if a translation
+  # is missing, include the site default language version instead
+  language_mode: current_with_fallback
+
 home_landing:
   video_url: https://youtu.be/VIDEO_ID
   youtube_id:
