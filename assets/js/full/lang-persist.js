@@ -70,7 +70,14 @@ window.afhLangChange = function (select) {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch (e) {}
   }
-  window.location.href = select.value;
+  var target = new URL(select.value, window.location.origin);
+  if (window.location.search) {
+    target.search = window.location.search;
+  }
+  if (!target.hash && window.location.hash) {
+    target.hash = window.location.hash;
+  }
+  window.location.href = target.toString();
 };
 
 /**
