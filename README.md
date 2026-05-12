@@ -24,6 +24,7 @@ A demo website is available at [demo.awayfromhome.nl](https://demo.awayfromhome.
 - **Accessible** — semantic HTML5, ARIA labels, keyboard-navigable drawer and search
 - **GitHub Pages compatible** — works with Jekyll 3.10.0 and the `github-pages ~> 232` gem; no unsupported plugins
 - **Cookie consent** — GDPR-ready consent banner with configurable categories, consent gates on map/video widgets, and a dedicated cookies preferences page
+- **File-based comments** — fully self-hosted comment threads stored as YAML files, moderated via a Cloudflare Worker and GitHub Pull Requests; spam-protected with Cloudflare Turnstile; supports Markdown formatting and clickable links; no third-party comment service required
 - **No build pipeline** — plain ES6 modules and SCSS `@import`; everything compiles inside Jekyll
 
 ---
@@ -579,6 +580,116 @@ Only include the platforms you actively use. Icons are rendered as a responsive 
 
 ---
 
+## Comments
+
+The theme includes a self-hosted, file-based comment system. Comments are stored as YAML files in `_data/comments/<post-ref>/` and published via a moderated GitHub Pull Request flow. Spam protection is provided by [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/).
+
+### How it works
+
+1. A visitor fills in the comment form and passes a Turnstile challenge.
+2. The form `POST`s a JSON payload to a **Cloudflare Worker** endpoint.
+3. The Worker validates the payload, resolves any `reply_to` target to the root comment (keeping threads one level deep), derives a deterministic `avatar_index` from the email's MD5 hash, and opens a GitHub Pull Request adding the new YAML comment file.
+4. You review and merge the PR; Jekyll rebuilds and the comment appears.
+5. Comment text is rendered as **Markdown** (bold, italic, bullet lists, inline code, and links). Links open in a new tab with `rel="noopener noreferrer nofollow ugc"` automatically.
+
+### Thread structure
+
+Comment files live in `_data/comments/<post-ref>/` and are named `<epoch-ms>-<slug>.yml`. Root comments have no `reply_to` field; replies set `reply_to` to the filename stem of the parent. Replies-to-replies are redirected to the root parent by the Worker, keeping the tree one level deep.
+
+```
+_data/comments/
+└── slow-travel-in-istrava-highlands/
+    ├── 1778572800000-lena-route-notes.yml      ← root comment
+    ├── 1778572860000-mateo-train-pass.yml      ← reply to Lena
+    ├── 1778572920000-nora-slow-days.yml        ← root comment
+    └── 1778572980000-omar-cafe-wifi.yml        ← reply to Nora
+```
+
+### Enabling comments
+
+Add the following block to your `_config.yml`:
+
+```yaml
+comments:
+  enabled: true
+
+  # Cloudflare Worker endpoint that receives submissions.
+  worker_url: https://comments.example.com
+
+  # Cloudflare Turnstile site key (public — safe to commit).
+  turnstile_sitekey: 0x4AAAAAAA...
+
+  # false: all translations share one comment thread (default).
+  # true: each language gets its own independent thread.
+  per_language: false
+
+  # Gravatar support (privacy-sensitive; disabled by default).
+  # When false, email addresses are discarded in the Worker after
+  # deriving the avatar_index. When true, the MD5 hash is stored
+  # in the YAML file and Gravatar images are requested in the browser.
+  gravatar: false
+
+  # Number of bundled fallback avatars (0–7 = 8 total).
+  avatar_count: 8
+
+  # Comment timestamp display format.
+  # Supported: long (default), medium, short, date-only, iso.
+  date_format: long
+
+  # Locale used for date rendering in the browser.
+  # page: use the page language (default).
+  # browser: use the visitor's browser locale.
+  # A BCP 47 tag (e.g. nl-NL): force one locale everywhere.
+  date_locale: page
+```
+
+To disable comments on a specific post, set `comments: false` in the post's front matter:
+
+```yaml
+---
+layout: post
+title: My Post
+comments: false
+---
+```
+
+### Local development
+
+Create `_config.local.yml` (not committed) to use the Turnstile test key and a local Worker during development:
+
+```yaml
+comments:
+  worker_url: http://127.0.0.1:8787
+  turnstile_sitekey: 1x00000000000000000000AA  # official test key — always passes
+```
+
+Run with: `bundle exec jekyll serve --config _config.yml,_config.local.yml`
+
+### i18n keys
+
+All comment UI strings are translatable in `_data/i18n/<lang>.yml` under a `comments:` block:
+
+```yaml
+comments:
+  heading: Comments
+  be_first: Be the first to leave a comment.
+  leave_comment: Leave a comment
+  closed: Comments are closed.
+  reply: Reply
+  cancel_reply: Cancel
+  replying_to: "Replying to %s"
+  form_name: Name
+  form_email: Email address
+  form_comment: Comment
+  email_note: Not published. Used for your avatar only.
+  markdown_hint: "Markdown is supported. Links open in a new tab."
+  form_submit: Post comment
+  success: "Thank you! Your comment is awaiting moderation."
+  error: "Something went wrong. Please try again."
+```
+
+---
+
 ## Cookie Consent
 
 The theme includes an opt-in GDPR-friendly cookie consent system. Enable it in `_config.yml` by setting `cookie_consent.enabled: true`.
@@ -880,6 +991,7 @@ $radius-large: 0.5rem;
 @import "awayfromhome-theme/gallery";
 @import "awayfromhome-theme/map-widget";
 @import "awayfromhome-theme/video-widget";
+@import "awayfromhome-theme/comments";
 @import "awayfromhome-theme/cookies";
 @import "awayfromhome-theme/print";
 ```

@@ -12,15 +12,21 @@ jekyll-awayfromhome/
 ├── _data/
 │   ├── authors.yml                 # Author directory used by author-card.html
 │   ├── timezone_language_hints.yml # Build-time timezone → language hint map for auto-detection
-│   └── i18n/                       # Per-language UI strings and search settings
-│       ├── en.yml
-│       ├── ar.yml
-│       ├── nl.yml
-│       └── de.yml
+│   ├── i18n/                       # Per-language UI strings and search settings
+│   │   ├── en.yml
+│   │   ├── ar.yml
+│   │   ├── nl.yml
+│   │   └── de.yml
+│   └── comments/                   # File-based comment storage (one subdirectory per post ref)
+│       └── <post-ref>/             # e.g. slow-travel-in-istrava-highlands/
+│           └── <epoch>-<slug>.yml  # One file per approved comment or reply
 │
 ├── _includes/                      # Reusable Liquid partials
 │   ├── author-card.html            # Author card with author lookup + optional socials/page
-│   ├── css.html                    # Stylesheet loading
+│   ├── comment-form.html           # Comment submission form (Turnstile, reply banner, Markdown hint)
+│   ├── comment-item.html           # Single comment balloon with avatar, date, reply button, and replies list
+│   ├── comment-list.html           # Comment thread: splits root/reply, renders form host + list
+│   ├── cookie-banner.html          # Cookie consent bottom bar (injected by base.html)
 │   ├── entity-index.html           # Shared browse/index renderer
 │   ├── font.html                   # Font loading
 │   ├── footer.html                 # Footer and footer language-aware links
@@ -73,6 +79,7 @@ jekyll-awayfromhome/
 ├── _sass/
 │   └── awayfromhome-theme/
 │       ├── _base.scss             # Base element styling
+│       ├── _comments.scss         # Comment thread, balloon styling, inline reply form, form states
 │       ├── _cookies.scss          # Cookie consent banner, buttons, toggle switch
 │       ├── _gallery.scss          # Gallery widget styles
 │       ├── _layout.scss           # Header, footer, drawer, grids, site structure
@@ -95,6 +102,7 @@ jekyll-awayfromhome/
 │   │   └── search-data.md         # Source file that builds search-data.json
 │   ├── images/
 │   │   ├── avatar.svg             # Default author avatar
+│   │   ├── avatars/               # Bundled comment avatars (avatar-0.svg … avatar-7.svg)
 │   │   ├── default-hero.svg       # Default post hero fallback
 │   │   ├── icons.svg              # SVG sprite sheet
 │   │   ├── logo-mark.svg          # Brand mark
@@ -104,6 +112,7 @@ jekyll-awayfromhome/
 │   └── js/
 │       ├── archive.js             # Archive filtering and pagination
 │       ├── blog-pagination.js     # Blog page pagination
+│       ├── comments.min.js        # Pre-minified comment form runtime (committed; source: full/comments.js)
 │       ├── cookie-consent.js      # Cookie consent banner + consent gate logic
 │       ├── cookies-clear.js       # Storage summary and clear-all runtime
 │       ├── entity-index.js        # Browse filtering
@@ -120,6 +129,9 @@ jekyll-awayfromhome/
 │       ├── tag-index.js           # Tag page filtering
 │       ├── theme.js               # Theme switching and shared chrome logic
 │       └── video-widget.js        # Video widget runtime
+│
+├── assets/js/full/                 # Un-minified JS sources (not served; minified into assets/js/*.min.js)
+│   └── comments.js                # Comment form: Turnstile loader, validation, reply state, submit
 │
 ├── scripts/
 │   ├── generate-image-variants.sh # ImageMagick helper for responsive image variants
@@ -227,6 +239,44 @@ When Jekyll builds the site, the main outputs include:
 6. Copied assets from `assets/js/` and `assets/images/`
 
 > **Important:** Production builds serve `assets/css/main.min.css` and `assets/js/*.min.js` — pre-compiled, minified files committed to the repository. Run `./scripts/minify.sh` after any SCSS or JS change and commit the updated minified files.
+
+## Comments Architecture
+
+Enabled via `comments.enabled: true` in `_config.yml`.
+
+### Data model
+
+- Each comment is a YAML file in `_data/comments/<post-ref>/` named `<epoch-ms>-<slug>.yml`.
+- Root comments have no `reply_to` key. Replies set `reply_to` to the filename stem of their parent.
+- The Worker enforces one level of nesting: if a visitor replies to a reply, the Worker resolves the root parent and stores that instead.
+- `avatar_index` (0–7) is derived deterministically from the MD5 of the submitter's email and stored in the YAML file. It selects one of the bundled SVGs in `assets/images/avatars/`.
+- `gravatar` (the MD5 hash) is only written when `comments.gravatar: true` is configured; otherwise the email is discarded after `avatar_index` is computed.
+
+### Template flow
+
+- `post.html` calls `{% include comment-list.html comments=site.data.comments[comment_key] %}`.
+- `comment-list.html` splits the hash into root comments and replies, sorts both by filename (chronological), and renders the form host plus the comment list.
+- For each root comment, `comment-item.html` is called with its replies. It renders the avatar, balloon body (Markdown via `markdownify`), date (timezone-aware via `Intl.DateTimeFormat`), and a Reply button that moves the inline composer below the target comment.
+- `comment-form.html` is rendered once and moved in the DOM by JavaScript when a Reply or Leave a comment button is clicked.
+
+### JavaScript runtime (`comments.js` / `comments.min.js`)
+
+- Lazy-loads the Cloudflare Turnstile script only when the form is first shown.
+- Manages reply state: sets a hidden `reply_to` field, shows a reply banner with the parent author's name, and moves the form below the target comment.
+- Validates inputs (trim-first, email blur check, `checkValidity()` / `reportValidity()`).
+- Localizes all `<time>` elements in the thread using `Intl.DateTimeFormat` with configurable format (`long`, `medium`, `short`, `date-only`, `iso`) and locale source (`page`, `browser`, or a BCP 47 tag).
+- Submits to the Cloudflare Worker as JSON; shows success/error status messages.
+
+### Markdown and link safety
+
+- Comment text is piped through Liquid's `escape | markdownify` filter, so HTML in user input is always escaped before Markdown parsing.
+- All `<a href="...">`  links in rendered comment output are rewritten by Liquid string replacement to add `target="_blank" rel="noopener noreferrer nofollow ugc"`, keeping external links safe and indicating user-generated content to search engines.
+
+### Styling
+
+- `_comments.scss` is imported by `_post.scss`, so comment styles are always available on post pages even in sites that have a custom `main.scss` that predates the comments feature.
+
+---
 
 ## Cookie Consent Architecture
 
