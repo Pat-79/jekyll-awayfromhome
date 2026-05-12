@@ -304,8 +304,8 @@ gallery_widget:
 #   - vendor/gems/
 #   - vendor/ruby/
 
-#exclude:
-#  - COMMENTS_DESIGN.md
+exclude:
+  - COMMENTS_DESIGN.md
 
 social_links:
   - platform: youtube
