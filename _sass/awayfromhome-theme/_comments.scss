@@ -102,6 +102,22 @@
   line-height: 1.5;
 }
 
+.afh-comment__text > :last-child {
+  margin-bottom: 0;
+}
+
+.afh-comment__text p,
+.afh-comment__text ul,
+.afh-comment__text ol,
+.afh-comment__text blockquote,
+.afh-comment__text pre {
+  margin: 0 0 0.65rem;
+}
+
+.afh-comment__text a {
+  word-break: break-word;
+}
+
 .afh-comment__reply-btn.btn {
   padding: 0.35em 0.8em;
   font-size: 0.82rem;

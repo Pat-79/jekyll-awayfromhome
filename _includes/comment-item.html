@@ -27,7 +27,12 @@
       </time>
     </p>
 
-    <div class="afh-comment__text">{{ include.comment.text | escape | newline_to_br }}</div>
+    {%- capture _comment_html -%}
+      {{ include.comment.text | default: '' | escape | markdownify }}
+    {%- endcapture -%}
+    {%- assign _comment_html = _comment_html
+      | replace: '<a href="', '<a target="_blank" rel="noopener noreferrer nofollow ugc" href="' -%}
+    <div class="afh-comment__text">{{ _comment_html }}</div>
 
     {%- unless include.closed -%}
       <button
@@ -72,7 +77,12 @@
               </time>
             </p>
 
-            <div class="afh-comment__text">{{ _rp[1].text | escape | newline_to_br }}</div>
+            {%- capture _reply_html -%}
+              {{ _rp[1].text | default: '' | escape | markdownify }}
+            {%- endcapture -%}
+            {%- assign _reply_html = _reply_html
+              | replace: '<a href="', '<a target="_blank" rel="noopener noreferrer nofollow ugc" href="' -%}
+            <div class="afh-comment__text">{{ _reply_html }}</div>
 
             {%- unless include.closed -%}
               <button

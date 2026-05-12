@@ -50,6 +50,7 @@
     <label>
       {{ t.comments.form_comment }}
       <textarea name="text" required minlength="1" maxlength="2000" rows="5"></textarea>
+      <small>{{ t.comments.markdown_hint | default: 'Markdown is supported. Links open in a new tab.' }}</small>
     </label>
 
     <div class="cf-turnstile" data-sitekey="{{ site.comments.turnstile_sitekey }}" data-theme="auto"  data-execution="render"></div>
