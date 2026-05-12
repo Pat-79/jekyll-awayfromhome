@@ -123,6 +123,16 @@ tags:
   not_found_message: "تعذّر عرض الوسم المطلوب لأنه غير موجود في هذا الموقع."
   no_tags: "لا توجد وسوم بعد."
 
+sitemap:
+  intro: استعرض كل صفحة ومقالة وأرشيف سنوي باستخدام نفس تخطيط البطاقات في الصفحة الرئيسية.
+  section_blog: المدوّنة
+  section_pages: الصفحات
+  section_archive: الأرشيف
+  page_meta: صفحة
+  year_archive_meta: أرشيف سنوي
+  year_count_one: "{count} مقالة في {year}."
+  year_count_many: "{count} مقالات في {year}."
+
 footer:
   copyright: جميع الحقوق محفوظة.
   disclaimer: المحتوى والآراء مقدَّمة لأغراض إعلامية فحسب.

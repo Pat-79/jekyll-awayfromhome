@@ -126,6 +126,16 @@ tags:
   not_found_message: "De gevraagde tag kan niet worden weergegeven omdat deze niet bestaat op deze site."
   no_tags: "Nog geen tags."
 
+sitemap:
+  intro: Blader door elke pagina, elk bericht en elk jaararchief met dezelfde kaartopmaak als op de homepage.
+  section_blog: Blog
+  section_pages: Pagina's
+  section_archive: Archief
+  page_meta: Pagina
+  year_archive_meta: Jaararchief
+  year_count_one: "{count} bericht in {year}."
+  year_count_many: "{count} berichten in {year}."
+
 footer:
   copyright: Alle rechten voorbehouden.
   disclaimer: Inhoud en meningen worden verstrekt voor informatieve doeleinden.

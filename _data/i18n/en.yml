@@ -126,6 +126,16 @@ tags:
   not_found_message: "Unable to show the requested tag because it does not exist in this site."
   no_tags: "No tags yet."
 
+sitemap:
+  intro: Browse every page, post, and yearly archive using the same card layout as the homepage.
+  section_blog: Blog
+  section_pages: Pages
+  section_archive: Archive
+  page_meta: Page
+  year_archive_meta: Year Archive
+  year_count_one: "{count} post in {year}."
+  year_count_many: "{count} posts in {year}."
+
 footer:
   copyright: All rights reserved.
   disclaimer: Content and opinions are provided for informational purposes.

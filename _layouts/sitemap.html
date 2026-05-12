@@ -2,16 +2,19 @@
 layout: page
 ---
 
-{%- assign sitemap_intro = page.sitemap_intro | default: 'Browse every page, post, and yearly archive using the same card layout as the homepage.' -%}
-{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
-{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign _site_lang = site.lang | default: 'en' -%}
+{%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+{%- assign sitemap_intro = page.sitemap_intro | default: t.sitemap.intro | default: 'Browse every page, post, and yearly archive using the same card layout as the homepage.' -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 {%- if _page_lang == _site_lang -%}
   {%- assign _archive_base = '/archive/' -%}
 {%- else -%}
   {%- assign _archive_base = '/' | append: _page_lang | append: '/archive/' -%}
 {%- endif -%}
+{%- assign _archive_page = site.pages | where: 'url', _archive_base | first -%}
+{%- assign _archive_image = _archive_page.image | default: site.default_post_image | default: '/assets/images/default-hero.svg' -%}
 
 <section class="page-section">
   <div class="container sitemap-index">
@@ -27,14 +30,15 @@ layout: page
 <section class="page-section page-section--spaced">
   <div class="container story-list">
     <div class="home-section-head">
-      <h2>Blog</h2>
+      <h2>{{ t.sitemap.section_blog | default: t.nav.blog | default: 'Blog' }}</h2>
     </div>
     {%- for post in site.posts -%}
-      {%- unless post.sitemap == false -%}
+      {%- if post.sitemap != false -%}
         {%- assign post_author_name = post.author.name | default: post.author | default: site.author.name -%}
         {%- assign post_word_count = post.content | strip_html | number_of_words -%}
         {%- assign post_image = post.image | default: site.default_post_image -%}
-        <a class="story-card" href="{{ post.url | relative_url }}">
+        {%- assign _post_lang = post.lang | default: _page_lang | default: _site_lang -%}
+        <a class="story-card" href="{{ post.url | relative_url }}?lang={{ _post_lang }}">
           <div class="story-card__media">
             {%- include responsive-image.html
               src=post_image
@@ -53,11 +57,11 @@ layout: page
             <h2>{{ post.title }}</h2>
             <p class="story-card__excerpt">{{ post.excerpt | strip_html | truncatewords: 60 }}</p>
             {%- if post_word_count > 60 -%}
-              <p class="story-card__read-more">Read more...</p>
+              <p class="story-card__read-more">{{ t.ui.read_more | default: 'Read more...' }}</p>
             {%- endif -%}
           </div>
         </a>
-      {%- endunless -%}
+      {%- endif -%}
     {%- endfor -%}
   </div>
 </section>
@@ -65,7 +69,7 @@ layout: page
 <section class="page-section page-section--spaced">
   <div class="container story-list">
     <div class="home-section-head">
-      <h2>Pages</h2>
+      <h2>{{ t.sitemap.section_pages | default: 'Pages' }}</h2>
     </div>
     {%- for node in site.html_pages -%}
       {%- assign include_node = true -%}
@@ -79,7 +83,8 @@ layout: page
       {%- if include_node -%}
         {%- assign node_title = node.title | default: node.name | default: node.url -%}
         {%- assign node_image = node.image | default: site.default_post_image -%}
-        <a class="story-card story-card--blog" href="{{ node.url | relative_url }}">
+        {%- assign _node_lang = node.lang | default: _page_lang | default: _site_lang -%}
+        <a class="story-card story-card--blog" href="{{ node.url | relative_url }}?lang={{ _node_lang }}">
           <div class="story-card__media">
             {%- include responsive-image.html
               src=node_image
@@ -94,7 +99,7 @@ layout: page
             -%}
           </div>
           <div class="story-card__body">
-            <p class="story-card__meta">Page</p>
+            <p class="story-card__meta">{{ t.sitemap.page_meta | default: 'Page' }}</p>
             <h2>{{ node_title }}</h2>
             <p class="story-card__excerpt">{{ node.excerpt | strip_html | default: node_title | truncatewords: 32 }}</p>
           </div>
@@ -107,7 +112,7 @@ layout: page
 <section class="page-section page-section--spaced">
   <div class="container story-list">
     <div class="home-section-head">
-      <h2>Archive</h2>
+      <h2>{{ t.sitemap.section_archive | default: t.nav.archive | default: 'Archive' }}</h2>
     </div>
     {%- assign years = '' | split: '' -%}
     {%- for post in site.posts -%}
@@ -119,6 +124,7 @@ layout: page
     {%- assign years = years | sort | reverse -%}
     {%- for year in years -%}
       {%- assign year_url = _archive_base | append: '?year=' | append: year -%}
+      {%- assign year_image = _archive_image -%}
       {%- assign year_count = 0 -%}
       {%- assign _seen_refs = '' | split: '' -%}
       {%- for post in site.posts -%}
@@ -134,10 +140,10 @@ layout: page
           {%- endif -%}
         {%- endif -%}
       {%- endfor -%}
-      <a class="story-card story-card--blog" href="{{ year_url | relative_url }}">
+      <a class="story-card story-card--blog" href="{{ year_url | relative_url }}&lang={{ _page_lang }}">
         <div class="story-card__media">
           {%- include responsive-image.html
-            src=site.default_post_image
+            src=year_image
             class='story-card__media-image'
             alt=''
             loading='lazy'
@@ -149,9 +155,15 @@ layout: page
           -%}
         </div>
         <div class="story-card__body">
-          <p class="story-card__meta">Year Archive</p>
+          <p class="story-card__meta">{{ t.sitemap.year_archive_meta | default: 'Year Archive' }}</p>
           <h2>{{ year }}</h2>
-          <p class="story-card__excerpt">{{ year_count }} post{% if year_count != 1 %}s{% endif %} in {{ year }}.</p>
+          {%- if year_count == 1 -%}
+            {%- assign _year_line = t.sitemap.year_count_one | default: '{count} post in {year}.' -%}
+          {%- else -%}
+            {%- assign _year_line = t.sitemap.year_count_many | default: '{count} posts in {year}.' -%}
+          {%- endif -%}
+          {%- assign _year_line = _year_line | replace: '{count}', year_count | replace: '{year}', year -%}
+          <p class="story-card__excerpt">{{ _year_line }}</p>
         </div>
       </a>
     {%- endfor -%}

@@ -107,29 +107,55 @@ navigation:
   - title: Home
     key: home
     url: /
-    #url_ar: /ar/
+    url_ar: /ar/
+    url_de: /de/
+    url_en: /en/
+    url_nl: /nl/
   - title: About
     key: about
     url: /about/
-    #url_ar: /ar/about/
+    url_ar: /ar/about/
+    url_de: /de/about/
+    url_en: /en/about/
+    url_nl: /nl/about/
   - title: Blogs
     key: blog
     url: /blog/
-    #url_ar: /ar/blog/
+    url_ar: /ar/blog/
+    url_de: /de/blog/
+    url_en: /en/blog/
+    url_nl: /nl/blog/
   - title: Browse
     key: browse
     url: /browse/
-    #url_ar: /ar/browse/
+    url_ar: /ar/browse/
+    url_de: /de/browse/
+    url_en: /en/browse/
+    url_nl: /nl/browse/
   - title: Search
     key: search
     url: /search/
-    #url_ar: /ar/search/
+    url_ar: /ar/search/
+    url_de: /de/search/
+    url_en: /en/search/
+    url_nl: /nl/search/
   - title: Cookies
     key: cookies
     url: /cookies/
-    url_nl: /nl/cookies/
-    url_de: /de/cookies/
     url_ar: /ar/cookies/
+    url_de: /de/cookies/
+    url_en: /en/cookies/
+    url_nl: /nl/cookies/
+  - title: Sitemap
+    key: sitemap
+    hide_in_nav: true
+    url: /sitemap/
+    url_ar: /ar/sitemap/
+    url_de: /de/sitemap/
+    url_en: /en/sitemap/
+    url_nl: /nl/sitemap/
+
+
 brand:
   title: Away From Home
   logo: /assets/images/logo-mark.svg

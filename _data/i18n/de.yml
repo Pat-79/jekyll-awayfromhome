@@ -126,6 +126,16 @@ tags:
   not_found_message: "Der angeforderte Tag kann nicht angezeigt werden, da er auf dieser Website nicht vorhanden ist."
   no_tags: "Noch keine Tags."
 
+sitemap:
+  intro: Durchsuche jede Seite, jeden Beitrag und jedes Jahresarchiv mit demselben Kartenlayout wie auf der Startseite.
+  section_blog: Blog
+  section_pages: Seiten
+  section_archive: Archiv
+  page_meta: Seite
+  year_archive_meta: Jahresarchiv
+  year_count_one: "{count} Beitrag im Jahr {year}."
+  year_count_many: "{count} Beiträge im Jahr {year}."
+
 footer:
   copyright: Alle Rechte vorbehalten.
   disclaimer: Inhalte und Meinungen dienen nur zu Informationszwecken.

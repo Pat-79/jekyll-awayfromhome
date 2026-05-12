@@ -53,6 +53,7 @@
     <nav aria-label="{{ t.drawer.navigate | default: 'Drawer navigation' }}">
       <ul class="menu-list">
         {%- for item in site.navigation %}
+          {%- if item.hide_in_nav == true -%}{%- continue -%}{%- endif -%}
           {%- assign _nav_label = t.nav[item.key] | default: item.title -%}
           {%- assign _lang_url_key = 'url_' | append: _page_lang -%}
           {%- assign _nav_url = item[_lang_url_key] | default: item.url -%}
