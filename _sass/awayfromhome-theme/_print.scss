@@ -306,4 +306,23 @@
     text-decoration: underline;
     font-style: italic;
   }
+
+  .afh-comments__actions,
+  .afh-comment-form-host,
+  .afh-comment-form-wrap,
+  .btn--ghost {
+    display: none !important;
+  }
+
+  .afh-comments__list,
+  .afh-comment__replies {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  .afh-comments__list > .afh-comment,
+  .afh-comment__replies > .afh-comment {
+    break-before: auto;
+    page-break-before: auto;
+  }
 }

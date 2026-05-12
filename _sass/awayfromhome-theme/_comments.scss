@@ -24,6 +24,7 @@
 
 .afh-comments__leave-btn.btn {
   padding: 0.4em 0.95em;
+  margin-bottom: 2rem;
 }
 
 .afh-comments__empty,
@@ -44,7 +45,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   gap: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
 }
 
 .afh-comment--reply {
@@ -56,15 +57,21 @@
   border-radius: 50%;
   border: 1px solid var(--border);
   background: var(--surface);
+  box-shadow: var(--shadow-soft);
 }
 
 .afh-comment__body {
-  --afh-comment-bubble-bg: color-mix(in srgb, var(--surface) 88%, transparent);
+  //--afh-comment-bubble-bg: color-mix(in srgb, var(--surface) 88%, transparent);
+  //--afh-comment-bubble-bg: background: color-mix(in srgb, var(--surface) 88%, var(--accent));
+  //--afh-comment-bubble-bg: var(--surface);
+  //--afh-comment-bubble-bg: color-mix(in srgb, var(--surface) 95%, var(--text));
+  --afh-comment-bubble-bg: linear-gradient(145deg, color-mix(in srgb, var(--surface) 92%, transparent), color-mix(in srgb, var(--surface-muted) 88%, transparent)), var(--surface-muted);
   position: relative;
   background: var(--afh-comment-bubble-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-small);
   padding: 0.8rem 0.9rem;
+  box-shadow: var(--shadow-soft);
 }
 
 .afh-comment__body::before {
@@ -137,11 +144,13 @@
   background: color-mix(in srgb, var(--surface) 90%, var(--accent) 3%);
   padding: 0.9rem;
   transition: border-color 180ms ease, box-shadow 180ms ease;
+  box-shadow: var(--shadow-soft);
 }
 
 .afh-comment-form-wrap.is-replying {
   border-color: color-mix(in srgb, var(--accent) 66%, white 10%);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow: var(--shadow-soft);
 }
 
 .afh-comment-form-wrap[hidden] {
@@ -150,6 +159,7 @@
 
 .afh-comment-form-host {
   margin-bottom: 0;
+
 }
 
 .afh-comment-form-host:empty {
@@ -306,5 +316,19 @@
   .afh-comment-form__submit-btn.btn,
   .afh-comment-form__cancel-reply.btn {
     min-width: 0;
+  }
+}
+
+@media print {
+  .btn--ghost,
+  .afh-comments__actions,
+  .afh-comment-form-host,
+  .afh-comment-form-wrap,
+  .afh-comment-form__actions {
+    display: none !important;
+  }
+
+  .afh-comments {
+    margin-bottom: 0;
   }
 }

@@ -51,9 +51,11 @@
   background: transparent;
   border-color: var(--border);
   color: var(--text);
+  background: color-mix(in srgb, var(--surface) 88%, var(--accent-btn));
 
   &:hover {
-    background: var(--surface-muted);
+    //background: var(--surface-muted);
+    background: color-mix(in srgb, var(--surface) 88%, var(--accent-btn-hover));
     text-decoration: none;
   }
 }

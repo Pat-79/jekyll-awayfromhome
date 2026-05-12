@@ -254,7 +254,7 @@ Enabled via `comments.enabled: true` in `_config.yml`.
 
 ### Template flow
 
-- `post.html` calls `{% include comment-list.html comments=site.data.comments[comment_key] %}`.
+- `post.html` calls `{% raw %}{% include comment-list.html comments=site.data.comments[comment_key] %}{% endraw %}`.
 - `comment-list.html` splits the hash into root comments and replies, sorts both by filename (chronological), and renders the form host plus the comment list.
 - For each root comment, `comment-item.html` is called with its replies. It renders the avatar, balloon body (Markdown via `markdownify`), date (timezone-aware via `Intl.DateTimeFormat`), and a Reply button that moves the inline composer below the target comment.
 - `comment-form.html` is rendered once and moved in the DOM by JavaScript when a Reply or Leave a comment button is clicked.
