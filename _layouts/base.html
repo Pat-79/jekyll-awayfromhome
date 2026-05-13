@@ -15,62 +15,40 @@
   {%- assign _dir = 'ltr' -%}
 {%- endif -%}
 {%- assign t = site.data.i18n[_page_lang] | default: site.data.i18n.en -%}
+{%- assign _default_lang = site.lang | default: 'en' -%}
+{%- assign _all_content = site.posts | concat: site.pages -%}
 <html lang="{{ _page_lang }}" dir="{{ _dir }}" data-site-lang="{{ _page_lang }}">
 {% include head.html %}
 {%- comment -%}Build translations map: other-lang → URL for this page (via page.ref lookup){%- endcomment -%}
 {%- assign _trans_pieces = '' | split: '' -%}
 {%- if page.ref and page.ref != '' -%}
-  {%- assign _all_content = site.posts | concat: site.pages -%}
-  {%- for _lang_obj in site.languages -%}
-    {%- assign _lcode = _lang_obj.code -%}
-    {%- if _lcode != _page_lang -%}
-      {%- assign _trans_matches = _all_content | where: "ref", page.ref | where: "lang", _lcode -%}
-      {%- assign _trans_match = _trans_matches | first -%}
-      {%- if _trans_match -%}
-        {%- assign _trans_url = _trans_match.url | relative_url -%}
-        {%- assign _trans_piece = '"' | append: _lcode | append: '":"' | append: _trans_url | append: '"' -%}
+  {%- for _entry in _all_content -%}
+    {%- if _entry.ref == page.ref -%}
+      {%- assign _entry_lang = _entry.lang | default: _default_lang -%}
+      {%- if _entry_lang != _page_lang -%}
+        {%- assign _trans_url = _entry.url | relative_url -%}
+        {%- assign _trans_piece = '"' | append: _entry_lang | append: '":"' | append: _trans_url | append: '"' -%}
         {%- assign _trans_pieces = _trans_pieces | push: _trans_piece -%}
       {%- endif -%}
     {%- endif -%}
   {%- endfor -%}
 {%- endif -%}
+{%- assign _trans_pieces = _trans_pieces | uniq -%}
 {%- assign _trans_json = _trans_pieces | join: ',' -%}
 {%- assign _trans_json_obj = '{' | append: _trans_json | append: '}' -%}
-{%- assign _default_lang = site.lang | default: 'en' -%}
 {%- assign _available_langs = '' | split: '' -%}
 {%- if site.languages and site.languages.size > 0 -%}
-  {%- for _lang_obj in site.languages -%}
-    {%- assign _lcode = _lang_obj.code | default: '' -%}
-    {%- if _lcode != '' -%}
-      {%- assign _available_langs = _available_langs | push: _lcode -%}
-    {%- endif -%}
-  {%- endfor -%}
+  {%- assign _available_langs = site.languages | map: 'code' -%}
 {%- else -%}
   {%- assign _available_langs = _available_langs | push: _default_lang -%}
 {%- endif -%}
 {%- assign _available_langs = _available_langs | push: _default_lang -%}
 {%- assign _available_langs = _available_langs | uniq -%}
 
-{%- assign _tz_hint_pieces = '' | split: '' -%}
+{%- assign _tz_hints_json_obj = '{}' -%}
 {%- if site.data.timezone_language_hints -%}
-  {%- for _tz_item in site.data.timezone_language_hints -%}
-    {%- assign _tz_name = _tz_item[0] -%}
-    {%- assign _tz_candidates = _tz_item[1] -%}
-    {%- assign _tz_filtered = '' | split: '' -%}
-    {%- for _tz_lang in _tz_candidates -%}
-      {%- if _available_langs contains _tz_lang -%}
-        {%- assign _tz_filtered = _tz_filtered | push: _tz_lang -%}
-      {%- endif -%}
-    {%- endfor -%}
-    {%- if _tz_filtered.size == 0 -%}
-      {%- assign _tz_filtered = _tz_filtered | push: _default_lang -%}
-    {%- endif -%}
-    {%- capture _tz_piece -%}"{{ _tz_name }}":{{ _tz_filtered | jsonify }}{%- endcapture -%}
-    {%- assign _tz_hint_pieces = _tz_hint_pieces | push: _tz_piece -%}
-  {%- endfor -%}
+  {%- assign _tz_hints_json_obj = site.data.timezone_language_hints | jsonify -%}
 {%- endif -%}
-{%- assign _tz_hints_json = _tz_hint_pieces | join: ',' -%}
-{%- assign _tz_hints_json_obj = '{' | append: _tz_hints_json | append: '}' -%}
 
 <body class="layout-{{ page.layout | default: 'default' }}{% if page.image and page.layout != 'post' %} has-page-image{% endif %}{% if page.url == '/' %} home-landing{% endif %}">
 <template id="afh-page-meta">{"currentLang":"{{ _page_lang }}","defaultLang":"{{ _default_lang }}","availableLangs":{{ _available_langs | jsonify }},"translations":{{ _trans_json_obj }},"timezoneHints":{{ _tz_hints_json_obj }},"i18n":{{ site.data.i18n | jsonify }}}</template>

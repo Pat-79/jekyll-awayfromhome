@@ -86,8 +86,12 @@
   {%- assign _gw_is_file = false -%}
   {%- if _gw_img_exts contains _gw_ext_chk -%}{%- assign _gw_is_file = true -%}{%- endif -%}
 
-  {%- assign _gw_all_static = site.static_files | map: 'path' | join: '||' -%}
-  {%- assign _gw_all_static = '||' | append: _gw_all_static | append: '||' -%}
+  {%- assign _gw_all_static = include.all_static_paths | default: _all_static_paths | default: '' -%}
+  {%- if _gw_all_static == '' -%}
+    {%- assign _gw_all_static = site.static_files | map: 'path' | join: '||' -%}
+    {%- assign _gw_all_static = '||' | append: _gw_all_static | append: '||' -%}
+  {%- endif -%}
+  {%- assign _gw_static_paths = _gw_all_static | split: '||' -%}
   {%- assign _gw_images = '' | split: '' -%}
   {%- assign _gw_root_dir = '' -%}
 
@@ -108,14 +112,18 @@
     {%- unless _gw_root_dir | slice: 0, 1 == '/' -%}{%- assign _gw_root_dir = '/' | append: _gw_root_dir -%}{%- endunless -%}
     {%- unless _gw_root_dir | slice: -1, 1 == '/' -%}{%- assign _gw_root_dir = _gw_root_dir | append: '/' -%}{%- endunless -%}
 
-    {%- for _gw_file in site.static_files -%}
-      {%- assign _gw_ext = _gw_file.extname | downcase -%}
-      {%- assign _gw_ext_marker = ',' | append: _gw_ext | append: ',' -%}
-      {%- if _gw_img_exts contains _gw_ext_marker and _gw_file.path contains _gw_root_dir -%}
-        {%- assign _gw_rel = _gw_file.path | remove_first: _gw_root_dir -%}
-        {%- unless _gw_rel contains '/' -%}
-          {%- assign _gw_images = _gw_images | push: _gw_file.path -%}
-        {%- endunless -%}
+    {%- for _gw_path in _gw_static_paths -%}
+      {%- assign _gw_path = _gw_path | strip -%}
+      {%- if _gw_path != '' and _gw_path contains _gw_root_dir -%}
+        {%- assign _gw_file = _gw_path | split: '/' | last -%}
+        {%- assign _gw_ext = _gw_file | split: '.' | last | downcase -%}
+        {%- assign _gw_ext_marker = ',.' | append: _gw_ext | append: ',' -%}
+        {%- if _gw_img_exts contains _gw_ext_marker -%}
+          {%- assign _gw_rel = _gw_path | remove_first: _gw_root_dir -%}
+          {%- unless _gw_rel contains '/' -%}
+            {%- assign _gw_images = _gw_images | push: _gw_path -%}
+          {%- endunless -%}
+        {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
 

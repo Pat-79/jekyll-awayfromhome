@@ -21,8 +21,11 @@
 
 <header class="post-hero{% unless hero_image %} post-hero--plain{% endunless %}">
   {%- if hero_image -%}
-    {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
-    {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
+    {%- assign _all_static_paths = include.all_static_paths | default: _all_static_paths | default: '' -%}
+    {%- if _all_static_paths == '' -%}
+      {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+      {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
+    {%- endif -%}
     <div class="post-hero__media">
       {%- include responsive-image.html
         src=hero_image

@@ -22,7 +22,10 @@
 {%- assign _sc_image = include.post.image | default: site.default_post_image -%}
 {%- assign _sc_words = include.excerpt_words | default: 60 -%}
 {%- assign _sc_author = include.post.author.name | default: include.post.author | default: site.author.name | default: '' -%}
-{%- assign _sc_wc = include.post.content | strip_html | number_of_words -%}
+{%- assign _sc_wc = 0 -%}
+{%- if include.show_read_more -%}
+  {%- assign _sc_wc = include.post.content | strip_html | number_of_words -%}
+{%- endif -%}
 <a class="story-card{% if include.extra_class %} {{ include.extra_class }}{% endif %}" href="{{ include.post.url | relative_url }}" lang="{{ _sc_lang }}" dir="{{ _sc_dir }}"{% if include.item_attr %} {{ include.item_attr }}{% endif %}{% if include.archive_dates %} data-archive-year="{{ include.post.date | date: '%Y' }}" data-archive-month="{{ include.post.date | date: '%-m' }}" data-archive-day="{{ include.post.date | date: '%-d' }}"{% endif %}>
   <div class="story-card__media">
     {%- include responsive-image.html

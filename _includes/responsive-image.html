@@ -54,7 +54,7 @@
       {%- assign variant_stem = variant_stem | split: '.full' | first -%}
     {%- endif -%}
 
-    {%- assign static_marker = include.all_static_paths | default: '' -%}
+    {%- assign static_marker = include.all_static_paths | default: _all_static_paths | default: '' -%}
     {%- if static_marker == '' -%}
       {%- assign static_marker = site.static_files | map: 'path' | join: '||' -%}
       {%- assign static_marker = '||' | append: static_marker | append: '||' -%}
@@ -63,6 +63,8 @@
     {%- assign base_exists = false -%}
     {%- assign base_marker = '||' | append: image_path | append: '||' -%}
     {%- if static_marker contains base_marker -%}{%- assign base_exists = true -%}{%- endif -%}
+    {%- assign _is_svg = false -%}
+    {%- if image_ext == 'svg' -%}{%- assign _is_svg = true -%}{%- endif -%}
 
     {%- assign known_exts = 'webp,avif,jpg,jpeg,png,gif,svg' | split: ',' -%}
     {%- assign ext_candidates = image_ext -%}
@@ -83,7 +85,7 @@
     {%- assign large_url = '' -%}
     {%- assign full_url = '' -%}
 
-    {%- if variant_stem != '' and variant_stem != file_name -%}
+    {%- if _is_svg == false and variant_stem != '' and variant_stem != file_name -%}
       {%- for _ext in ext_candidates -%}
         {%- assign _thumbs_sub = variant_root_dir | append: 'thumbs/' | append: variant_stem | append: '.' | append: _ext -%}
         {%- assign _thumb_suffix = variant_root_dir | append: variant_stem | append: '.thumb.' | append: _ext -%}
@@ -191,7 +193,7 @@
     {%- assign avif_medium_url = '' -%}
     {%- assign avif_large_url = '' -%}
     {%- assign avif_full_url = '' -%}
-    {%- if variant_stem != '' and variant_stem != file_name -%}
+    {%- if _is_svg == false and variant_stem != '' and variant_stem != file_name -%}
       {%- assign _av_thumb  = variant_root_dir | append: 'thumbs/' | append: variant_stem | append: '.avif' -%}
       {%- assign _av_small  = variant_root_dir | append: 'small/'  | append: variant_stem | append: '.avif' -%}
       {%- assign _av_medium = variant_root_dir | append: 'medium/' | append: variant_stem | append: '.avif' -%}

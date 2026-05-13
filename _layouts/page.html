@@ -15,6 +15,8 @@ layout: base
 {%- endif -%}
 
 {%- assign hero_image = page.image | default: site.default_post_image | default: '/assets/images/default-hero.svg' -%}
+{%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
+{%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 
 {%- assign hero_has_author = page.has_author | default: is_post_layout | default: false -%}
 {%- assign hero_author_name = false -%}
@@ -52,6 +54,7 @@ layout: base
   author_name=hero_author_name
   date=hero_date
   comment_count=hero_comment_count
+  all_static_paths=_all_static_paths
 -%}
 
 {%- if page.layout == 'page' -%}

@@ -284,11 +284,11 @@ comments:
   enabled: true
 
   # Cloudflare Worker endpoint that receives submissions.
-  worker_url: https://my-comments-worker.example.com
+  #worker_url: https://my-comments-worker.example.com
   # Cloudflare Turnstile site key (public key).
   # NOTE: this must be a site key (for example, 0x4... or 1x0000... test key),
   # not the dummy verification token "XXXX.DUMMY.TOKEN.XXXX".
-  turnstile_sitekey: 0x000000000000000000000AA
+  #turnstile_sitekey: 0x000000000000000000000AA
 
   # false: all translations share one thread via page.ref
   # true: comments are split by page.ref--lang
@@ -356,3 +356,7 @@ sidebar:
     # mode: month-year
     mode: year-month-tree
     show_post_counts: true
+
+
+exclude:
+  - assets/images/**/original/**

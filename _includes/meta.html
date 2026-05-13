@@ -19,44 +19,15 @@
   {%- assign twitter_creator = '@' | append: twitter_creator -%}
 {%- endif -%}
 {%- assign page_image = page.image | default: site.default_post_image | default: site.brand.logo -%}
-{%- assign page_image_resolved = page_image -%}
-{%- assign _meta_static_paths = site.static_files | map: 'path' | join: '||' -%}
-{%- assign _meta_static_paths = '||' | append: _meta_static_paths | append: '||' -%}
+{%- assign page_image_resolved = page_image | split: '#' | first | split: '?' | first | strip -%}
 {%- assign _meta_is_external = false -%}
-{%- if page_image contains '://' or page_image contains 'data:' -%}
+{%- if page_image_resolved contains '://' or page_image_resolved contains 'data:' -%}
   {%- assign _meta_is_external = true -%}
 {%- endif -%}
 {%- unless _meta_is_external -%}
-  {%- assign _meta_img_clean = page_image | split: '#' | first | split: '?' | first | strip -%}
-  {%- if _meta_img_clean != '' -%}
-    {%- unless _meta_img_clean | slice: 0, 1 == '/' -%}
-      {%- assign _meta_img_clean = '/' | append: _meta_img_clean -%}
-    {%- endunless -%}
-    {%- assign _meta_marker = '||' | append: _meta_img_clean | append: '||' -%}
-    {%- if _meta_static_paths contains _meta_marker -%}
-      {%- assign page_image_resolved = _meta_img_clean -%}
-    {%- else -%}
-      {%- assign _meta_file = _meta_img_clean | split: '/' | last -%}
-      {%- assign _meta_dir = _meta_img_clean | remove: _meta_file -%}
-      {%- assign _meta_file_ext = _meta_file | split: '.' | last -%}
-      {%- assign _meta_file_suffix = '.' | append: _meta_file_ext -%}
-      {%- assign _meta_base = _meta_file | remove: _meta_file_suffix -%}
-      {%- assign _meta_exts = 'webp,png,jpg,jpeg,avif,gif,svg' | split: ',' -%}
-      {%- assign _meta_found = '' -%}
-      {%- for _meta_ext in _meta_exts -%}
-        {%- if _meta_found == '' -%}
-          {%- assign _meta_candidate = _meta_dir | append: _meta_base | append: '.' | append: _meta_ext -%}
-          {%- assign _meta_candidate_marker = '||' | append: _meta_candidate | append: '||' -%}
-          {%- if _meta_static_paths contains _meta_candidate_marker -%}
-            {%- assign _meta_found = _meta_candidate -%}
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor -%}
-      {%- if _meta_found != '' -%}
-        {%- assign page_image_resolved = _meta_found -%}
-      {%- endif -%}
-    {%- endif -%}
-  {%- endif -%}
+  {%- unless page_image_resolved | slice: 0, 1 == '/' -%}
+    {%- assign page_image_resolved = '/' | append: page_image_resolved -%}
+  {%- endunless -%}
 {%- endunless -%}
 {%- if _meta_is_external -%}
   {%- assign page_image_url = page_image_resolved -%}
@@ -91,10 +62,10 @@
 <link rel="shortcut icon" href="{{ favicon_path | relative_url }}">
 <!-- Hreflang alternate links for multilingual content -->
 {%- if site.languages and site.languages.size > 1 -%}
-  {%- assign _all_content = site.posts | concat: site.pages -%}
+  {%- assign _meta_all_content = _all_content | default: site.posts | concat: site.pages -%}
   {%- assign _ref_translations = '' | split: '' -%}
   {%- if page.ref and page.ref != '' -%}
-    {%- assign _ref_translations = _all_content | where: "ref", page.ref -%}
+    {%- assign _ref_translations = _meta_all_content | where: "ref", page.ref -%}
   {%- endif -%}
   {%- for _lang in site.languages -%}
     {%- assign _lang_matches = _ref_translations | where: "lang", _lang.code -%}
