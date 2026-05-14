@@ -18,9 +18,13 @@
   var dateFormatSetting = String(form.getAttribute('data-date-format') || 'long').trim().toLowerCase();
   var dateLocaleSetting = String(form.getAttribute('data-date-locale') || 'page').trim().toLowerCase();
 
-  var msgSuccess = String(form.getAttribute('data-msg-success') || 'Thank you! Your comment is awaiting moderation.');
+  var msgSubmitSuccess = String(form.getAttribute('data-msg-submit-success') || 'Your comment has been submitted for review and approval.');
+  var msgSubmitError = String(form.getAttribute('data-msg-submit-error') || 'An error occurred submitting your comment. Please try again.');
   var msgError = String(form.getAttribute('data-msg-error') || 'Something went wrong. Please try again.');
   var msgReplyingTo = String(form.getAttribute('data-msg-replying-to') || 'Replying to %s');
+  var msgTurnstileChecking = String(form.getAttribute('data-msg-turnstile-checking') || 'Checking for robots . . .');
+  var msgTurnstileSuccess = String(form.getAttribute('data-msg-turnstile-success') || "Human detected, you're allowed to submit a comment.");
+  var msgSubmitting = String(form.getAttribute('data-msg-submitting') || 'Submitting your comment . . .');
 
   var nameInput = form.querySelector('input[name="name"]');
   var emailInput = form.querySelector('input[name="email"]');
@@ -29,14 +33,22 @@
   var replyField = form.querySelector('input[name="reply_to"]');
   var honeypotField = form.querySelector('input[name="url"]');
   var statusBox = form.querySelector('.afh-comment-form__status');
+  var turnstileStatusText = form.querySelector('.afh-comment-form__turnstile-status-text');
   var submitButton = form.querySelector('button[type="submit"]');
+  var closeSuccessButton = form.querySelector('.afh-comment-form__close-btn');
 
   var replyBanner = form.querySelector('.afh-comment-form__reply-banner');
   var replyBannerName = form.querySelector('.afh-comment-form__reply-to-name');
   var cancelReplyButton = form.querySelector('.afh-comment-form__cancel-reply');
 
   var turnstileBox = form.querySelector('.cf-turnstile');
+  var hasTurnstile = !!turnstileBox;
   var isSubmitting = false;
+  var isTurnstileReady = !hasTurnstile;
+  var turnstileWidgetId = null;
+  var turnstileScriptLoading = false;
+  var submitResultMessage = '';
+  var submitResultIsError = false;
 
   function getCommentDateFormatOptions(formatName) {
     if (formatName === 'short') {
@@ -134,6 +146,38 @@
     }
   }
 
+  function setTurnstileStatus(message, isError) {
+    if (!turnstileStatusText) {
+      return;
+    }
+
+    turnstileStatusText.textContent = message || '';
+    turnstileStatusText.classList.toggle('is-error', !!isError && !!message);
+  }
+
+  function clearSubmitResultStatus() {
+    submitResultMessage = '';
+    submitResultIsError = false;
+  }
+
+  function enterPostSuccessMode(message) {
+    form.classList.add('is-post-success');
+    if (message) {
+      setStatus('success', message);
+    }
+    if (closeSuccessButton) {
+      closeSuccessButton.hidden = false;
+    }
+    setTurnstileStatus('', false);
+  }
+
+  function exitPostSuccessMode() {
+    form.classList.remove('is-post-success');
+    if (closeSuccessButton) {
+      closeSuccessButton.hidden = true;
+    }
+  }
+
   function clearStatus() {
     if (!statusBox) {
       return;
@@ -209,6 +253,113 @@
     host.appendChild(formWrap);
   }
 
+  function ensureTurnstileScript() {
+    if (!hasTurnstile) {
+      return;
+    }
+
+    if (window.turnstile || turnstileScriptLoading || document.querySelector('script[data-afh-turnstile]')) {
+      return;
+    }
+
+    turnstileScriptLoading = true;
+
+    var script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.setAttribute('data-afh-turnstile', 'true');
+    script.setAttribute('data-cfasync', 'false');
+    script.addEventListener('load', function () {
+      turnstileScriptLoading = false;
+      renderTurnstile(true);
+    });
+    script.addEventListener('error', function () {
+      turnstileScriptLoading = false;
+      console.log('[Turnstile] script load error');
+      setTurnstileStatus(msgError, true);
+      setTurnstileButtonState('error');
+    });
+    document.head.appendChild(script);
+  }
+
+  function clearStaleTurnstileFields() {
+    form.querySelectorAll('input[name="cf-turnstile-response"]').forEach(function (field) {
+      if (field && field.parentNode) {
+        field.parentNode.removeChild(field);
+      }
+    });
+  }
+
+  function getTurnstileRenderOptions() {
+    if (!turnstileBox) {
+      return null;
+    }
+
+    syncTurnstileTheme();
+
+    return {
+      sitekey: String(turnstileBox.getAttribute('data-sitekey') || '').trim(),
+      theme: String(turnstileBox.getAttribute('data-theme') || 'auto').trim(),
+      size: String(turnstileBox.getAttribute('data-size') || 'normal').trim(),
+      appearance: String(turnstileBox.getAttribute('data-appearance') || 'always').trim(),
+      callback: window.onTurnstileSuccess,
+      'error-callback': window.onTurnstileError,
+      'expired-callback': window.onTurnstileExpired,
+      'refresh-timeout': String(turnstileBox.getAttribute('data-refresh-timeout') || 'auto').trim()
+    };
+  }
+
+  function renderTurnstile(forceRender) {
+    if (!hasTurnstile) {
+      return;
+    }
+
+    clearSubmitResultStatus();
+    setTurnstileStatus(msgTurnstileChecking, false);
+    setTurnstileButtonState('waiting');
+
+    if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+      ensureTurnstileScript();
+      return;
+    }
+
+    if (forceRender && turnstileWidgetId !== null && typeof window.turnstile.remove === 'function') {
+      try {
+        window.turnstile.remove(turnstileWidgetId);
+      } catch (_) {
+        // Ignore remove errors from stale widgets.
+      }
+      turnstileWidgetId = null;
+    }
+
+    if (forceRender) {
+      clearStaleTurnstileFields();
+      turnstileBox.innerHTML = '';
+    }
+
+    if (turnstileWidgetId !== null) {
+      try {
+        window.turnstile.reset(turnstileWidgetId);
+        return;
+      } catch (_) {
+        turnstileWidgetId = null;
+        clearStaleTurnstileFields();
+        turnstileBox.innerHTML = '';
+      }
+    }
+
+    var renderOptions = getTurnstileRenderOptions();
+    if (!renderOptions || !renderOptions.sitekey) {
+      console.log('[Turnstile] missing render options');
+      setTurnstileStatus(msgError, true);
+      setTurnstileButtonState('error');
+      return;
+    }
+
+    turnstileWidgetId = window.turnstile.render(turnstileBox, renderOptions);
+  }
+
   function showFormAtHost(host) {
     var targetHost = host || rootFormHost || commentsRoot;
     if (!targetHost || !formWrap) {
@@ -216,7 +367,16 @@
     }
 
     moveFormToHost(targetHost);
+    exitPostSuccessMode();
+    clearStatus();
     formWrap.hidden = false;
+
+    if (hasTurnstile) {
+      renderTurnstile(true);
+    } else {
+      syncSubmitButtonState();
+    }
+
     focusForm(targetHost);
   }
 
@@ -246,31 +406,140 @@
       return;
     }
 
-    resetFormState();
+    form.reset();
+    setReplyState('', '');
+    exitPostSuccessMode();
+    clearStatus();
+    clearSubmitResultStatus();
+    setTurnstileStatus('', false);
     moveFormToHost(rootFormHost || commentsRoot);
     formWrap.hidden = true;
   }
 
-  function ensureTurnstileScript() {
+  function isFormVisible() {
+    return !!formWrap && !formWrap.hidden;
+  }
+
+  function isCloseModeVisible() {
+    return (
+      isFormVisible() &&
+      !!closeSuccessButton &&
+      !closeSuccessButton.hidden &&
+      form.classList.contains('is-post-success')
+    );
+  }
+
+  function isCancelModeVisible() {
+    return (
+      isFormVisible() &&
+      !form.classList.contains('is-post-success') &&
+      !!cancelReplyButton
+    );
+  }
+
+  function canKeyboardSubmit() {
+    return (
+      isFormVisible() &&
+      !form.classList.contains('is-post-success') &&
+      !!submitButton &&
+      !submitButton.disabled
+    );
+  }
+
+  function handleCommentFormKeydown(event) {
+    if (!event) {
+      return;
+    }
+
+    var key = String(event.key || '').toLowerCase();
+    if (event.ctrlKey && key === 'enter') {
+      if (!canKeyboardSubmit()) {
+        return;
+      }
+
+      event.preventDefault();
+      if (typeof form.requestSubmit === 'function') {
+        form.requestSubmit(submitButton || undefined);
+      } else if (submitButton) {
+        submitButton.click();
+      }
+      return;
+    }
+
+    if (key === 'escape' || key === 'esc') {
+      if (!isFormVisible()) {
+        return;
+      }
+
+      if (isCloseModeVisible() || isCancelModeVisible()) {
+        event.preventDefault();
+        hideForm();
+      }
+    }
+  }
+
+  function syncSubmitButtonState() {
+    if (!submitButton) {
+      return;
+    }
+
+    submitButton.disabled = isSubmitting || !isTurnstileReady;
+    submitButton.setAttribute('aria-disabled', submitButton.disabled ? 'true' : 'false');
+  }
+
+  function syncTurnstileTheme() {
     if (!turnstileBox) {
       return;
     }
 
-    var sitekey = String(turnstileBox.getAttribute('data-sitekey') || '').trim();
-    if (!sitekey) {
+    var theme = String(document.documentElement.getAttribute('data-theme') || '').trim().toLowerCase();
+    if (theme !== 'light' && theme !== 'dark') {
+      theme = 'auto';
+    }
+
+    turnstileBox.setAttribute('data-theme', theme);
+  }
+
+  function setTurnstileButtonState(state) {
+    if (!hasTurnstile) {
+      isTurnstileReady = true;
+      setTurnstileStatus('', false);
+      syncSubmitButtonState();
       return;
     }
 
-    if (document.querySelector('script[data-afh-turnstile]')) {
+    var hasToken = getTurnstileToken() !== '';
+    isTurnstileReady = state === 'success' && hasToken;
+
+    if (state === 'waiting') {
+      setTurnstileStatus(msgTurnstileChecking, false);
+    } else if (state === 'success' && hasToken) {
+      setTurnstileStatus(msgTurnstileSuccess, false);
+    }
+
+    syncSubmitButtonState();
+  }
+
+  function observeThemeChanges() {
+    if (!turnstileBox || typeof window.MutationObserver !== 'function') {
       return;
     }
 
-    var script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-    script.async = true;
-    script.defer = true;
-    script.setAttribute('data-afh-turnstile', 'true');
-    document.head.appendChild(script);
+    var html = document.documentElement;
+    var observer = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        if (mutations[i].type === 'attributes' && mutations[i].attributeName === 'data-theme') {
+          syncTurnstileTheme();
+          resetTurnstile();
+          break;
+        }
+      }
+    });
+
+    observer.observe(html, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
   }
 
   function getTurnstileToken() {
@@ -283,24 +552,36 @@
   }
 
   function resetTurnstile() {
-    if (!window.turnstile || typeof window.turnstile.reset !== 'function') {
+    if (!hasTurnstile) {
       return;
     }
 
-    try {
-      window.turnstile.reset();
-    } catch (_) {
-      // Ignore reset errors from optional Turnstile widgets.
-    }
+    renderTurnstile(false);
   }
 
   function setSubmittingState(nextState) {
     isSubmitting = nextState;
 
     if (submitButton) {
-      submitButton.disabled = nextState;
       submitButton.setAttribute('aria-busy', nextState ? 'true' : 'false');
     }
+
+    if (nextState) {
+      clearSubmitResultStatus();
+      setTurnstileStatus(msgSubmitting, false);
+    } else if (submitResultMessage) {
+      setTurnstileStatus(submitResultMessage, submitResultIsError);
+    } else if (hasTurnstile) {
+      if (isTurnstileReady && getTurnstileToken() !== '') {
+        setTurnstileStatus(msgTurnstileSuccess, false);
+      } else {
+        setTurnstileStatus(msgTurnstileChecking, false);
+      }
+    } else {
+      setTurnstileStatus('', false);
+    }
+
+    syncSubmitButtonState();
   }
 
   function normalizeFormValues() {
@@ -376,6 +657,14 @@
     });
   }
 
+  if (closeSuccessButton) {
+    closeSuccessButton.addEventListener('click', function () {
+      hideForm();
+    });
+  }
+
+  document.addEventListener('keydown', handleCommentFormKeydown);
+
   if (emailInput) {
     emailInput.addEventListener('blur', function () {
       emailInput.value = String(emailInput.value || '').trim();
@@ -404,8 +693,8 @@
     var honeypot = String((honeypotField || {}).value || '').trim();
     var turnstileToken = getTurnstileToken();
 
-    if (!workerUrl || !postRef || !name || !email || !text || !turnstileToken) {
-      setStatus('error', msgError);
+    if (!workerUrl || !postRef || !name || !email || !text || (hasTurnstile && !turnstileToken)) {
+      setStatus('error', msgSubmitError);
       return;
     }
 
@@ -438,30 +727,59 @@
           })
           .then(function (data) {
             if (!response.ok) {
-              var errorMessage = String(data.error || msgError).trim() || msgError;
-              throw new Error(errorMessage);
+              throw new Error(String(data.error || response.statusText || 'Unknown submit error'));
             }
 
             return data;
           });
       })
-      .then(function (data) {
-        var successMessage = String(data.message || msgSuccess).trim() || msgSuccess;
-        setStatus('success', successMessage);
+      .then(function () {
+        submitResultMessage = msgSubmitSuccess;
+        submitResultIsError = false;
         form.reset();
         setReplyState('', '');
-        resetTurnstile();
+        enterPostSuccessMode(msgSubmitSuccess);
       })
       .catch(function (error) {
-        setStatus('error', error.message || msgError);
+        console.error('[Comments] submit error', error);
+        submitResultMessage = msgSubmitError;
+        submitResultIsError = true;
+        setStatus('error', submitResultMessage);
       })
       .finally(function () {
         setSubmittingState(false);
       });
   });
 
+  window.onTurnstileSuccess = function (token) {
+    var resolvedToken = String(token || getTurnstileToken() || '').trim();
+    console.log('[Turnstile] success', resolvedToken);
+    if (resolvedToken !== '') {
+      setTurnstileStatus(msgTurnstileSuccess, false);
+      setTurnstileButtonState('success');
+    } else {
+      setTurnstileStatus(msgError, true);
+      setTurnstileButtonState('error');
+    }
+  };
+
+  window.onTurnstileError = function (error) {
+    console.log('[Turnstile] error', error || 'Unknown Turnstile error');
+    setTurnstileStatus(String(error || msgError).trim() || msgError, true);
+    setTurnstileButtonState('error');
+  };
+
+  window.onTurnstileExpired = function () {
+    console.log('[Turnstile] timeout/expired');
+    setTurnstileStatus(msgTurnstileChecking, false);
+    setTurnstileButtonState('waiting');
+  };
+
+  syncTurnstileTheme();
+  observeThemeChanges();
   setReplyState('', '');
   hideForm();
-  ensureTurnstileScript();
+  setTurnstileStatus('', false);
+  setTurnstileButtonState('waiting');
   localizeCommentTimes();
 })();

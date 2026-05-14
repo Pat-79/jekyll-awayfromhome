@@ -10,60 +10,85 @@
     data-post-url="{{ page.url | absolute_url }}"
     data-date-format="{{ site.comments.date_format | default: 'long' | escape }}"
     data-date-locale="{{ site.comments.date_locale | default: 'page' | escape }}"
+    data-msg-submit-success="{{ t.comments.submit_success | default: 'Your comment has been submitted for review and approval.' | escape }}"
+    data-msg-submit-error="{{ t.comments.submit_error | default: 'An error occurred submitting your comment. Please try again.' | escape }}"
     data-msg-success="{{ t.comments.success | default: 'Thank you! Your comment is awaiting moderation.' | escape }}"
     data-msg-error="{{ t.comments.error | default: 'Something went wrong. Please try again.' | escape }}"
+    data-msg-turnstile-checking="{{ t.comments.turnstile_checking | default: 'Checking for robots . . .' | escape }}"
+    data-msg-turnstile-success="{{ t.comments.turnstile_success | default: "Human detected, you're allowed to submit a comment." | escape }}"
+    data-msg-submitting="{{ t.comments.submitting | default: 'Submitting your comment . . .' | escape }}"
     data-msg-replying-to="{{ t.comments.replying_to | default: 'Replying to %s' | escape }}">
 
-    <input
-      type="text"
-      name="url"
-      tabindex="-1"
-      autocomplete="off"
-      style="position:absolute;left:-9999px;width:1px;height:1px;"
-      aria-hidden="true">
-
-    <input type="hidden" name="reply_to" value="">
-
-    <div class="afh-comment-form__reply-banner" hidden>
-      <span class="afh-comment-form__reply-to-name"></span>
-    </div>
-
-    <label>
-      {{ t.comments.form_name }}
-      <input type="text" name="name" required maxlength="80" autocomplete="name" autocapitalize="words">
-    </label>
-
-    <label>
-      {{ t.comments.form_email }}
+    <div class="afh-comment-form__main">
       <input
-        type="email"
-        name="email"
-        required
-        autocomplete="email"
-        inputmode="email"
-        autocapitalize="off"
-        autocorrect="off"
-        spellcheck="false">
-      <small>{{ t.comments.email_note }}</small>
-    </label>
+        type="text"
+        name="url"
+        tabindex="-1"
+        autocomplete="off"
+        style="position:absolute;left:-9999px;width:1px;height:1px;"
+        aria-hidden="true">
 
-    <label>
-      {{ t.comments.form_comment }}
-      <textarea name="text" required minlength="1" maxlength="2000" rows="5"></textarea>
-      <small>{{ t.comments.markdown_hint | default: 'Markdown is supported. Links open in a new tab.' }}</small>
-    </label>
+      <input type="hidden" name="reply_to" value="">
 
-    <div class="cf-turnstile" data-sitekey="{{ site.comments.turnstile_sitekey }}" data-theme="auto"  data-execution="render"></div>
+      <div class="afh-comment-form__reply-banner" hidden>
+        <span class="afh-comment-form__reply-to-name"></span>
+      </div>
 
-    <div class="afh-comment-form__actions">
-      <button type="submit" class="btn btn--accent afh-comment-form__submit-btn">
-        {{ t.comments.form_submit }}
-      </button>
-      <button type="button" class="afh-comment-form__cancel-reply btn btn--ghost">
-        {{ t.comments.cancel_reply | default: 'Cancel' }}
-      </button>
+      <label>
+        {{ t.comments.form_name }}
+        <input type="text" name="name" required maxlength="80" autocomplete="name" autocapitalize="words">
+      </label>
+
+      <label>
+        {{ t.comments.form_email }}
+        <input
+          type="email"
+          name="email"
+          required
+          autocomplete="email"
+          inputmode="email"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false">
+        <small>{{ t.comments.email_note }}</small>
+      </label>
+
+      <label>
+        {{ t.comments.form_comment }}
+        <textarea name="text" required minlength="1" maxlength="2000" rows="5"></textarea>
+        <small>{{ t.comments.markdown_hint | default: 'Markdown is supported. Links open in a new tab.' }}</small>
+      </label>
+
+      <div
+        class="cf-turnstile"
+        data-sitekey="{{ site.comments.turnstile_sitekey }}"
+        data-theme="auto"
+        data-size="flexible"
+        data-callback="onTurnstileSuccess"
+        data-error-callback="onTurnstileError"
+        data-expired-callback="onTurnstileExpired"
+        data-appearance="execute"
+        data-refresh-timeout="auto"
+      ></div>
+
+      <div class="afh-comment-form__turnstile-status" aria-live="polite">
+        <span class="afh-comment-form__turnstile-status-text"></span>
+      </div>
+
+      <div class="afh-comment-form__actions">
+        <button type="submit" class="btn btn--accent afh-comment-form__submit-btn" disabled aria-disabled="true">
+          {{ t.comments.form_submit }}
+        </button>
+        <button type="button" class="afh-comment-form__cancel-reply btn btn--ghost">
+          {{ t.comments.cancel_reply | default: 'Cancel' }}
+        </button>
+      </div>
     </div>
 
     <div class="afh-comment-form__status" aria-live="polite" hidden></div>
+
+    <button type="button" class="btn btn--ghost afh-comment-form__close-btn" hidden>
+      {{ t.comments.close_form | default: 'Close' }}
+    </button>
   </form>
 </div>

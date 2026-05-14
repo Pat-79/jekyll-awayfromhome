@@ -21,6 +21,14 @@
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.55;
+    box-shadow: none;
+    pointer-events: none;
+  }
 }
 
 .btn--accent {
@@ -33,6 +41,13 @@
     border-color: var(--accent-btn-hover);
     color: var(--accent-btn-fg);
     text-decoration: none;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    background: color-mix(in srgb, var(--accent-btn) 45%, var(--surface));
+    border-color: color-mix(in srgb, var(--accent-btn) 35%, var(--border));
+    color: color-mix(in srgb, var(--accent-btn-fg) 65%, var(--muted));
   }
 }
 

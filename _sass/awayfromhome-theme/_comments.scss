@@ -212,6 +212,15 @@
   gap: 0.95rem;
 }
 
+.afh-comment-form__main {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.afh-comment-form.is-post-success .afh-comment-form__main {
+  display: none;
+}
+
 .afh-comment-form__actions {
   display: flex;
   flex-wrap: wrap;
@@ -255,6 +264,23 @@
   color: var(--muted);
 }
 
+.afh-comment-form__turnstile-status {
+  min-height: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.afh-comment-form__turnstile-status-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+.afh-comment-form__turnstile-status-text.is-error {
+  color: #c45757;
+}
+
 .afh-comment-form__reply-banner {
   display: flex;
   flex-wrap: wrap;
@@ -281,6 +307,10 @@
   border: 1px solid var(--border);
 }
 
+.afh-comment-form__status[hidden] {
+  display: none;
+}
+
 .afh-comment-form__status.is-success {
   border-color: color-mix(in srgb, #2d9961 48%, var(--border));
   background: color-mix(in srgb, #2d9961 12%, transparent);
@@ -289,6 +319,20 @@
 .afh-comment-form__status.is-error {
   border-color: color-mix(in srgb, #c45757 52%, var(--border));
   background: color-mix(in srgb, #c45757 12%, transparent);
+}
+
+.afh-comment-form__close-btn {
+  display: none;
+}
+
+.afh-comment-form__close-btn[hidden],
+.afh-comment-form:not(.is-post-success) .afh-comment-form__close-btn {
+  display: none !important;
+}
+
+.afh-comment-form.is-post-success .afh-comment-form__close-btn {
+  display: inline-flex;
+  justify-self: start;
 }
 
 @media (max-width: $breakpoint-mobile) {
