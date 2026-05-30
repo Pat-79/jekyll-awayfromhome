@@ -24,6 +24,16 @@
 {%- for _cb_cat in site.cookie_consent.categories -%}
   {%- unless _cb_cat.required -%}{%- assign _cb_has_optional = true -%}{%- endunless -%}
 {%- endfor -%}
+{%- assign _cb_lang_attrs = '' | split: '' -%}
+{%- if site.languages -%}
+  {%- capture _cb_langs_attr -%}  data-langs="{{ site.languages | map: 'code' | join: ',' | escape }}"{%- endcapture -%}
+  {%- assign _cb_lang_attrs = _cb_lang_attrs | push: _cb_langs_attr -%}
+  {%- for _cb_lng in site.languages -%}
+    {%- assign _cb_lng_cc = site.data.i18n[_cb_lng.code].cookie_consent | default: site.data.i18n.en.cookie_consent -%}
+    {%- capture _cb_i18n_attr -%}  data-i18n-{{ _cb_lng.code }}="{{ _cb_lng_cc | jsonify | escape }}"{%- endcapture -%}
+    {%- assign _cb_lang_attrs = _cb_lang_attrs | push: _cb_i18n_attr -%}
+  {%- endfor -%}
+{%- endif -%}
 
 <div
   id="afh-cookie-banner"
@@ -38,14 +48,8 @@
   data-categories="{{ _cb_cats_json | escape }}"
   data-str-saved="{{ _cb_cc.saved_message | default: 'Your preferences have been saved.' | escape }}"
   data-show-accept-essential="{{ site.cookie_consent.show_accept_essential | default: true | escape }}"
-  data-page-lang="{{ _cb_lang | escape }}"
-  {%- if site.languages -%}
-  data-langs="{{ site.languages | map: 'code' | join: ',' | escape }}"
-  {%- for _cb_lng in site.languages -%}
-  {%- assign _cb_lng_cc = site.data.i18n[_cb_lng.code].cookie_consent | default: site.data.i18n.en.cookie_consent -%}
-  data-i18n-{{ _cb_lng.code }}="{{ _cb_lng_cc | jsonify | escape }}"
-  {%- endfor -%}
-  {%- endif -%}
+  data-page-lang="{{ _cb_lang | escape }}"{% for _cb_attr in _cb_lang_attrs %}
+{{ _cb_attr }}{% endfor %}
 >
   <div class="afh-cookie-banner__inner">
     <div class="afh-cookie-banner__header">
