@@ -45,11 +45,6 @@
 {%- assign _available_langs = _available_langs | push: _default_lang -%}
 {%- assign _available_langs = _available_langs | uniq -%}
 
-{%- assign _tz_hints_json_obj = '{}' -%}
-{%- if site.data.timezone_language_hints -%}
-  {%- assign _tz_hints_json_obj = site.data.timezone_language_hints | jsonify -%}
-{%- endif -%}
-
 <body class="layout-{{ page.layout | default: 'default' }}{% if page.image and page.layout != 'post' %} has-page-image{% endif %}{% if page.url == '/' %} home-landing{% endif %}">
 <a class="skip-link" href="#main-content">Skip to main content</a>
 <div class="menu-drawer" id="site-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Site menu">
@@ -68,7 +63,7 @@
   </div>
 </div>
 {% include cookie-banner.html %}
-<template id="afh-page-meta">{"currentLang":"{{ _page_lang }}","defaultLang":"{{ _default_lang }}","availableLangs":{{ _available_langs | jsonify }},"translations":{{ _trans_json_obj }},"timezoneHints":{{ _tz_hints_json_obj }},"i18n":{{ site.data.i18n | jsonify }}}</template>
+<template id="afh-page-meta">{"currentLang":"{{ _page_lang }}","defaultLang":"{{ _default_lang }}","availableLangs":{{ _available_langs | jsonify }},"translations":{{ _trans_json_obj }},"timezoneHintsPath":{{ '/assets/data/timezone-hints.json' | relative_url | jsonify }},"i18nBasePath":{{ '/assets/data/i18n' | relative_url | jsonify }}}</template>
 {% include javascript-body.html %}
 </body>
 </html>

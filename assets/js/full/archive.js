@@ -63,29 +63,26 @@
     } catch (e) {}
   }
 
-  // If lang-persist.js overrode the page language, use that language's i18n
-  // from afh-page-meta (which contains all languages' data).
-  var metaEl = document.getElementById('afh-page-meta');
-  if (metaEl) {
+  // If lang-persist.js overrode the page language, it may have lazy-loaded
+  // that language dictionary. Use it when available.
+  (function () {
     try {
-      var meta = readMetaJson(metaEl);
       var htmlLang = document.documentElement.lang;
-      if (meta.i18n && htmlLang && htmlLang !== meta.currentLang) {
-        var al = meta.i18n[htmlLang] && meta.i18n[htmlLang].archive;
-        if (al) {
-          if (al.all_years) i18n.all_years = al.all_years;
-          if (al.all_months) i18n.all_months = al.all_months;
-          if (al.all_days) i18n.all_days = al.all_days;
-          if (al.months) i18n.months = al.months;
-          if (al.filtered_by) i18n.filtered_by = al.filtered_by;
-          if (al.showing_all) i18n.showing_all = al.showing_all;
-          if (al.post_count_one) i18n.post_count_one = al.post_count_one;
-          if (al.post_count) i18n.post_count = al.post_count;
-          if (al.page_of) i18n.page_of = al.page_of;
-        }
-      }
+      if (!htmlLang || typeof window.afhI18nGetLoaded !== 'function') return;
+      var loaded = window.afhI18nGetLoaded(htmlLang);
+      var al = loaded && loaded.archive;
+      if (!al) return;
+      if (al.all_years) i18n.all_years = al.all_years;
+      if (al.all_months) i18n.all_months = al.all_months;
+      if (al.all_days) i18n.all_days = al.all_days;
+      if (al.months) i18n.months = al.months;
+      if (al.filtered_by) i18n.filtered_by = al.filtered_by;
+      if (al.showing_all) i18n.showing_all = al.showing_all;
+      if (al.post_count_one) i18n.post_count_one = al.post_count_one;
+      if (al.post_count) i18n.post_count = al.post_count;
+      if (al.page_of) i18n.page_of = al.page_of;
     } catch (e) {}
-  }
+  }());
 
   // Month name lookup: use i18n.months map (keys "1"–"12") when available,
   // falling back to English names.

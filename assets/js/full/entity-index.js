@@ -42,18 +42,16 @@
   var entityPerPage = parseInt(root.getAttribute('data-entity-per-page'), 10) || 10;
   var entityPageFormat = root.getAttribute('data-pagination-format') || 'Page {page} of {total}';
 
-  // Read i18n strings from afh-page-meta (same approach as archive.js).
+  // Read i18n strings from lang-persist's lazy-loaded cache when available.
   // Fall back to data attributes on the status element, then to hardcoded English.
   var browseI18n = {};
-  var metaEl = document.getElementById('afh-page-meta');
-  if (metaEl) {
-    try {
-      var meta = readMetaJson(metaEl);
-      var lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
-      var langI18n = meta.i18n && (meta.i18n[lang] || meta.i18n[meta.currentLang]);
-      if (langI18n && langI18n.browse) browseI18n = langI18n.browse;
-    } catch (e) {}
-  }
+  try {
+    var lang = document.documentElement.lang || 'en';
+    if (typeof window.afhI18nGetLoaded === 'function') {
+      var loaded = window.afhI18nGetLoaded(lang);
+      if (loaded && loaded.browse) browseI18n = loaded.browse;
+    }
+  } catch (e) {}
 
   var i18nNotFound = browseI18n.not_found_status
     || (status && status.getAttribute('data-i18n-not-found'))

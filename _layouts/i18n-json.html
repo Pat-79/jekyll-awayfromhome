@@ -1,0 +1,5 @@
+---
+layout: none
+---
+{%- assign _i18n_lang = page.lang_code | default: site.lang | default: 'en' -%}
+{{ site.data.i18n[_i18n_lang] | default: site.data.i18n.en | jsonify }}

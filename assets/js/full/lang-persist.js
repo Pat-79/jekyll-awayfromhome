@@ -187,12 +187,35 @@ function afhApplyResponsiveLangLabels() {
   var pageLang    = meta.currentLang  || 'en';
   var defaultLang = meta.defaultLang  || 'en';
   var translations = meta.translations || {};
-  var i18n         = meta.i18n         || {};
-  var timezoneHints = meta.timezoneHints || {};
+  var i18nBasePath = (meta.i18nBasePath || '/assets/data/i18n').replace(/\/+$/, '');
+  var timezoneHintsPath = meta.timezoneHintsPath || null;
   var availableLangs = (meta.availableLangs && meta.availableLangs.length)
     ? meta.availableLangs
-    : Object.keys(i18n);
+    : [defaultLang];
   var langSelect = document.querySelector('.lang-select');
+  var i18nCache = {};
+
+  window.afhI18nGetLoaded = function (lang) {
+    return i18nCache[lang] || null;
+  };
+
+  function loadLangI18n(lang) {
+    lang = (lang || '').trim();
+    if (!lang) return Promise.resolve(null);
+    if (i18nCache[lang]) return Promise.resolve(i18nCache[lang]);
+
+    var url = i18nBasePath + '/' + encodeURIComponent(lang) + '.json';
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (payload) {
+        if (payload && typeof payload === 'object') {
+          i18nCache[lang] = payload;
+          return payload;
+        }
+        return null;
+      })
+      .catch(function () { return null; });
+  }
 
   // Check for an explicit stored preference set only via the language selector.
   var storedLang = afhReadStoredLang();
@@ -212,9 +235,22 @@ function afhApplyResponsiveLangLabels() {
   // No explicit preference — detect from browser on every visit (not saved).
   var targetLang = storedLang;
   if (!targetLang) {
-    var detected = afhDetectLang(availableLangs, defaultLang, timezoneHints);
+    // Try browser languages first (synchronous, no network round-trip needed).
+    var detected = afhDetectLang(availableLangs, defaultLang, {});
     if (detected && detected !== defaultLang) {
       targetLang = detected;
+    } else if (timezoneHintsPath) {
+      // Browser languages gave no match — fall back to timezone hints (async).
+      fetch(timezoneHintsPath, { credentials: 'same-origin' })
+        .then(function (res) { return res.ok ? res.json() : {}; })
+        .then(function (hints) {
+          var tzDetected = afhDetectLang(availableLangs, defaultLang, hints);
+          if (tzDetected && tzDetected !== defaultLang) {
+            dispatchToTargetLang(tzDetected);
+          }
+        })
+        .catch(function () {});
+      return;
     }
   }
 
@@ -223,21 +259,25 @@ function afhApplyResponsiveLangLabels() {
 
   if (!targetLang || targetLang === pageLang) return;
 
-  // Target language differs from page language.
-  if (translations[targetLang]) {
-    // A real translation exists — redirect to it, preserving query string and hash.
-    var target = translations[targetLang];
-    if (window.location.search) target += window.location.search;
-    if (window.location.hash) target += window.location.hash;
-    window.location.replace(target);
-    return;
+  dispatchToTargetLang(targetLang);
+
+  function dispatchToTargetLang(lang) {
+    if (!lang || lang === pageLang) return;
+    if (translations[lang]) {
+      // A real translation exists — redirect to it, preserving query string and hash.
+      var target = translations[lang];
+      if (window.location.search) target += window.location.search;
+      if (window.location.hash) target += window.location.hash;
+      window.location.replace(target);
+      return;
+    }
+    // No translation available — apply preferred lang's chrome strings.
+    loadLangI18n(lang).then(function (strings) {
+      if (strings) applyLangOverride(lang, strings);
+    });
   }
 
-  // No translation available — apply preferred lang's chrome strings.
-  applyLangOverride(targetLang, i18n);
-
-  function applyLangOverride(lang, i18nData) {
-    var strings = i18nData[lang];
+  function applyLangOverride(lang, strings) {
     if (!strings) return;
 
     var rtlLangs = ['ar', 'he', 'fa', 'ur', 'dv', 'ku', 'ps', 'sd', 'ug', 'yi'];

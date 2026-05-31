@@ -32,57 +32,28 @@
 
   if (!query) return;
 
-  // ── Language-specific config from afh-page-meta ──────────────────────────────
+  // ── Language-specific config loaded lazily from /assets/data/i18n/{lang}.json ─
   // word_regex: pattern matching a single "word" token (no capturing group, no flags)
   // stopwords:  comma-separated list of words to exclude from highlighting
 
   const FALLBACK_WORD_REGEX = "[A-Za-zÀ-ÖØ-öø-ÿ0-9''\-]+";
   const FALLBACK_STOPWORDS  = 'a,about,above,after,again,against,all,also,am,an,and,any,are,around,as,at,be,because,been,before,being,below,between,both,but,by,can,could,day,days,did,do,does,doing,down,during,each,few,first,for,from,further,had,has,have,having,he,her,here,hers,herself,him,himself,his,how,i,if,in,into,is,it,its,itself,just,last,like,more,most,my,myself,no,nor,not,now,of,off,on,once,one,only,or,other,our,ours,ourselves,out,over,own,really,same,she,should,so,some,such,than,that,the,their,theirs,them,themselves,then,there,these,they,this,those,through,to,too,under,until,up,very,was,we,well,were,what,when,where,which,while,who,whom,why,will,with,without,would,you,your,yours,yourself,yourselves';
 
-  let wordRegexStr = FALLBACK_WORD_REGEX;
-  let stopwordsStr = FALLBACK_STOPWORDS;
-
+  // Read only routing info from meta; search config is fetched from the i18n endpoint.
   const metaEl = document.getElementById('afh-page-meta');
+  let i18nBasePath = '/assets/data/i18n';
+  let pageLang = 'en';
+  let defaultLang = 'en';
   if (metaEl) {
     try {
       const meta = readMetaJson(metaEl);
-      const lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
-      const defaultLang = (meta && meta.defaultLang) || 'en';
-      const langI18n    = meta.i18n && (meta.i18n[lang]        || meta.i18n['en']);
-      const defaultI18n = meta.i18n && (meta.i18n[defaultLang] || meta.i18n['en']);
-
-      if (langI18n && langI18n.search) {
-        if (langI18n.search.word_regex) wordRegexStr = langI18n.search.word_regex;
-        if (langI18n.search.stopwords) stopwordsStr = langI18n.search.stopwords;
-      }
-
-      // Also include the default language's word pattern so that content in the
-      // default language embedded in a translated page is tokenised correctly.
-      if (defaultI18n && defaultI18n.search && defaultI18n.search.word_regex) {
-        const defaultRegexStr = defaultI18n.search.word_regex;
-        if (defaultRegexStr !== wordRegexStr) {
-          wordRegexStr = wordRegexStr + '|' + defaultRegexStr;
-        }
+      if (meta) {
+        if (meta.i18nBasePath) i18nBasePath = meta.i18nBasePath.replace(/\/+$/, '');
+        if (meta.currentLang) pageLang = meta.currentLang;
+        if (meta.defaultLang) defaultLang = meta.defaultLang;
       }
     } catch (e) {}
   }
-
-  // Build the split regex: capturing group keeps matched tokens in the result array.
-  let wordRegex;
-  try {
-    wordRegex = new RegExp('(' + wordRegexStr + ')');
-  } catch (e) {
-    wordRegex = new RegExp('(' + FALLBACK_WORD_REGEX + ')');
-  }
-
-  const STOPWORDS = new Set(stopwordsStr.split(',').map((s) => s.trim()).filter(Boolean));
-
-  // Parse + filter query terms (same rules: length > 2, not a stopword)
-  const terms = [...new Set(query.toLowerCase().trim().split(/\s+/).filter(Boolean))].filter(
-    (t) => t.length > 2 && !STOPWORDS.has(t)
-  );
-
-  if (!terms.length) return;
 
   // ── Levenshtein helpers (identical to search-worker.js) ─────────────────────
 
@@ -141,54 +112,100 @@
     return false;
   }
 
-  function wordMatchesAnyTerm(rawWord) {
-    // Strip leading/trailing punctuation before comparing
-    const word = rawWord.toLowerCase().replace(/^['''\-]+|['''\-]+$/g, '');
-    if (word.length < 3) return false;
-    for (const term of terms) {
-      if (wordMatchesTerm(word, term)) return true;
+  // ── Fetch search config lazily, then run ────────────────────────────────────
+
+  function fetchLangJson(lang) {
+    return fetch(i18nBasePath + '/' + encodeURIComponent(lang) + '.json', { credentials: 'same-origin' })
+      .then((res) => res.ok ? res.json() : null)
+      .catch(() => null);
+  }
+
+  const fetches = pageLang !== defaultLang
+    ? [fetchLangJson(pageLang), fetchLangJson(defaultLang)]
+    : [fetchLangJson(pageLang)];
+
+  Promise.all(fetches).then(([pageI18n, defaultI18n = pageI18n]) => {
+    let wordRegexStr = FALLBACK_WORD_REGEX;
+    let stopwordsStr = FALLBACK_STOPWORDS;
+
+    if (pageI18n && pageI18n.search) {
+      if (pageI18n.search.word_regex) wordRegexStr = pageI18n.search.word_regex;
+      if (pageI18n.search.stopwords) stopwordsStr = pageI18n.search.stopwords;
     }
-    return false;
-  }
 
-  // ── DOM highlighting ──────────────────────────────────────────────────────────
-
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  }
-
-  // Split text into alternating non-word / word segments and wrap matches.
-  // Returns null when nothing matched (avoids unnecessary DOM mutations).
-  function buildHighlightedHtml(text) {
-    // wordRegex has a capturing group so split() keeps matched tokens at odd indices.
-    const parts = text.split(wordRegex);
-    let hasMatch = false;
-    let result = '';
-
-    for (let i = 0; i < parts.length; i++) {
-      if (i % 2 === 1 && wordMatchesAnyTerm(parts[i])) {
-        hasMatch = true;
-        result += `<mark class="afh-search-highlight">${escapeHtml(parts[i])}</mark>`;
-      } else {
-        result += escapeHtml(parts[i]);
+    // Also include the default language's word pattern so that content in the
+    // default language embedded in a translated page is tokenised correctly.
+    if (defaultI18n && defaultI18n.search && defaultI18n.search.word_regex) {
+      const defaultRegexStr = defaultI18n.search.word_regex;
+      if (defaultRegexStr !== wordRegexStr) {
+        wordRegexStr = wordRegexStr + '|' + defaultRegexStr;
       }
     }
 
-    return hasMatch ? result : null;
-  }
+    // Build the split regex: capturing group keeps matched tokens in the result array.
+    let wordRegex;
+    try {
+      wordRegex = new RegExp('(' + wordRegexStr + ')');
+    } catch (e) {
+      wordRegex = new RegExp('(' + FALLBACK_WORD_REGEX + ')');
+    }
 
-  // Tags whose entire subtree should be skipped
-  const SKIP_TAGS = new Set([
-    'SCRIPT', 'STYLE', 'NOSCRIPT', 'MARK',
-    'INPUT', 'TEXTAREA', 'SELECT',
-    'IFRAME', 'CANVAS', 'SVG', 'MATH',
-    'CODE', 'PRE',
-  ]);
+    const STOPWORDS = new Set(stopwordsStr.split(',').map((s) => s.trim()).filter(Boolean));
 
-  function run() {
+    // Parse + filter query terms (same rules: length > 2, not a stopword)
+    const terms = [...new Set(query.toLowerCase().trim().split(/\s+/).filter(Boolean))].filter(
+      (t) => t.length > 2 && !STOPWORDS.has(t)
+    );
+
+    if (!terms.length) return;
+
+    function wordMatchesAnyTerm(rawWord) {
+      // Strip leading/trailing punctuation before comparing
+      const word = rawWord.toLowerCase().replace(/^['''\-]+|['''\-]+$/g, '');
+      if (word.length < 3) return false;
+      for (const term of terms) {
+        if (wordMatchesTerm(word, term)) return true;
+      }
+      return false;
+    }
+
+    // ── DOM highlighting ────────────────────────────────────────────────────────
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    // Split text into alternating non-word / word segments and wrap matches.
+    // Returns null when nothing matched (avoids unnecessary DOM mutations).
+    function buildHighlightedHtml(text) {
+      // wordRegex has a capturing group so split() keeps matched tokens at odd indices.
+      const parts = text.split(wordRegex);
+      let hasMatch = false;
+      let result = '';
+
+      for (let i = 0; i < parts.length; i++) {
+        if (i % 2 === 1 && wordMatchesAnyTerm(parts[i])) {
+          hasMatch = true;
+          result += `<mark class="afh-search-highlight">${escapeHtml(parts[i])}</mark>`;
+        } else {
+          result += escapeHtml(parts[i]);
+        }
+      }
+
+      return hasMatch ? result : null;
+    }
+
+    // Tags whose entire subtree should be skipped
+    const SKIP_TAGS = new Set([
+      'SCRIPT', 'STYLE', 'NOSCRIPT', 'MARK',
+      'INPUT', 'TEXTAREA', 'SELECT',
+      'IFRAME', 'CANVAS', 'SVG', 'MATH',
+      'CODE', 'PRE',
+    ]);
+
     // Target only the main content area — naturally excludes header, sidebar,
     // footer, and nav without any additional selector filtering.
     const root = document.getElementById('main-content') || document.body;
@@ -225,12 +242,5 @@
       template.innerHTML = html;
       textNode.parentNode.replaceChild(template.content, textNode);
     }
-  }
-
-  // Run after the DOM is ready — defer handles this, but guard anyway.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run, { once: true });
-  } else {
-    run();
-  }
+  });
 }());

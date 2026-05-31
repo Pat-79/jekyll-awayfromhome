@@ -35,17 +35,27 @@
   var optionalCategories = categories.filter(function (c) { return !c.required; });
 
   // ── Runtime i18n (banner language follows the user's UI language pref) ────────
-  // The banner HTML is baked at build time in page.lang, but the user may have
-  // switched to a different language via the language selector (stored in
-  // localStorage as 'afh-lang'). We embed all site languages' strings as
-  // data-i18n-{code} attributes and re-apply the right set at runtime.
+  // The banner HTML is baked at build time in page.lang. If the visitor has a
+  // different preferred UI language, lazy-load that language JSON on demand.
   var _pageLang = banner.getAttribute('data-page-lang') || 'en';
+  var _i18nBasePath = (banner.getAttribute('data-i18n-base-path') || '/assets/data/i18n').replace(/\/+$/, '');
   var _i18nByLang = {};
-  (banner.getAttribute('data-langs') || '').split(',').forEach(function (lc) {
-    lc = lc.trim();
-    if (!lc) return;
-    try { _i18nByLang[lc] = JSON.parse(banner.getAttribute('data-i18n-' + lc) || 'null'); } catch (_) {}
-  });
+
+  function fetchLangStrings(lang) {
+    lang = (lang || '').trim();
+    if (!lang) return Promise.resolve(null);
+    if (_i18nByLang[lang]) return Promise.resolve(_i18nByLang[lang]);
+
+    var url = _i18nBasePath + '/' + encodeURIComponent(lang) + '.json';
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (payload) {
+        var strings = payload && payload.cookie_consent ? payload.cookie_consent : null;
+        if (strings) _i18nByLang[lang] = strings;
+        return strings;
+      })
+      .catch(function () { return null; });
+  }
 
   function applyI18n(s) {
     if (!s) return;
@@ -334,8 +344,10 @@
     (function () {
       var userLang = '';
       try { userLang = localStorage.getItem('afh-lang') || ''; } catch (_) {}
-      if (userLang && userLang !== _pageLang && _i18nByLang[userLang]) {
-        applyI18n(_i18nByLang[userLang]);
+      if (userLang && userLang !== _pageLang) {
+        fetchLangStrings(userLang).then(function (strings) {
+          if (strings) applyI18n(strings);
+        });
       }
     }());
 

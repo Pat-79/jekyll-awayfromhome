@@ -60,17 +60,16 @@
     return;
   }
 
-  // Read i18n strings from afh-page-meta. Fall back to data attributes, then hardcoded English.
+  // Read i18n strings from lang-persist's lazy-loaded cache when available.
+  // Fall back to data attributes, then hardcoded English.
   var tagsI18n = {};
-  var metaEl = document.getElementById('afh-page-meta');
-  if (metaEl) {
-    try {
-      var meta = readMetaJson(metaEl);
-      var lang = document.documentElement.lang || (meta && meta.currentLang) || 'en';
-      var langI18n = meta.i18n && (meta.i18n[lang] || meta.i18n[meta.currentLang]);
-      if (langI18n && langI18n.tags) tagsI18n = langI18n.tags;
-    } catch (e) {}
-  }
+  try {
+    var lang = document.documentElement.lang || 'en';
+    if (typeof window.afhI18nGetLoaded === 'function') {
+      var loaded = window.afhI18nGetLoaded(lang);
+      if (loaded && loaded.tags) tagsI18n = loaded.tags;
+    }
+  } catch (e) {}
 
   var i18nShowingAll = tagsI18n.showing_all
     || status.getAttribute('data-i18n-showing-all')
