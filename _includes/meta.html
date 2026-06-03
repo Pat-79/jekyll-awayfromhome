@@ -53,6 +53,7 @@
   {%- assign og_type = 'website' -%}
   {%- assign is_article = false -%}
 {%- endif -%}
+{% comment %} DOCUMENT META {% endcomment %}
 <!-- Document -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,14 +78,23 @@
     {%- else -%}
       {%- assign _alt_url = '/' | append: _lang.code | append: '/' | absolute_url -%}
     {%- endif -%}
+{% comment %} ALT LANG {% endcomment %}
 <link rel="alternate" hreflang="{{ _lang.code }}" href="{{ _alt_url }}">
   {%- endfor -%}
+{% comment %} DEFAULT LANG {% endcomment %}
 <link rel="alternate" hreflang="x-default" href="{{ '/' | absolute_url }}">
 {%- endif -%}
+{% comment %} SEO & Search Engine Optimization {% endcomment %}
 <!-- SEO & Search Engine Optimization -->
+{% if page_description %}
 <meta name="description" content="{{ page_description }}">
+{%- endif -%}
+{% if author_name %}
 <meta name="author" content="{{ author_name }}">
+{%- endif -%}
+{% if page.tags %}
 <meta name="keywords" content="{%- if page.tags -%}{{ page.tags | join: ', ' }}{%- endif -%}">
+{% endif %}
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="google-site-verification" content="">
 <meta name="googlebot" content="index, follow">
@@ -131,6 +141,7 @@
 {%- if twitter_creator and twitter_creator != '' -%}
 <meta name="twitter:creator" content="{{ twitter_creator }}">
 {%- endif -%}
+{% comment %} STRUCTURED DATA {% endcomment %}
 <!-- Structured Data & Schema.org -->
 <script type="application/ld+json">
 {
@@ -185,4 +196,3 @@
   ]
 }
 </script>
-
