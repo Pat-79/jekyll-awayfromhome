@@ -3,11 +3,10 @@ layout: none
 ---
 
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   {%- assign all_items = site.pages | concat: site.posts -%}
   {%- comment -%} Layouts that produce non-indexable utility pages {%- endcomment -%}
-  {%- assign _skip_layouts = 'search,search-data,social-media,sitemap,sitemap_xml,error' | split: ',' -%}
+  {%- assign _skip_layouts = 'search,search-data,sitemap,sitemap_xml,error' | split: ',' -%}
   {%- comment -%} File extensions that are not HTML pages {%- endcomment -%}
   {%- assign _skip_exts = 'css,js,json,xml,txt' | split: ',' -%}
   {%- for item in all_items -%}
@@ -34,11 +33,12 @@ layout: none
       {%- assign include_item = false -%}
     {%- endif -%}
     {%- if include_item -%}
+    {% comment %} URL {% endcomment %}
     <url>
       <loc>{{ site.url }}{{ item.url | replace: "index.html", "" | replace: '&', '&amp;' }}</loc>
       {%- if item.last_modified_at -%}
       <lastmod>{{ item.last_modified_at | date_to_xmlschema }}</lastmod>
-      {%- elsif item.date -%}
+      {% elsif item.date %}
       <lastmod>{{ item.date | date_to_xmlschema }}</lastmod>
       {%- endif -%}
       {%- comment -%} hreflang alternate links for multilingual content {%- endcomment -%}
@@ -47,16 +47,44 @@ layout: none
         {%- for _alt in _alts -%}
           {%- if _alt.sitemap != false -%}
             {%- assign _alt_lang = _alt.lang | default: site.lang | default: 'en' -%}
-      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' | replace: '&', '&amp;' }}"/>
+      {% comment %} XHTML:LINK {% endcomment %}
+      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' | replace: '&', '&amp;' }}" />
           {%- endif -%}
         {%- endfor -%}
         {%- assign _default_lang = site.lang | default: 'en' -%}
         {%- assign _x_default = _alts | where: 'lang', _default_lang | first -%}
         {%- if _x_default and _x_default.sitemap != false -%}
-      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' | replace: '&', '&amp;' }}"/>
+      
+      {% comment %} XHTML:LINK X-DEFAULT {% endcomment %}
+      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' | replace: '&', '&amp;' }}" />
         {%- endif -%}
       {%- endif -%}
+      {%- if item.priority != null -%}
+        {%- assign _priority = item.priority -%}
+      {%- elsif item.layout == 'home' -%}
+        {%- assign _priority = 1.0 -%}
+      {% elsif item.layout == 'post' %}
+        {%- assign _priority = 0.8 -%}
+      {% elsif item.layout == 'social-media' %}
+        {%- assign _priority = 0.6 -%}
+      {% elsif item.layout == 'blog' %}
+        {%- assign _priority = 0.4 -%}
+      {% elsif item.layout == 'entity-index' or item.layout == 'tag-index' %}
+        {%- assign _priority = 0.3 -%}
+      {% elsif item.layout == 'archive' or item.layout == 'search' or item.layout == 'base' %}
+        {%- assign _priority = 0.2 -%}
+      {% elsif item.layout == 'sitemap' or item.layout == 'base' or item.layout == '' %}
+        {%- assign _priority = 0.0 -%}
+      {%- else -%}
+        {%- assign _priority = 0.5 -%}
+      {%- endif -%}
+      {% comment %} PRIORITY {% endcomment %}
+      <priority>{{ _priority }}</priority>
+      {%- assign _changefreq = item.changefreq | default: 'monthly' -%}
+      {% comment %} CHANGEFREQ {% endcomment %}
+      <changefreq>{{ _changefreq }}</changefreq>
     </url>
     {%- endif -%}
   {%- endfor -%}
+  {% comment %} END {% endcomment %}
 </urlset>
