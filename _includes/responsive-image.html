@@ -182,10 +182,6 @@
       {%- if srcset_items != '' -%}{%- assign srcset_items = srcset_items | append: ', ' -%}{%- endif -%}
       {%- assign srcset_items = srcset_items | append: full_url | append: ' 2200w' -%}
     {%- endif -%}
-    {%- if base_exists -%}
-      {%- if srcset_items != '' -%}{%- assign srcset_items = srcset_items | append: ', ' -%}{%- endif -%}
-      {%- assign srcset_items = srcset_items | append: base_url | append: ' ' | append: base_width | append: 'w' -%}
-    {%- endif -%}
 
     {%- comment -%} AVIF lookup — separate pass so we can offer avif via <picture><source> with webp/jpeg <img> fallback {%- endcomment -%}
     {%- assign avif_thumb_url = '' -%}
