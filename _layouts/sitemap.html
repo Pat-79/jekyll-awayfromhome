@@ -172,7 +172,14 @@ layout: page
     {%- endif -%}
     {%- for node in sitemap_pages -%}
         {%- assign node_title = node.title | default: node.name | default: node.url -%}
-        {%- assign node_image = node.image | default: site.default_post_image -%}
+        {%- if node.layout == 'home' and site.home_landing.use_latest_post_image-%}
+          {% for post in site.posts limit:1 %}
+            {%- assign last_post_landing_image_raw = post.image -%}
+          {% endfor %}
+        {%- else -%}
+          {%- assign last_post_landing_image_raw = nil -%}
+        {%- endif -%}
+        {%- assign node_image = last_post_landing_image_raw | default: node.image | default: site.default_post_image -%}
         {%- assign _node_lang = node.lang | default: _site_lang -%}
         {%- assign _node_href = node.url | relative_url -%}
         {%- if _append_lang_query and _node_lang != _page_lang -%}
