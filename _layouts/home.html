@@ -7,11 +7,14 @@ layout: base
 {%- assign landing_video_url = page.landing_video_url | default: page.landing_video | default: site.home_landing.video_url -%}
 {%- assign landing_video_id = page.landing_youtube_id | default: site.home_landing.youtube_id -%}
 {%- assign landing_hls_raw = page.landing_hls_url | default: page.landing_hls | default: site.home_landing.hls_url | default: site.home_landing.landing_hls_url -%}
-{%- assign last_post_landing_image_raw = '' -%}
-{% for post in site.posts limit:1 %}
-  {%- assign last_post_landing_image_raw = post.image -%}
-{% endfor %}
-{%- assign landing_image_raw = page.landing_image | default: last_post_landing_image_raw | default: page.image | default: site.home_landing.image | default: site.default_post_image -%}
+{%- if site.home_landing.use_latest_post_image -%}
+  {% for post in site.posts limit:1 %}
+    {%- assign last_post_landing_image_raw = post.image -%}
+  {% endfor %}
+{%- else -%}
+  {%- assign last_post_landing_image_raw = nil -%}
+{%- endif -%}
+{%- assign landing_image_raw = page.landing_image | default: page.image | default: last_post_landing_image_raw | default: page.image | default: site.home_landing.image | default: site.default_post_image -%}
 {%- assign latest_posts_limit = page.latest_posts_limit | default: site.home_landing.latest_posts_limit -%}
 {%- assign home_per_page = page.home_per_page | default: site.home_landing.per_page | default: 10 -%}
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}

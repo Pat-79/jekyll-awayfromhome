@@ -172,6 +172,7 @@ sitemap_page:
 home_landing:
   video_url: https://youtu.be/VIDEO_ID
   youtube_id:
+  use_latest_post_image: true
   image: /assets/images/default-hero.svg
   latest_posts_limit: 9999999999
   #hls_url: /assets/streams/sample_stream.m3u8
@@ -358,5 +359,5 @@ sidebar:
     show_post_counts: true
 
 
-exclude:
-  - assets/images/**/original/**
+#exclude:
+#  - assets/images/**/original/**
