@@ -115,7 +115,7 @@ function initSearchWidget(widget) {
       const hasImage = Boolean(entry.image);
       const itemClass = hasImage ? 'search-widget__item search-widget__item--with-thumb' : 'search-widget__item';
       const media = hasImage
-        ? `<div class="search-widget__thumb-wrap"><img class="search-widget__thumb" src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async" /></div>`
+        ? `<div class="search-widget__thumb-wrap"><img class="search-widget__thumb" src="${escapeHtml(entry.image)}" alt="" loading="lazy" decoding="async"></div>`
         : '';
       const lang = entry.lang || '';
       const langBase = lang.split('-')[0].toLowerCase();
