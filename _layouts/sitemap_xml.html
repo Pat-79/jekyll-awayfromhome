@@ -48,7 +48,7 @@ layout: none
           {%- if _alt.sitemap != false -%}
             {%- assign _alt_lang = _alt.lang | default: site.lang | default: 'en' -%}
       {% comment %} XHTML:LINK {% endcomment %}
-      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' | replace: '&', '&amp;' }}">
+      <xhtml:link rel="alternate" hreflang="{{ _alt_lang }}" href="{{ site.url }}{{ _alt.url | replace: 'index.html', '' | replace: '&', '&amp;' }}" />
           {%- endif -%}
         {%- endfor -%}
         {%- assign _default_lang = site.lang | default: 'en' -%}
@@ -56,7 +56,7 @@ layout: none
         {%- if _x_default and _x_default.sitemap != false -%}
       
       {% comment %} XHTML:LINK X-DEFAULT {% endcomment %}
-      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' | replace: '&', '&amp;' }}">
+      <xhtml:link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ _x_default.url | replace: 'index.html', '' | replace: '&', '&amp;' }}" />
         {%- endif -%}
       {%- endif -%}
       {%- if item.priority != null -%}
