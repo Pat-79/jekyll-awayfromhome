@@ -180,6 +180,7 @@
       {%- assign _gw_stage_href = '' -%}
       {%- assign _gw_stage_src = '' -%}
       {%- assign _gw_stage_srcset = '' -%}
+      {%- assign _gw_stage_avif_srcset = '' -%}
       {%- assign _gw_stage_alt = '' -%}
       {%- capture _gw_items_markup -%}
         {%- for _gw_image_path in _gw_images -%}
@@ -263,6 +264,7 @@
             {%- assign _gw_stage_href = _gw_href -%}
             {%- assign _gw_stage_src = _gw_stage_preview_url -%}
             {%- assign _gw_stage_srcset = _gw_srcset -%}
+            {%- assign _gw_stage_avif_srcset = _gw_avif_srcset -%}
             {%- assign _gw_stage_alt = _gw_item_alt -%}
           {%- endif -%}
 
@@ -276,11 +278,10 @@
               data-gallery-alt="{{ _gw_item_alt | escape }}"
               data-gallery-base="{{ _gw_base_url }}"
               {% if _gw_srcset != '' %}data-gallery-srcset="{{ _gw_srcset }}"{% endif %}
+              {% if _gw_avif_srcset != '' %}data-gallery-avif-srcset="{{ _gw_avif_srcset }}"{% endif %}
               {% if _gw_mode == 'carousel' and forloop.first %}aria-current="true"{% endif %}
             >
-              {%- if _gw_avif_srcset != '' -%}
-              <picture>
-                <source type="image/avif" srcset="{{ _gw_avif_srcset }}" sizes="{{ _gw_thumb_sizes }}">
+              {%- capture _gw_thumb_img -%}
                 <img
                   class="afh-gallery__thumb"
                   src="{{ _gw_preview_url }}"
@@ -289,16 +290,14 @@
                   loading="{{ _gw_loading }}"
                   decoding="{{ _gw_decoding }}"
                 >
+              {%- endcapture -%}
+              {%- if _gw_avif_srcset != '' -%}
+              <picture>
+                <source type="image/avif" srcset="{{ _gw_avif_srcset }}" sizes="{{ _gw_thumb_sizes }}">
+                {{ _gw_thumb_img | strip }}
               </picture>
               {%- else -%}
-              <img
-                class="afh-gallery__thumb"
-                src="{{ _gw_preview_url }}"
-                {% if _gw_srcset != '' %}srcset="{{ _gw_srcset }}" sizes="{{ _gw_thumb_sizes }}"{% endif %}
-                alt="{{ _gw_item_alt | escape }}"
-                loading="{{ _gw_loading }}"
-                decoding="{{ _gw_decoding }}"
-              >
+              {{ _gw_thumb_img | strip }}
               {%- endif -%}
             </a>
           </article>
@@ -314,8 +313,9 @@
             data-gallery-alt="{{ _gw_stage_alt | escape }}"
             data-gallery-base="{{ _gw_stage_src }}"
             {% if _gw_stage_srcset != '' %}data-gallery-srcset="{{ _gw_stage_srcset }}"{% endif %}
+            {% if _gw_stage_avif_srcset != '' %}data-gallery-avif-srcset="{{ _gw_stage_avif_srcset }}"{% endif %}
           >
-            <picture class="afh-gallery__stage-picture is-active" data-gallery-stage-picture>
+            {%- capture _gw_stage_img -%}
               <img
                 class="afh-gallery__stage-image"
                 data-gallery-stage-image
@@ -325,17 +325,18 @@
                 loading="{{ _gw_loading }}"
                 decoding="{{ _gw_decoding }}"
               >
+            {%- endcapture -%}
+            <picture class="afh-gallery__stage-picture is-active" data-gallery-stage-picture>
+              {%- if _gw_stage_avif_srcset != '' -%}
+              <source type="image/avif" srcset="{{ _gw_stage_avif_srcset }}" sizes="{{ _gw_stage_sizes }}">
+              {%- endif -%}
+              {{ _gw_stage_img | strip }}
             </picture>
             <picture class="afh-gallery__stage-picture is-inactive" data-gallery-stage-picture aria-hidden="true">
-              <img
-                class="afh-gallery__stage-image"
-                data-gallery-stage-image
-                src="{{ _gw_stage_src }}"
-                {% if _gw_stage_srcset != '' %}srcset="{{ _gw_stage_srcset }}" sizes="{{ _gw_stage_sizes }}"{% endif %}
-                alt="{{ _gw_stage_alt | escape }}"
-                loading="{{ _gw_loading }}"
-                decoding="{{ _gw_decoding }}"
-              >
+              {%- if _gw_stage_avif_srcset != '' -%}
+              <source type="image/avif" srcset="{{ _gw_stage_avif_srcset }}" sizes="{{ _gw_stage_sizes }}">
+              {%- endif -%}
+              {{ _gw_stage_img | strip }}
             </picture>
           </a>
         </div>
@@ -368,16 +369,12 @@
               <span class="sr-only">Next image</span>
             </button>
           </div>
-          <p class="afh-gallery__stage-meta" data-gallery-stage-counter>{{ 1 }} / {{ _gw_count }}</p>
-        </div>
-        <div class="afh-gallery__grid" data-gallery-grid>
-          {{ _gw_items_markup }}
-        </div>
-      {%- else -%}
-        <div class="afh-gallery__grid" data-gallery-grid>
-          {{ _gw_items_markup }}
+          <p class="afh-gallery__stage-meta" data-gallery-stage-counter>1 / {{ _gw_count }}</p>
         </div>
       {%- endif -%}
+      <div class="afh-gallery__grid" data-gallery-grid>
+        {{ _gw_items_markup }}
+      </div>
     {%- else -%}
       <p class="afh-gallery__notice">{{ _gw_empty_text }}</p>
     {%- endif -%}
@@ -386,24 +383,26 @@
       <figcaption class="afh-gallery__description" data-gallery-description-text>{{ _gw_description }}</figcaption>
     {%- endif -%}
 
-    <div class="afh-gallery__lightbox is-hidden" data-gallery-lightbox aria-hidden="true" role="dialog" aria-modal="true">
-      <figure class="afh-gallery__figure">
-        <button class="afh-gallery__close" type="button" data-gallery-close aria-label="Close gallery">&times;</button>
-        <button class="afh-gallery__nav afh-gallery__nav--prev" type="button" data-gallery-prev aria-label="Previous image">
-          <span aria-hidden="true">&#8249;</span>
-          <span class="sr-only">Previous image</span>
-        </button>
-        <picture class="afh-gallery__picture" data-gallery-picture>
-          <img class="afh-gallery__image" data-gallery-image alt="">
-        </picture>
-        <button class="afh-gallery__nav afh-gallery__nav--next" type="button" data-gallery-next aria-label="Next image">
-          <span aria-hidden="true">&#8250;</span>
-          <span class="sr-only">Next image</span>
-        </button>
-        <figcaption class="afh-gallery__caption">
-          <p class="afh-gallery__caption-meta" data-gallery-counter></p>
-        </figcaption>
-      </figure>
-    </div>
+    {%- if _gw_count > 0 -%}
+      <div class="afh-gallery__lightbox is-hidden" data-gallery-lightbox aria-hidden="true" role="dialog" aria-modal="true" aria-label="Image viewer">
+        <figure class="afh-gallery__figure">
+          <button class="afh-gallery__close" type="button" data-gallery-close aria-label="Close gallery">&times;</button>
+          <button class="afh-gallery__nav afh-gallery__nav--prev" type="button" data-gallery-prev aria-label="Previous image">
+            <span aria-hidden="true">&#8249;</span>
+            <span class="sr-only">Previous image</span>
+          </button>
+          <picture class="afh-gallery__picture" data-gallery-picture>
+            <img class="afh-gallery__image" data-gallery-image alt="">
+          </picture>
+          <button class="afh-gallery__nav afh-gallery__nav--next" type="button" data-gallery-next aria-label="Next image">
+            <span aria-hidden="true">&#8250;</span>
+            <span class="sr-only">Next image</span>
+          </button>
+          <figcaption class="afh-gallery__caption">
+            <p class="afh-gallery__caption-meta" data-gallery-counter></p>
+          </figcaption>
+        </figure>
+      </div>
+    {%- endif -%}
   </section>
 {%- endif -%}

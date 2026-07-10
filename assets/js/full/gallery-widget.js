@@ -49,10 +49,11 @@
     applyNext();
   }
 
-  function createSource(media, srcset) {
+  function createSource(media, srcset, type) {
     var source = document.createElement('source');
     source.media = media;
     source.srcset = srcset;
+    if (type) source.type = type;
     return source;
   }
 
@@ -208,6 +209,7 @@
       base: anchor.dataset.galleryBase || '',
       href: anchor.getAttribute('href') || '',
       srcset: anchor.dataset.gallerySrcset || '',
+      avifSrcset: anchor.dataset.galleryAvifSrcset || '',
       alt: anchor.dataset.galleryAlt || '',
       thumb: anchor.dataset.galleryThumb || '',
       small: anchor.dataset.gallerySmall || '',
@@ -221,6 +223,7 @@
     var base = data.base || '';
     var href = data.href || '';
     var srcset = data.srcset || '';
+    var avifSrcset = data.avifSrcset || '';
     var srcsetCandidates = parseSrcsetCandidates(srcset);
     var small = data.small || '';
     var medium = data.medium || '';
@@ -232,6 +235,11 @@
 
     while (picture.firstChild) {
       picture.removeChild(picture.firstChild);
+    }
+
+    if (avifSrcset) {
+      picture.appendChild(createSource('(min-width: 1081px)', avifSrcset, 'image/avif'));
+      picture.appendChild(createSource('(max-width: 1080px)', avifSrcset, 'image/avif'));
     }
 
     if (srcset) {
@@ -599,6 +607,7 @@
       setOrRemoveDataAttr(stageLink, 'data-gallery-title', link.dataset.galleryTitle || '');
       setOrRemoveDataAttr(stageLink, 'data-gallery-description', link.dataset.galleryDescription || '');
       setOrRemoveDataAttr(stageLink, 'data-gallery-srcset', link.dataset.gallerySrcset || '');
+      setOrRemoveDataAttr(stageLink, 'data-gallery-avif-srcset', link.dataset.galleryAvifSrcset || '');
       stageLink.setAttribute('data-gallery-alt', link.dataset.galleryAlt || '');
       stageLink.setAttribute('data-gallery-base', link.dataset.galleryBase || link.getAttribute('href') || '');
     }
@@ -664,6 +673,7 @@
         base: link.dataset.galleryBase || link.getAttribute('href') || '',
         href: link.getAttribute('href') || '',
         srcset: link.dataset.gallerySrcset || '',
+        avifSrcset: link.dataset.galleryAvifSrcset || '',
         alt: link.dataset.galleryAlt || '',
         thumb: link.dataset.galleryThumb || '',
         small: link.dataset.gallerySmall || '',
