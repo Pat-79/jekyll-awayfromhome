@@ -25,3 +25,5 @@ _config.local.yml
 COMMENTS_DESIGN.md
 _data/comments/slow-travel-in-istrava-highlands/
 test.md
+.bundle
+.claude
