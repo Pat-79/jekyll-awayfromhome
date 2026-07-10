@@ -985,7 +985,15 @@ $radius-large: 0.5rem;
 
 // ── Theme imports ─────────────────────────────────────────────────────────────
 @import "awayfromhome-theme/base";
-@import "awayfromhome-theme/layout";
+@import "awayfromhome-theme/header";
+@import "awayfromhome-theme/hero";
+@import "awayfromhome-theme/page";
+@import "awayfromhome-theme/drawer";
+@import "awayfromhome-theme/tags";
+@import "awayfromhome-theme/browse";
+@import "awayfromhome-theme/archive";
+@import "awayfromhome-theme/social-links";
+@import "awayfromhome-theme/footer";
 @import "awayfromhome-theme/search-widget";
 @import "awayfromhome-theme/post";
 @import "awayfromhome-theme/gallery";
@@ -995,6 +1003,11 @@ $radius-large: 0.5rem;
 @import "awayfromhome-theme/cookies";
 @import "awayfromhome-theme/print";
 ```
+
+> Upgrading from an older version of the theme? `awayfromhome-theme/layout` was
+> split into the 9 focused files above in a later release. The old single
+> `@import "awayfromhome-theme/layout";` line still works as a compatibility
+> shim, but switching to the explicit list is recommended going forward.
 
 #### Typography
 

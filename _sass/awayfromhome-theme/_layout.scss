@@ -1,0 +1,21 @@
+// Away From Home Theme - Backward-compatibility shim.
+//
+// This file used to contain all layout/header/drawer/tag/footer styling
+// directly. It has been split into focused partials (_header.scss, _hero.scss,
+// _page.scss, _drawer.scss, _tags.scss, _browse.scss, _archive.scss,
+// _social-links.scss, _footer.scss).
+//
+// Site owners who copied the old customization example from the README and
+// have their own assets/css/main.scss with an explicit
+// `@import "awayfromhome-theme/layout";` line will still work via this shim.
+// New sites should import the split files directly instead (see README).
+
+@import "awayfromhome-theme/header";
+@import "awayfromhome-theme/hero";
+@import "awayfromhome-theme/page";
+@import "awayfromhome-theme/drawer";
+@import "awayfromhome-theme/tags";
+@import "awayfromhome-theme/browse";
+@import "awayfromhome-theme/archive";
+@import "awayfromhome-theme/social-links";
+@import "awayfromhome-theme/footer";
