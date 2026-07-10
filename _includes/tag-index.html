@@ -23,8 +23,7 @@
           {%- assign tag_name = _tag_parts[0] -%}
           {%- assign tag_slug = tag_name | slugify -%}
           {%- assign post_count = _tag_parts[1] | plus: 0 -%}
-          {%- assign font_size = post_count | minus: min_posts | times: size_range | divided_by: steps | plus: min_size -%}
-          {%- assign size_bucket = font_size | minus: min_size | times: 5 | divided_by: size_range | plus: 1 -%}
+          {%- assign size_bucket = _tag_parts[2] -%}
           <a class="tag-chip tag-chip--cloud tag-filter-chip tag-chip--size-{{ size_bucket }}" href="{{ _tags_base | relative_url }}?tag={{ tag_slug }}" data-tag-filter-link data-tag-value="{{ tag_slug }}">
             <span class="tag-chip__label">{{ tag_name }}</span>
             <span class="tag-chip__count">{{ post_count }}</span>
