@@ -1,6 +1,6 @@
 :root {
   --afh-video-bg: var(--surface-muted);
-  --afh-video-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
+  --afh-video-border: #{$widget-border-tint};
   --afh-video-shadow: #{$shadow-widget};
 }
 

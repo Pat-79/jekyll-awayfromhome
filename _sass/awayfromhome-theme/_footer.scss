@@ -1,0 +1,185 @@
+// Away From Home Theme - Site Footer
+// Split out of the former monolithic _layout.scss.
+// NOTE: imported after _social-links.scss -- see note there.
+
+@import "awayfromhome-theme/variables";
+
+// ============================================================================
+// FOOTER: Bottom Navigation & Information
+// ============================================================================
+
+/// Footer layout has exactly two states:
+/// 1) wide: 1 row x 3 columns
+/// 2) narrow: 3 rows x 1 column
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto;
+  grid-template-areas: "footer-left footer-center footer-right";
+  align-items: center;
+  gap: 1rem 1.25rem;
+}
+
+/// Ensure the footer container is never constrained by page-level .container
+/// overrides (e.g. the default GitHub 404.html which sets max-width: 600px).
+.site-footer .container {
+  max-width: none;
+  width: min(calc(100% - (2 * var(--page-gutter))), var(--layout-max-width));
+  text-align: start;
+}
+
+.site-footer__brand,
+.site-footer__note {
+  text-align: start;
+}
+
+
+// ============================================================================
+// FOOTER: Site Footer & Content
+// ============================================================================
+
+/// Main footer section - dark background, positioned at bottom
+.site-footer {
+  padding: 1rem 0 1rem;
+  background: $footer-bg;
+  border-top: 1px solid var(--border);
+}
+
+/// Footer content groups - logo/brand and disclaimer/note
+.site-footer__brand,
+.site-footer__note {
+  display: grid;
+  gap: 0.25rem;
+}
+
+/// Brand section - positioned in footer grid
+.site-footer__brand {
+  grid-area: footer-left;
+  justify-self: start;
+  align-self: center;
+  align-content: center;
+  min-width: max-content;
+}
+
+/// Disclaimer/note section - centered
+.site-footer__note {
+  grid-area: footer-center;
+  justify-self: center;
+  align-self: center;
+  align-content: center;
+}
+
+/// Social links in footer - right aligned
+.social-links--footer {
+  grid-area: footer-right;
+  justify-self: end;
+  align-self: center;
+  margin-inline: 0; // Override margin-inline: auto from .social-links--balanced
+}
+
+.social-links--footer:not(.social-links--balanced) {
+  min-width: max-content;
+  flex-wrap: nowrap;
+}
+
+/// Footer text color - light on dark background
+.site-footer {
+  color: color-mix(in srgb, $footer-text 70%, transparent);
+}
+
+.site-footer a {
+  color: inherit;
+}
+
+.site-footer * {
+  color: inherit;
+}
+
+/// Footer brand link styling
+.site-footer__brand a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/// First link in brand section - site title styling
+.site-footer__brand a:first-child {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+}
+
+/// Disclaimer text - more muted color
+.site-footer__note {
+  text-align: center;
+}
+
+.site-footer .social-link {
+  color: inherit;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.site-footer .social-link:hover,
+.site-footer .social-link:focus-visible,
+.site-footer .social-link--share.is-copied,
+.site-footer .social-link--share.is-copy-failed {
+  color: inherit;
+  background: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.site-footer__note p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+
+// ============================================================================
+// FOOTER: Mobile breakpoint adjustments (≤ 719px)
+// ============================================================================
+
+@media (max-width: 719px) {
+  /// Footer grid - strict vertical stack with reordered content
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "footer-right"
+      "footer-left"
+      "footer-center";
+    align-items: stretch;
+    row-gap: 1.2rem;
+  }
+
+  /// Social links on top - centered
+  .social-links--footer {
+    grid-area: footer-right;
+    width: auto;
+    justify-self: center;
+    justify-content: center;
+    align-self: center;
+    align-content: center;
+  }
+
+  .social-links--footer:not(.social-links--balanced) {
+    flex-wrap: wrap;
+  }
+
+  /// Footer brand (sitemap) in middle - centered
+  .site-footer__brand {
+    grid-area: footer-left;
+    justify-self: center;
+    align-self: center;
+    align-content: center;
+    text-align: center;
+  }
+
+  /// Footer note (disclaimer) on bottom - centered
+  .site-footer__note {
+    grid-area: footer-center;
+    justify-self: center;
+    text-align: center;
+    align-self: center;
+    align-content: center;
+  }
+}

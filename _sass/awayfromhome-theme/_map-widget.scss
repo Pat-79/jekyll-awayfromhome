@@ -1,6 +1,6 @@
 :root {
   --afh-map-bg: var(--surface-muted);
-  --afh-map-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
+  --afh-map-border: #{$widget-border-tint};
   --afh-map-shadow: #{$shadow-widget};
 }
 

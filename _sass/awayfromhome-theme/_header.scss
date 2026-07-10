@@ -1,0 +1,574 @@
+// Away From Home Theme - Header, Brand & Hamburger Menu Toggle
+// Split out of the former monolithic _layout.scss.
+
+@import "awayfromhome-theme/variables";
+
+// ============================================================================
+// HEADER LAYOUT: Computed helpers (derived from $header-* variables)
+// ============================================================================
+
+// Whether the drawer/toggle lives on the start (left in LTR) side.
+$_drawer-is-start: $header-drawer-side == start or $header-drawer-side == left;
+
+// Brand slot classification.
+$_brand-is-start:  $header-brand-slot == start or $header-brand-slot == left;
+$_brand-is-end:    $header-brand-slot == end   or $header-brand-slot == right;
+$_brand-is-center: $header-brand-slot == center;
+
+// True when the brand and the drawer/toggle are on the same side.
+// In this case the grid needs an extra auto column so they don't conflict.
+$_same-side: ($_drawer-is-start and $_brand-is-start) or (not $_drawer-is-start and $_brand-is-end);
+
+// Search slot helpers (for centered-brand layout decisions).
+$_search-is-start: $header-search-slot == start or $header-search-slot == left;
+// True when the search and toggle/drawer are on the same side.
+// When brand is centered this requires a 4-column grid so search and toggle
+// don't fight for the same column.
+$_search-same-as-drawer: ($_drawer-is-start and $_search-is-start) or (not $_drawer-is-start and not $_search-is-start);
+
+// RTL physical-side helpers.
+// Logical 'start'/'end' brand values flip meaning in RTL (start=right, end=left).
+// Physical 'right'/'left' brand values are always fixed.
+// These detect the physical side the brand will occupy in an RTL document, used
+// to compute RTL same-side conflicts when a physical drawer value is configured.
+$_rtl-brand-at-right: $header-brand-slot == start or $header-brand-slot == right;
+$_rtl-brand-at-left:  $header-brand-slot == end   or $header-brand-slot == left;
+
+
+// ============================================================================
+// HEADER: Fixed Navigation Top Bar
+// ============================================================================
+
+/// Main site header - fixed at top of viewport
+/// Responds to two scroll classes:
+/// - is-header-solid: applies dark background (triggered at scrollY > 0)
+/// - is-scrolled: reduces height when post hero exits viewport
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: $header-padding-block 0;
+  background: transparent;
+  transform: translateX(0);
+  
+  transition: transform $motion-base, padding $motion-base, background 0.2s;
+  
+  // Default: no blur effect (transparent state)
+  backdrop-filter: blur(0);
+}
+
+/// Dark background + blur effect applied when:
+/// - User has scrolled down (is-header-solid class)
+/// - Navigation drawer is open (menu-open class)
+body.is-header-solid .site-header,
+body.menu-open .site-header {
+  background: color-mix(in srgb, var(--header-bg-scrolled) 96%, $color-black);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); // Safari support
+  box-shadow: $shadow-header-solid;
+}
+
+/// Inner container for header content (logo, menu button)
+/// Height transitions between two states based on scroll position
+.site-header__inner {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: $header-inner-height; // Default height
+  padding-inline: clamp(0.65rem, 2.2vw, 1.6rem); // Responsive padding
+  display: grid;
+  grid-auto-flow: dense; // Allow backfill when items are assigned to non-DOM-order columns
+  @if $_brand-is-center and $_search-same-as-drawer and not $_drawer-is-start {
+    // Brand center, search + toggle both on end: [1fr][brand][search 1fr][toggle]
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  } @else if $_brand-is-center and $_search-same-as-drawer and $_drawer-is-start {
+    // Brand center, search + toggle both on start: [toggle][search 1fr][brand][1fr]
+    grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr);
+  } @else if $_brand-is-center {
+    // Brand center, search and toggle on opposite sides: true 3-col center
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  } @else if $_same-side and $_drawer-is-start {
+    // Toggle + Brand on start side, search fills the rest
+    grid-template-columns: auto auto minmax(0, 1fr); // [toggle][brand][search]
+  } @else if $_same-side and not $_drawer-is-start {
+    // Search fills the start, Brand + Toggle on end side
+    grid-template-columns: minmax(0, 1fr) auto auto; // [search][brand][toggle]
+  } @else {
+    // Default cross-side: brand on one end, toggle on the other
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  align-items: center;
+  gap: 1rem;
+  transition: min-height 220ms;
+}
+
+.site-header__search {
+  min-width: 0;
+  width: min(26rem, 100%);
+  @if $_brand-is-center and $_search-same-as-drawer and not $_drawer-is-start {
+    grid-column: 3; // [1fr][brand][search][toggle] — search in col 3
+  } @else if $_brand-is-center and $_search-same-as-drawer and $_drawer-is-start {
+    grid-column: 2; // [toggle][search][brand][1fr] — search in col 2
+  } @else if $_brand-is-center {
+    // Opposite sides: search goes in the 1fr column opposite the toggle
+    @if $_drawer-is-start {
+      grid-column: 3;
+    } @else {
+      grid-column: 1;
+    }
+  } @else if $_same-side and $_drawer-is-start {
+    grid-column: 3; // The 1fr column in [toggle][brand][search]
+  } @else if $_same-side and not $_drawer-is-start {
+    grid-column: 1; // The 1fr column in [search][brand][toggle]
+  } @else {
+    grid-column: 2; // Always the 1fr middle column
+  }
+  @if $header-search-slot == start or $header-search-slot == left {
+    justify-self: start;
+  } @else if $header-search-slot == center {
+    justify-self: center;
+  } @else {
+    justify-self: end;
+  }
+}
+
+/// Reduced height when post hero exits viewport (is-scrolled)
+/// or when menu is open (prevents overlap)
+body.is-scrolled .site-header__inner,
+body.menu-open .site-header__inner {
+  min-height: $header-inner-height-compact;
+}
+
+
+// ============================================================================
+// BRAND: Logo & Title
+// ============================================================================
+
+/// Site brand/logo container - links to home page
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  position: relative;
+  z-index: 2; // Stays above menu when opened
+  flex: 0 1 auto;
+  min-width: 0; // Allows truncation of long titles
+  @if $_brand-is-center and $_search-same-as-drawer and not $_drawer-is-start {
+    grid-column: 2; // [1fr][brand][search][toggle]
+    justify-self: center;
+  } @else if $_brand-is-center and $_search-same-as-drawer and $_drawer-is-start {
+    grid-column: 3; // [toggle][search][brand][1fr]
+    justify-self: center;
+  } @else if $_brand-is-center {
+    grid-column: 2;
+    justify-self: center;
+  } @else if $_same-side {
+    // Brand sits in col 2, adjacent to the toggle in col 1 or col 3
+    grid-column: 2;
+    @if $_drawer-is-start {
+      justify-self: start; // Brand=start: icon on the left (default flex-direction)
+    } @else {
+      justify-self: end;
+      flex-direction: row-reverse; // Brand=end: icon to the outer (right) edge
+    }
+  } @else if $_brand-is-end {
+    grid-column: 3;
+    justify-self: end;
+    flex-direction: row-reverse; // Icon to the outer (right) edge of the brand unit
+  } @else {
+    grid-column: 1;
+    justify-self: start;
+  }
+}
+
+/// Logo and mark are circles with consistent dimensions
+.site-brand__logo,
+.site-brand__mark {
+  width: $control-size;
+  height: $control-size;
+  border-radius: $radius-pill; // Perfect circle
+  flex: 0 0 auto;
+}
+
+/// Logo mark - colored circle with accent background and site initial
+.site-brand__mark {
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface));
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+/// Logo text - always white with a tight dark halo that keeps it legible
+/// on any background: light page, dark hero, scrolled header, or open menu.
+.site-brand__text {
+  color: $color-white;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; // Truncate on narrow screens
+  text-shadow: $header-text-shadow;
+}
+
+/// When the header turns solid (scrolled / menu open), drop the shadow —
+/// the dark background now provides sufficient contrast on its own.
+body.is-header-solid .site-brand__text,
+body.menu-open .site-brand__text {
+  text-shadow: none;
+}
+
+/// Logo drop shadow when header is solid
+body.is-header-solid .site-brand__logo,
+body.menu-open .site-brand__logo {
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+}
+
+
+// ============================================================================
+// MENU TOGGLE: Hamburger Button
+// ============================================================================
+
+/// Hamburger menu button - opens navigation drawer
+.menu-toggle {
+  flex: 0 0 auto;
+  width: $control-size;
+  height: $control-size;
+  display: grid;
+  place-items: center;
+  @if $_drawer-is-start {
+    grid-column: 1;
+    justify-self: start; // Align to the start (left) side of header
+  } @else if $_brand-is-center and $_search-same-as-drawer {
+    grid-column: 4; // [1fr][brand][search][toggle] — toggle in col 4
+    justify-self: end;
+  } @else {
+    grid-column: 3;
+    justify-self: end; // Align to the end (right) side of header
+  }
+  padding: 0;
+  border: 1px solid $frost-border-soft;
+  border-radius: $radius-pill;
+  background: $frost-bg-strong;
+  color: $color-white;
+  box-shadow: $elevation-shadow;
+}
+
+/// Once the header has a dark background of its own, soften the button background.
+body.is-header-solid .menu-toggle,
+body.menu-open .menu-toggle {
+  background: $frost-bg-soft;
+}
+
+/// Container for three animated bars
+.menu-toggle__bars {
+  width: $menu-bars-width;
+  display: grid;
+  gap: $menu-bar-gap;
+}
+
+/// Individual hamburger bar - 2px height
+/// Each bar has unique animation (5.791s, 9.23s, 7.31s) for organic effect
+.menu-toggle__bar {
+  display: block;
+  height: $menu-bar-height;
+  // Shorter middle bar points away from the drawer side.
+  // Physical values use fixed margins; logical values use RTL-aware logical margins.
+  @if $header-drawer-side == left {
+    margin-right: auto;
+  } @else if $header-drawer-side == right {
+    margin-left: auto;
+  } @else if $_drawer-is-start {
+    margin-inline-end: auto; // logical: faces inline-end (right in LTR, left in RTL)
+  } @else {
+    margin-inline-start: auto; // logical: faces inline-start (left in LTR, right in RTL)
+  }
+  border-radius: $radius-pill;
+  background: currentColor;
+  transform-origin: center;
+  transition: transform $motion-base ease, opacity $motion-toast ease, width $motion-base ease;
+}
+
+/// Top and bottom bars - 20px width
+.menu-toggle__bar--top,
+.menu-toggle__bar--bottom {
+  width: $menu-bar-width-long;
+}
+
+/// Middle bar - 14px width (off-center for visual balance)
+.menu-toggle__bar--middle {
+  width: $menu-bar-width-short;
+}
+
+/// Continuous animations with staggered timings for each bar
+.menu-toggle__bar--top {
+  animation: menu-bar-top 5.791s ease-in-out infinite;
+}
+
+.menu-toggle__bar--middle {
+  animation: menu-bar-middle 9.23s ease-in-out infinite;
+}
+
+.menu-toggle__bar--bottom {
+  animation: menu-bar-bottom 7.31s ease-in-out infinite;
+}
+
+/// When menu is open: stop animations and transform into X
+body.menu-open .menu-toggle__bar {
+  animation: none;
+  margin-left: 0;
+  margin-right: 0;
+  justify-self: center;
+}
+
+/// Top bar rotates up and to the right
+body.menu-open .menu-toggle__bar--top {
+  width: $menu-bar-width-open;
+  transform: translateY($menu-bar-open-offset) rotate(45deg);
+}
+
+/// Middle bar fades out
+body.menu-open .menu-toggle__bar--middle {
+  opacity: 0;
+}
+
+/// Bottom bar rotates down and to the left
+body.menu-open .menu-toggle__bar--bottom {
+  width: $menu-bar-width-open;
+  transform: translateY(calc(-1 * #{$menu-bar-open-offset})) rotate(-45deg);
+}
+
+
+// ============================================================================
+// HEADER LAYOUT: RTL runtime fixes for physical drawer values
+// ============================================================================
+// CSS Grid reverses column numbering in [dir="rtl"]: column 1 is on the
+// physical RIGHT, column 3 on the physical LEFT (for a 3-col grid).
+// Physical 'left'/'right' drawer values keep the drawer fixed regardless of
+// writing direction, but the compiled grid-column assignments land on the wrong
+// physical side in RTL. These [dir="rtl"] selectors correct toggle, brand, and
+// search placement at runtime without touching the logical-value paths.
+
+@if $header-drawer-side == right {
+  // Drawer is always on the physical RIGHT.
+  // In RTL col 1 = physical right → move toggle there to sit beside the drawer.
+  [dir="rtl"] .menu-toggle {
+    grid-column: 1;
+    justify-self: start; // inline-start = physical right in RTL
+  }
+
+  @if $_brand-is-center {
+    // Symmetric center grid: just swap toggle↔search columns so both land on
+    // the correct physical sides (toggle right, search left in RTL).
+    [dir="rtl"] .site-header__inner {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+    [dir="rtl"] .site-header__search {
+      grid-column: 3; // physical left in RTL
+    }
+  } @else if $_rtl-brand-at-right {
+    // Brand also lands on physical right in RTL (brand=start or brand=right).
+    // Same-side conflict: switch to [toggle][brand][search↔fills-left] grid.
+    [dir="rtl"] .site-header__inner {
+      grid-template-columns: auto auto minmax(0, 1fr);
+    }
+    [dir="rtl"] .site-brand {
+      grid-column: 2;
+      justify-self: start; // inline-start = physical right in RTL
+    }
+    [dir="rtl"] .site-header__search {
+      grid-column: 3; // fills physical left
+    }
+  } @else {
+    // Brand on physical left, toggle on physical right → cross-side.
+    [dir="rtl"] .site-header__inner {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+    [dir="rtl"] .site-brand {
+      grid-column: 3;
+      justify-self: end; // inline-end = physical left in RTL
+    }
+    [dir="rtl"] .site-header__search {
+      grid-column: 2;
+    }
+  }
+}
+
+@if $header-drawer-side == left {
+  // Drawer is always on the physical LEFT.
+  // In RTL col 3 = physical left (3-col grid) → move toggle there.
+  [dir="rtl"] .menu-toggle {
+    grid-column: 3;
+    justify-self: end; // inline-end = physical left in RTL
+  }
+
+  @if $_brand-is-center {
+    // Symmetric center grid: swap toggle↔search columns.
+    [dir="rtl"] .site-header__inner {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+    [dir="rtl"] .site-header__search {
+      grid-column: 1; // physical right in RTL
+    }
+  } @else if $_rtl-brand-at-left {
+    // Brand also lands on physical left in RTL (brand=end or brand=left).
+    // Same-side conflict: switch to [search↔fills-right][brand][toggle] grid.
+    [dir="rtl"] .site-header__inner {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+    }
+    [dir="rtl"] .site-brand {
+      grid-column: 2;
+      justify-self: end; // inline-end = physical left in RTL
+    }
+    [dir="rtl"] .site-header__search {
+      grid-column: 1; // fills physical right
+    }
+  } @else {
+    // Brand on physical right, toggle on physical left → cross-side.
+    [dir="rtl"] .site-header__inner {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+    [dir="rtl"] .site-brand {
+      grid-column: 1;
+      justify-self: start; // inline-start = physical right in RTL
+    }
+    [dir="rtl"] .site-header__search {
+      grid-column: 2;
+    }
+  }
+}
+
+
+// ============================================================================
+// KEYFRAME ANIMATIONS: Hamburger Bar Animations
+// ============================================================================
+
+/// Top bar animation - width pulses with 5.791s cycle
+/// Creates organic, continuous animation effect
+@keyframes menu-bar-top {
+  0% {
+    width: 20px;
+  }
+  8.633% {
+    width: 15px;
+  }
+  17.266% {
+    width: 20px;
+  }
+  100% {
+    width: 20px;
+  }
+}
+
+/// Middle bar animation - width pulses with 9.23s cycle
+/// Different timing creates visual rhythm and interest
+@keyframes menu-bar-middle {
+  0% {
+    width: 14px;
+  }
+  5.416% {
+    width: 19px;
+  }
+  10.832% {
+    width: 14px;
+  }
+  100% {
+    width: 14px;
+  }
+}
+
+/// Bottom bar animation - width pulses with 7.31s cycle
+/// Staggered timing makes the three bars move independently
+@keyframes menu-bar-bottom {
+  0% {
+    width: 20px;
+  }
+  6.842% {
+    width: 15px;
+  }
+  13.684% {
+    width: 20px;
+  }
+  100% {
+    width: 20px;
+  }
+}
+
+// ============================================================================
+// HEADER LAYOUT: Mobile breakpoint adjustments (≤ 719px)
+// ============================================================================
+
+@media (max-width: 719px) {
+  .site-header__inner {
+    // Simplified 2-column layout: toggle on its side, brand takes remaining space
+    @if $_drawer-is-start {
+      grid-template-columns: auto minmax(0, 1fr);
+    } @else {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+
+  // Reset brand and toggle grid-column for 2-column mobile layout
+  .site-brand {
+    @if $_drawer-is-start {
+      grid-column: 2;
+      justify-self: end;
+    } @else {
+      grid-column: 1;
+      justify-self: start;
+    }
+  }
+
+  .menu-toggle {
+    @if $_drawer-is-start {
+      grid-column: 1;
+    } @else {
+      grid-column: 2;
+    }
+  }
+
+  .site-header__search {
+    display: none;
+  }
+}
+
+// ============================================================================
+// HEADER LAYOUT: RTL mobile fixes for physical drawer values (≤ 719px)
+// ============================================================================
+// The 2-column simplified mobile grid (toggle | brand) also has reversed
+// column order in RTL, so physical drawer values need [dir="rtl"] swaps here.
+
+@if $header-drawer-side == right {
+  @media (max-width: 719px) {
+    [dir="rtl"] .site-header__inner {
+      // Swap to: [toggle (auto, right)][brand (1fr, fills left)]
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+    [dir="rtl"] .menu-toggle {
+      grid-column: 1; // physical right in RTL
+    }
+    [dir="rtl"] .site-brand {
+      grid-column: 2; // fills left in RTL
+    }
+  }
+}
+
+@if $header-drawer-side == left {
+  @media (max-width: 719px) {
+    [dir="rtl"] .site-header__inner {
+      // Swap to: [brand (1fr, fills right)][toggle (auto, left)]
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    [dir="rtl"] .menu-toggle {
+      grid-column: 2; // physical left in RTL
+    }
+    [dir="rtl"] .site-brand {
+      grid-column: 1; // fills right in RTL
+    }
+  }
+}

@@ -1,0 +1,349 @@
+// Away From Home Theme - Generic Page Shell & Content Components
+// Split out of the former monolithic _layout.scss.
+
+@import "awayfromhome-theme/variables";
+
+// ============================================================================
+// LAYOUT: Page Structure & Container
+// ============================================================================
+
+/// Root container for entire site
+/// Uses flexbox to push footer to bottom (sticky footer pattern)
+.site-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: transparent;
+}
+
+
+// ============================================================================
+// PAGE CONTENT: Main Content Area
+// ============================================================================
+
+/// Main content flex container - grows to fill available space above footer
+.page-content {
+  flex: 1;
+  position: relative;
+}
+
+// ============================================================================
+// DEFAULT LAYOUT: Non-Post Pages
+// ============================================================================
+
+/// Default layout page content - accounts for fixed header
+/// Adds bottom padding to create space before footer
+.layout-default .page-content {
+  padding-top: calc(var(--header-height) + 2rem);
+  padding-bottom: 1.5rem;
+}
+
+.layout-default.has-page-image .page-content {
+  padding-top: 0;
+}
+
+.layout-default.home-landing .page-content {
+  padding-top: 0;
+}
+
+/// Search page: add bottom slack so focus-scroll can place the input near
+/// the top even on short pages and mobile keyboards.
+.layout-search .page-content::after {
+  content: "";
+  display: block;
+  height: clamp(16rem, 62svh, 34rem);
+}
+
+/// On the landing hero, the brand text shadow is already handled by the
+/// default $header-text-shadow. No additional overrides needed.
+
+/// Keep a consistent footer gap on all non-post pages.
+body:not(.layout-post) .page-content > :last-child {
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/// Posts can intentionally run into the footer when the continue banner is present.
+.layout-post .page-content > :last-child {
+  margin-bottom: 0;
+}
+
+
+// ============================================================================
+// PAGE SECTIONS & CARDS: Content Components
+// ============================================================================
+
+/// Generic page section container
+.page-section {
+  padding: 0;
+}
+
+.page-section--spaced {
+  margin-top: 1.25rem;
+}
+
+
+// ============================================================================
+// BLOG: Client-side pagination controls
+// ============================================================================
+
+[data-blog-item].is-pagination-hidden {
+  display: none !important;
+}
+
+[data-archive-item].is-pagination-hidden {
+  display: none !important;
+}
+
+.blog-pagination {
+  display: none;
+}
+
+.blog-pagination:not(.blog-pagination--hidden) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.blog-pagination__btn {
+  font-family: $font-body;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: $radius-pill;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background $motion-base, border-color $motion-base, opacity $motion-base;
+
+  &:hover:not(:disabled) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+.blog-pagination__meta {
+  font-size: 0.875rem;
+  color: var(--muted);
+  min-width: 7rem;
+  text-align: center;
+}
+
+/// Reusable card styles for intro cards, story cards, and page copy
+.intro-card,
+.story-card,
+.page-copy {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  background: var(--surface-muted);
+  box-shadow: var(--shadow-soft);
+}
+
+/// Intro card width + padding
+.intro-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: $panel-max-width;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/// Page copy keeps container gutters while capping readable width
+.page-copy {
+  box-sizing: border-box;
+  max-width: $panel-max-width;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/// Match regular page text to blog post body typography (excluding headings)
+.page-copy p,
+.page-copy li,
+.page-copy blockquote {
+  font-family: var(--font-body);
+  font-size: 1.32rem;
+  line-height: 1.6;
+}
+
+/// Text color in cards - muted for secondary content
+.intro-card p,
+.page-copy p,
+.page-copy li {
+  color: var(--muted);
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+@media (max-width: $breakpoint-desktop) {
+  .page-copy p,
+  .page-copy li,
+  .page-copy blockquote {
+    font-size: 1.18rem;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .page-copy p,
+  .page-copy li,
+  .page-copy blockquote {
+    font-size: 1.06rem;
+  }
+
+  .layout-search .page-content::after {
+    height: clamp(20rem, 78svh, 44rem);
+  }
+}
+
+/// List of story cards - grid with consistent gaps
+.story-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/// Story card - two-column grid (image + content)
+.story-card {
+  display: grid;
+  grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.story-card--blog {
+  min-height: 18rem;
+}
+
+/// Story card background image section
+.story-card__media {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+.story-card__media-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform $motion-base ease;
+}
+
+.story-card:hover .story-card__media-image,
+.story-card:focus-visible .story-card__media-image {
+  transform: scale(1.07);
+}
+
+/// Story card text content area
+.story-card__body {
+  padding: 1.5rem;
+}
+
+/// Story card metadata - date, tags, etc.
+.story-card__meta {
+  margin-bottom: 0.65rem;
+  color: var(--accent-strong);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+/// Story card body text
+.story-card__excerpt {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.story-card__read-more {
+  margin: 0.65rem 0 0;
+  color: var(--accent-strong);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+
+// ============================================================================
+// ERROR PAGE
+// ============================================================================
+
+.error-page {
+  text-align: center;
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+}
+
+.error-page__code {
+  margin-bottom: 0.7rem;
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.error-page h1 {
+  margin-bottom: 0.85rem;
+}
+
+.error-page p {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 38rem;
+}
+
+
+// ============================================================================
+// BUTTONS & ACTIONS
+// ============================================================================
+
+/// Primary button style - accent background with dark text
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.4rem;
+  border-radius: $radius-pill;
+  background: var(--accent);
+  color: $color-accent-ink;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform $motion-fast ease, background $motion-fast ease;
+}
+
+/// Button hover state - stronger accent, subtle lift
+.button:hover {
+  background: var(--accent-strong);
+  color: $color-accent-ink;
+  transform: translateY(-1px);
+}
+
+// ============================================================================
+// PAGE: Mobile breakpoint adjustments (≤ 719px)
+// ============================================================================
+
+@media (max-width: 719px) {
+  /// Story cards stack vertically (single column)
+  .story-card {
+    grid-template-columns: 1fr;
+  }
+
+  /// Story card image gets full width and fixed height
+  .story-card__media {
+    min-height: 14rem;
+  }
+
+  /// Adjust default layout top padding
+  .layout-default .page-content {
+    padding-top: calc(var(--header-height) + 1.4rem);
+  }
+}

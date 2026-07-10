@@ -1,11 +1,16 @@
 // Gallery widget variables can be overridden by site owners.
+
+// On-image text legibility shadow, reused by caption/title text sitting
+// directly over photos.
+$gallery-on-image-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+
 :root {
   --afh-gallery-bg: color-mix(in srgb, var(--surface) 92%, #000);
   --afh-gallery-card-bg: color-mix(in srgb, var(--surface) 92%, #000);
   --afh-gallery-text: var(--text);
   --afh-gallery-muted: var(--muted);
   --afh-gallery-accent: var(--accent);
-  --afh-gallery-border: color-mix(in srgb, var(--border) 86%, #fff 14%);
+  --afh-gallery-border: #{$widget-border-tint};
   --afh-gallery-overlay: rgba(8, 10, 14, 0.9);
   --afh-gallery-shadow: #{$shadow-widget};
   --afh-gallery-button-bg: color-mix(in srgb, var(--surface) 74%, #fff 26%);
@@ -219,7 +224,7 @@
   font-size: 0.94rem;
   font-weight: 500;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: $gallery-on-image-text-shadow;
 }
 
 .afh-gallery__stage-description {
@@ -229,7 +234,7 @@
   font-style: italic;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.88);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: $gallery-on-image-text-shadow;
 }
 
 .afh-gallery__stage-meta {
@@ -379,7 +384,7 @@
   font-size: 0.94rem;
   font-weight: 500;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: $gallery-on-image-text-shadow;
 }
 
 .afh-gallery__item-description {
@@ -388,7 +393,7 @@
   font-style: italic;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.88);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  text-shadow: $gallery-on-image-text-shadow;
 }
 
 .afh-gallery__link {

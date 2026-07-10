@@ -114,6 +114,7 @@ $shadow-header-solid: 0 2px 8px rgba(0, 0, 0, 0.12), 0 1px 0 var(--border) !defa
 $shadow-drawer: -18px 0 48px rgba(0, 0, 0, 0.28) !default;
 $backdrop-menu: rgba(5, 8, 12, 0.38) !default;
 $shadow-widget: 0 10px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06) !default;
+$widget-border-tint: color-mix(in srgb, var(--border) 86%, #fff 14%) !default;
 $shadow-gallery-item: 0 7px 16px rgba(0, 0, 0, 0.16) !default;
 $shadow-gallery-lightbox: 0 12px 24px rgba(0, 0, 0, 0.25) !default;
 $shadow-share-toast: 0 10px 26px rgba(0, 0, 0, 0.22) !default;

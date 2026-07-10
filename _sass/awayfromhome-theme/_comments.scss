@@ -1,5 +1,11 @@
 @import "variables";
 
+// Reply-thread accent tints, reused across the inline reply form and its
+// speech-bubble pointer.
+$comment-reply-border: color-mix(in srgb, var(--accent) 66%, white 10%);
+$comment-form-border: color-mix(in srgb, var(--accent) 22%, var(--border));
+$comment-form-bg: color-mix(in srgb, var(--surface) 90%, var(--accent) 3%);
+
 .afh-comments {
   width: min(calc(100% - (2 * var(--page-gutter))), var(--reading-width));
   margin: 2.25rem auto 3rem;
@@ -139,16 +145,16 @@
 
 .afh-comment-form-wrap {
   margin-top: 0;
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border: 1px solid $comment-form-border;
   border-radius: var(--radius-small);
-  background: color-mix(in srgb, var(--surface) 90%, var(--accent) 3%);
+  background: $comment-form-bg;
   padding: 0.9rem;
   transition: border-color 180ms ease, box-shadow 180ms ease;
   box-shadow: var(--shadow-soft);
 }
 
 .afh-comment-form-wrap.is-replying {
-  border-color: color-mix(in srgb, var(--accent) 66%, white 10%);
+  border-color: $comment-reply-border;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
   box-shadow: var(--shadow-soft);
 }
@@ -189,14 +195,14 @@
   width: 0.9rem;
   height: 0.9rem;
   transform: rotate(45deg);
-  background: color-mix(in srgb, var(--surface) 90%, var(--accent) 3%);
-  border-inline-start: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
-  border-block-end: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  background: $comment-form-bg;
+  border-inline-start: 1px solid $comment-form-border;
+  border-block-end: 1px solid $comment-form-border;
 }
 
 .afh-comment-form-host--inline .afh-comment-form-wrap.is-replying::before {
-  border-inline-start-color: color-mix(in srgb, var(--accent) 66%, white 10%);
-  border-block-end-color: color-mix(in srgb, var(--accent) 66%, white 10%);
+  border-inline-start-color: $comment-reply-border;
+  border-block-end-color: $comment-reply-border;
 }
 
 .afh-comment-form-host .afh-comment-form-wrap:not([hidden]) {

@@ -1,0 +1,441 @@
+// Away From Home Theme - Navigation Drawer & Flyout Controls
+// Split out of the former monolithic _layout.scss.
+
+@import "awayfromhome-theme/variables";
+
+// ============================================================================
+// NAVIGATION DRAWER: Slide-out Menu Panel
+// ============================================================================
+
+/// Off-screen drawer slides in from the configured side when menu opens
+/// Contains navigation links, tags, theme toggle, social links
+.menu-drawer {
+  position: fixed;
+  top: 0;
+  // Physical values are fixed regardless of writing direction.
+  // Logical values respond to dir="rtl" at runtime via logical properties.
+  @if $header-drawer-side == left {
+    left: 0;
+    right: auto;
+  } @else if $header-drawer-side == right {
+    right: 0;
+    left: auto;
+  } @else if $_drawer-is-start {
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+  } @else {
+    inset-inline-end: 0;
+    inset-inline-start: auto;
+  }
+  width: min(100vw, var(--drawer-width-wide)); // Responsive, max width on desktop
+  height: 100vh;
+  z-index: 20;
+  background: var(--drawer-bg);
+  color: var(--drawer-text);
+  overflow-y: auto;
+
+  // Slides in from the configured side.
+  // translateX is always physical, so logical values need a [dir="rtl"] override.
+  @if $header-drawer-side == left {
+    transform: translateX(-100%);
+  } @else if $header-drawer-side == right {
+    transform: translateX(100%);
+  } @else if $_drawer-is-start {
+    transform: translateX(-100%); // LTR: slides from left
+    [dir="rtl"] & { transform: translateX(100%); } // RTL: start = right, slides from right
+  } @else {
+    transform: translateX(100%); // LTR: slides from right
+    [dir="rtl"] & { transform: translateX(-100%); } // RTL: end = left, slides from left
+  }
+  visibility: hidden; // Prevent interaction when hidden
+  pointer-events: none;
+
+  // Quick slide animation, no delay
+  transition: transform $motion-base ease, visibility 0s linear $motion-base;
+
+  // Shadow extends toward page center.
+  @if $header-drawer-side == left {
+    box-shadow: 18px 0 48px rgba(0, 0, 0, 0.28);
+  } @else if $header-drawer-side == right {
+    box-shadow: $shadow-drawer;
+  } @else if $_drawer-is-start {
+    box-shadow: 18px 0 48px rgba(0, 0, 0, 0.28); // LTR: shadow to the right
+    [dir="rtl"] & { box-shadow: $shadow-drawer; }  // RTL: start=right, shadow to the left
+  } @else {
+    box-shadow: $shadow-drawer; // LTR: shadow to the left
+    [dir="rtl"] & { box-shadow: 18px 0 48px rgba(0, 0, 0, 0.28); } // RTL: end=left, shadow to the right
+  }
+}
+
+/// Inner padding for drawer content - accounts for sticky header
+.menu-drawer__inner {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: calc(var(--header-height) + 1.4rem) 1.5rem 2rem;
+}
+
+/// Semi-transparent overlay behind drawer
+/// Blocks interaction with page content while drawer is open
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: $backdrop-menu;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $motion-base ease;
+}
+
+/// Show backdrop when menu is open
+body.menu-open .menu-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/// Slide drawer in and enable interaction
+body.menu-open .menu-drawer {
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform $motion-base ease;
+}
+
+/// Wraps hero + content + footer so they animate as one composited layer
+.site-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  will-change: transform;
+  transition: transform $motion-base ease, filter $motion-base ease;
+}
+
+/// Shift header and site-body together to reveal drawer
+body.menu-open .site-header {
+  @if $header-drawer-side == left {
+    transform: translateX(min(100vw, var(--drawer-width-wide)));
+  } @else if $header-drawer-side == right {
+    transform: translateX(calc(-1 * min(100vw, var(--drawer-width-wide))));
+  } @else if $_drawer-is-start {
+    transform: translateX(min(100vw, var(--drawer-width-wide)));
+    [dir="rtl"] & { transform: translateX(calc(-1 * min(100vw, var(--drawer-width-wide)))); }
+  } @else {
+    transform: translateX(calc(-1 * min(100vw, var(--drawer-width-wide))));
+    [dir="rtl"] & { transform: translateX(min(100vw, var(--drawer-width-wide))); }
+  }
+}
+
+body.menu-open .site-body {
+  @if $header-drawer-side == left {
+    transform: translateX(min(100vw, var(--drawer-width-wide)));
+  } @else if $header-drawer-side == right {
+    transform: translateX(calc(-1 * min(100vw, var(--drawer-width-wide))));
+  } @else if $_drawer-is-start {
+    transform: translateX(min(100vw, var(--drawer-width-wide)));
+    [dir="rtl"] & { transform: translateX(calc(-1 * min(100vw, var(--drawer-width-wide)))); }
+  } @else {
+    transform: translateX(calc(-1 * min(100vw, var(--drawer-width-wide))));
+    [dir="rtl"] & { transform: translateX(min(100vw, var(--drawer-width-wide))); }
+  }
+  filter: blur(2px);
+}
+
+
+// ============================================================================
+// MENU CONTENT: Navigation Sections, Lists, Tags
+// ============================================================================
+
+/// Panel grouping multiple menu sections
+.menu-panel {
+  display: grid;
+  gap: 2rem;
+  text-align: $drawer-text-align;
+}
+
+/// Section headers in drawer - small caps style
+.menu-section h2 {
+  margin-bottom: 1rem;
+  color: var(--drawer-text);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/// Navigation link list in drawer
+.menu-list {
+  display: grid;
+  gap: 0.65rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/// Menu links - subtle color, accent on hover
+.menu-list a {
+  color: color-mix(in srgb, var(--drawer-text) 88%, white);
+  font-size: 1.10rem;
+  text-decoration: none;
+}
+
+.menu-list a:hover,
+.menu-list a:focus-visible {
+  color: var(--accent);
+}
+
+.archive-tree__details {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.archive-tree__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.archive-tree__summary::-webkit-details-marker {
+  display: none;
+}
+
+.archive-tree__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  min-width: 1.1rem;
+  min-height: 1.1rem;
+  color: color-mix(in srgb, var(--drawer-text) 82%, white);
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.archive-tree__glyph::before {
+  content: "▸";
+  display: inline-block;
+  line-height: 1;
+  transform: rotate(0deg);
+  transform-origin: center center;
+  transition: transform $motion-fast ease;
+}
+
+.archive-tree__details[open] .archive-tree__glyph::before {
+  transform: rotate(90deg);
+}
+
+.archive-tree__year-label {
+  color: color-mix(in srgb, var(--drawer-text) 88%, white);
+  font-size: 1.10rem;
+}
+
+.archive-tree__months {
+  margin-top: 0.15rem;
+  margin-left: 1.75rem;
+  gap: 0.45rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height $motion-base ease, opacity $motion-fast ease;
+}
+
+.archive-tree__details[open] .archive-tree__months {
+  max-height: 18rem;
+  opacity: 1;
+}
+
+.archive-tree__months a {
+  color: color-mix(in srgb, var(--drawer-text) 82%, white);
+  font-size: 1rem;
+}
+
+.archive-tree__count {
+  opacity: 0.72;
+  font-size: 0.9em;
+}
+
+/// Descriptive text in drawer sections
+.menu-note {
+  color: var(--drawer-muted);
+  font-size: 0.95rem;
+}
+
+// ============================================================================
+// THEME SWITCH: Icon Buttons in Flyout Top
+// ============================================================================
+
+.menu-drawer__top-controls {
+  position: absolute;
+  top: 0.8rem;
+  inset-inline-start: 1.5rem;
+  inset-inline-end: 1.5rem;
+  z-index: 1;
+}
+
+.theme-switch--drawer-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.theme-switch--drawer-top .theme-switch__option {
+  width: $control-size-compact;
+  height: $control-size-compact;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid $frost-border-soft;
+  border-radius: $radius-pill;
+  background: $frost-bg-soft;
+  color: var(--drawer-text);
+  cursor: pointer;
+  box-shadow: $elevation-shadow;
+  transition: transform $motion-fast ease, background $motion-fast ease, color $motion-fast ease, border-color $motion-fast ease;
+}
+
+.theme-switch--drawer-top .theme-switch__option svg {
+  width: $icon-size-control;
+  height: $icon-size-control;
+}
+
+.theme-switch--drawer-top .theme-switch__option:hover,
+.theme-switch--drawer-top .theme-switch__option:focus-visible {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 68%, $color-white);
+}
+
+.theme-switch--drawer-top .theme-switch__option.is-active,
+.theme-switch--drawer-top .theme-switch__option[aria-pressed="true"] {
+  background: var(--accent);
+  color: $color-accent-ink;
+  border-color: var(--accent);
+}
+
+
+// ============================================================================
+// LANGUAGE SELECT: Native <select> combobox alongside theme toggle
+// ============================================================================
+
+.menu-drawer__top-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.lang-select {
+  height: $control-size-compact;
+  padding-block: 0;
+  padding-inline-start: 0.6rem;
+  padding-inline-end: 0.5rem;
+  margin-inline-start: auto;
+  appearance: none;
+  -webkit-appearance: none;
+  background: $frost-bg-strong;
+  border: 1px solid $frost-border-soft;
+  border-radius: $radius-pill;
+  color: $color-white;
+  font-family: 'BabelStone Flags', var(--font-display), system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: $elevation-shadow;
+  transition: border-color $motion-fast ease;
+
+  // Style the dropdown arrow via a background SVG so it stays white
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ffffff99'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  padding-inline-end: 1.6rem;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--accent) 68%, $color-white);
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
+  }
+
+  option {
+    background: #1a1a2e;
+    color: $color-white;
+    font-family: 'BabelStone Flags', var(--font-display), system-ui, sans-serif;
+    font-size: 1rem;
+  }
+
+  [dir="rtl"] & {
+    background-position: left 0.55rem center;
+  }
+}
+
+
+// ============================================================================
+// DRAWER: Mobile breakpoint adjustments (≤ 640px)
+// ============================================================================
+
+@media (max-width: $breakpoint-mobile) {
+  .menu-drawer__top-controls {
+    inset-inline-start: 1rem;
+    inset-inline-end: 1rem;
+  }
+
+  .theme-switch--drawer-top {
+    gap: 0.25rem;
+  }
+
+  .theme-switch--drawer-top .theme-switch__option {
+    width: $control-size-mobile;
+    height: $control-size-mobile;
+  }
+
+  /// Smaller drawer width on mobile
+  .menu-drawer {
+    @if $header-drawer-side == left {
+      right: auto;
+      left: 0;
+    } @else if $header-drawer-side == right {
+      left: auto;
+      right: 0;
+    } @else if $_drawer-is-start {
+      inset-inline-end: auto;
+      inset-inline-start: 0;
+    } @else {
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+    }
+    width: min(calc(100vw - 1rem), 18rem);
+  }
+
+  /// Adjust content shift amount when drawer opens
+  body.menu-open .site-body {
+    @if $header-drawer-side == left {
+      transform: translateX(min(100vw, 18rem));
+    } @else if $header-drawer-side == right {
+      transform: translateX(calc(-1 * min(100vw, 18rem)));
+    } @else if $_drawer-is-start {
+      transform: translateX(min(100vw, 18rem));
+      [dir="rtl"] & { transform: translateX(calc(-1 * min(100vw, 18rem))); }
+    } @else {
+      transform: translateX(calc(-1 * min(100vw, 18rem)));
+      [dir="rtl"] & { transform: translateX(min(100vw, 18rem)); }
+    }
+    filter: blur(1px);
+  }
+
+  body.menu-open .site-header {
+    @if $header-drawer-side == left {
+      transform: translateX(min(100vw, 18rem));
+    } @else if $header-drawer-side == right {
+      transform: translateX(calc(-1 * min(100vw, 18rem)));
+    } @else if $_drawer-is-start {
+      transform: translateX(min(100vw, 18rem));
+      [dir="rtl"] & { transform: translateX(calc(-1 * min(100vw, 18rem))); }
+    } @else {
+      transform: translateX(calc(-1 * min(100vw, 18rem)));
+      [dir="rtl"] & { transform: translateX(min(100vw, 18rem)); }
+    }
+  }
+}

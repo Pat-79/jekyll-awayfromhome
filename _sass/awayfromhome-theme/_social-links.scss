@@ -1,0 +1,108 @@
+// Away From Home Theme - Social Link Icons & Share Toast
+// Split out of the former monolithic _layout.scss.
+// NOTE: must be imported before _footer.scss -- .site-footer .social-link
+// is declared again there with an overriding color at equal specificity.
+
+@import "awayfromhome-theme/variables";
+
+// ============================================================================
+// SOCIAL LINKS: Footer Social Icons
+// ============================================================================
+
+/// Social links container - horizontal flex layout
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.social-links--balanced {
+  display: grid;
+  grid-template-columns: repeat(var(--social-wrap-columns, 4), $control-size);
+  gap: 0.8rem;
+  justify-items: center;
+  align-content: center;
+  margin-inline: auto;
+}
+
+/// Individual social link icon - circular background on hover
+.social-link {
+  width: $control-size;
+  height: $control-size;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-pill;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  transition: transform $motion-fast ease, background $motion-fast ease, color $motion-fast ease;
+}
+
+/// Hover/focus state - solid background, subtle lift animation
+.social-link:hover,
+.social-link:focus-visible {
+  transform: translateY(-2px);
+  background: var(--accent);
+  color: $color-accent-ink;
+}
+
+/// SVG icon sizing within social link
+.social-link svg {
+  width: $icon-size-social;
+  height: $icon-size-social;
+}
+
+.site-footer .social-link {
+  color: $footer-text;
+}
+
+.social-link--share.is-copied {
+  background: var(--accent);
+  color: $color-accent-ink;
+}
+
+.social-link--share.is-copy-failed {
+  background: $color-danger-soft;
+  color: $color-danger-text;
+}
+
+.share-toast {
+  position: fixed;
+  bottom: 15%;
+  left: 50%;
+  transform: translate(-50%, 16%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 60;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid $frost-border-strong;
+  border-radius: $radius-pill;
+  background: $frost-bg-strong;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: $footer-text;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition: opacity $motion-toast ease, transform $motion-toast ease;
+}
+
+.share-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+// ============================================================================
+// SOCIAL LINKS: Mobile breakpoint adjustments (≤ 640px)
+// ============================================================================
+
+@media (max-width: $breakpoint-mobile) {
+  .share-toast {
+    font-size: 0.82rem;
+  }
+}

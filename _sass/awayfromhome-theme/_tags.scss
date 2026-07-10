@@ -1,0 +1,179 @@
+// Away From Home Theme - Tag Cloud, Tag Chips & Tag Index Page
+// Split out of the former monolithic _layout.scss.
+
+@import "awayfromhome-theme/variables";
+
+/// Tag cloud layout - wrapping flex layout
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.tag-cloud--scaled {
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.tag-cloud--page {
+  margin-top: 1.5rem;
+}
+
+.tag-cloud--filters {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tag-cloud--filters-list {
+  align-items: center;
+}
+
+.tag-cloud--drawer {
+  gap: 0.5rem;
+}
+
+/// Individual tag chip - subtle border and background
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: $radius-pill;
+  color: var(--text);
+  font-size: 0.92rem;
+  text-decoration: none;
+  background: var(--surface);
+}
+
+.tag-chip--cloud {
+  gap: 0.45em;
+  padding: 0.5em 0.8em;
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+@for $i from 1 through 6 {
+  .tag-chip--cloud.tag-chip--size-#{$i} {
+    font-size: 14px + ($i - 1) * 4px;
+  }
+}
+
+/// Inside the drawer the background is always dark, so restore frost values.
+.tag-cloud--drawer .tag-chip {
+  border-color: $frost-border-soft;
+  color: var(--drawer-text);
+  background: $frost-fill-soft;
+}
+
+.tag-cloud--drawer .tag-chip--cloud {
+  padding: 0.45em 0.75em;
+}
+
+.tag-chip__label {
+  line-height: 1;
+}
+
+.tag-chip__count {
+  font-size: 0.72em;
+  font-weight: 700;
+  opacity: 0.72;
+}
+
+.tag-filter-chip.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: $color-accent-ink;
+}
+
+.tag-filter-chip.is-active .tag-chip__count {
+  opacity: 0.84;
+}
+
+.tag-posts__status {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.tag-index {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tag-section {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+
+.tag-section .home-section-head {
+  margin: 0 0 0.45rem;
+  padding-top: 0.9rem;
+}
+
+.tag-section__eyebrow {
+  margin-top: 0;
+  margin-bottom: 0.65rem;
+  color: var(--accent-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.tag-section__summary {
+  margin-bottom: 0.45rem;
+  color: var(--muted);
+}
+
+.tag-section__list {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tag-section__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.45rem 1rem;
+}
+
+.tag-section__list a {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tag-section__list a:hover,
+.tag-section__list a:focus-visible {
+  color: var(--accent-strong);
+}
+
+.tag-section__date {
+  color: var(--muted);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.tag-section--missing {
+  text-align: left;
+}
+
+
+[data-tag-section][hidden],
+[data-tag-not-found][hidden] {
+  display: none !important;
+}
+
+// ============================================================================
+// TAGS: Mobile breakpoint adjustments (≤ 719px)
+// ============================================================================
+
+@media (max-width: 719px) {
+  .tag-section__list li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

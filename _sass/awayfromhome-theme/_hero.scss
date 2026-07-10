@@ -1,0 +1,197 @@
+// Away From Home Theme - Landing Page Hero Banner
+// Split out of the former monolithic _layout.scss.
+
+@import "awayfromhome-theme/variables";
+
+// ============================================================================
+// HERO SECTION: Large Introductory Banner
+// ============================================================================
+
+.landing-hero {
+  position: relative;
+  height: 100svh;
+  min-height: 32rem;
+  display: grid;
+  place-items: center;
+  overflow: clip;
+}
+
+.landing-hero__media,
+.landing-hero__video,
+.landing-hero__image,
+.landing-hero__overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.landing-hero__video {
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-width: 177.78svh;
+  min-height: 100svh;
+  border: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.landing-hero__video--hls {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  transform: none;
+}
+
+.landing-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.landing-hero__overlay {
+  background:
+    linear-gradient(180deg, $landing-hero-linear-start 0%, $landing-hero-linear-end 100%);
+}
+
+.landing-hero__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: min(100%, 60rem);
+  color: $color-white;
+  padding-top: var(--header-height);
+}
+
+.landing-hero__title {
+  margin: 0;
+  color: $color-white;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  line-height: 1.05;
+  text-shadow:
+    $on-image-heading-shadow,
+    0 4px 16px rgba(0, 0, 0, 0.62),
+    // fuzzy outline
+    0 0 6px rgba(0, 0, 0, 0.72),
+    0 0 14px rgba(0, 0, 0, 0.52),
+    -0.5px -0.5px 0 rgba(0, 0, 0, 0.75),
+     0.5px -0.5px 0 rgba(0, 0, 0, 0.75),
+    -0.5px  0.5px 0 rgba(0, 0, 0, 0.75),
+     0.5px  0.5px 0 rgba(0, 0, 0, 0.75);
+  -webkit-text-stroke: 1.5px rgba(0, 0, 0, 0.28);
+  paint-order: stroke fill;
+}
+
+.landing-hero__title::after {
+  content: "";
+  display: block;
+  width: clamp(10rem, 30vw, 17rem);
+  height: 2px;
+  margin: clamp(1rem, 2.8vh, 1.7rem) auto 0;
+  background: currentColor;
+  opacity: 0.9;
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.75), 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.landing-hero__tagline {
+  margin: clamp(1.15rem, 3.2vh, 2rem) auto 0;
+  max-width: 34rem;
+  color: $color-white;
+  font-size: clamp(1.05rem, 2.4vw, 1.8rem);
+  text-shadow:
+    $on-image-shadow,
+    0 3px 14px rgba(0, 0, 0, 0.68),
+    // fuzzy outline
+    0 0 5px rgba(0, 0, 0, 0.65),
+    0 0 10px rgba(0, 0, 0, 0.45),
+    -0.5px -0.5px 0 rgba(0, 0, 0, 0.65),
+     0.5px -0.5px 0 rgba(0, 0, 0, 0.65),
+    -0.5px  0.5px 0 rgba(0, 0, 0, 0.65),
+     0.5px  0.5px 0 rgba(0, 0, 0, 0.65);
+  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.22);
+  paint-order: stroke fill;
+}
+
+.landing-hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 20%;
+  z-index: 2;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  transform: translateX(-50%);
+  color: $on-image-strong;
+  text-decoration: none;
+  animation: landing-arrow-pulse 3s ease-in-out infinite;
+}
+
+.landing-hero__chevron {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-right: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.home-section-head {
+  text-align: center;
+  margin: 0 0 1.25rem;
+}
+
+.home-section-head h2 {
+  margin: 0;
+}
+
+.home-landing #home-main {
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+
+// ============================================================================
+// KEYFRAME ANIMATIONS: Hero Scroll Indicator
+// ============================================================================
+
+@keyframes landing-arrow-pulse {
+  0% {
+    opacity: 0.45;
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0.35rem);
+  }
+  100% {
+    opacity: 0.45;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+// ============================================================================
+// HERO: Mobile breakpoint adjustments (≤ 640px)
+// ============================================================================
+
+@media (max-width: $breakpoint-mobile) {
+  .landing-hero__content {
+    padding-top: calc(var(--header-height) + 0.5rem);
+  }
+
+  .landing-hero__tagline {
+    margin-top: 0.7rem;
+  }
+
+  .landing-hero__scroll {
+    bottom: 20%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero__scroll {
+    animation: none;
+  }
+}
