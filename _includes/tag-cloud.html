@@ -1,82 +1,17 @@
-{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
-{%- assign _default_lang = site.lang | default: 'en' -%}
-{%- if _page_lang == _default_lang or _page_lang == '' -%}
-  {%- assign _tags_prefix = '' -%}
-{%- else -%}
-  {%- assign _tags_prefix = '/' | append: _page_lang -%}
-{%- endif -%}
-{%- assign _tags_base = _tags_prefix | append: '/tags/' -%}
-{%- assign _fallback = site.lang_fallback | default: false -%}
-{%- assign scoped_posts = '' | split: '' -%}
-{%- assign _seen_refs = '' | split: '' -%}
-{%- for _p in site.posts -%}
-  {%- assign _p_lang = _p.lang | default: _default_lang -%}
-  {%- if _p_lang == _page_lang -%}
-    {%- assign scoped_posts = scoped_posts | push: _p -%}
-    {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
-  {%- endif -%}
-{%- endfor -%}
-{%- if _fallback and _page_lang != _default_lang -%}
-  {%- for _p in site.posts -%}
-    {%- assign _p_lang = _p.lang | default: _default_lang -%}
-    {%- if _p_lang == _default_lang -%}
-      {%- if _p.ref and _p.ref != '' -%}
-        {%- unless _seen_refs contains _p.ref -%}{%- assign scoped_posts = scoped_posts | push: _p -%}{%- endunless -%}
-      {%- else -%}
-        {%- assign scoped_posts = scoped_posts | push: _p -%}
-      {%- endif -%}
-    {%- endif -%}
-  {%- endfor -%}
-  {%- assign scoped_posts = scoped_posts | sort: 'date' | reverse -%}
-{%- endif -%}
-{%- assign _scoped_urls = '' | split: '' -%}
-{%- for _sp in scoped_posts -%}
-  {%- assign _scoped_urls = _scoped_urls | push: _sp.url -%}
-{%- endfor -%}
-{%- assign cloud_tags = '' | split: '' -%}
-{%- assign _sorted_site_tags = site.tags | sort -%}
-{%- for _tag in _sorted_site_tags -%}
-  {%- assign _scoped_count = 0 -%}
-  {%- for _tagged_post in _tag[1] -%}
-    {%- if _scoped_urls contains _tagged_post.url -%}
-      {%- assign _scoped_count = _scoped_count | plus: 1 -%}
-    {%- endif -%}
-  {%- endfor -%}
-  {%- if _scoped_count > 0 -%}
-    {%- assign _tag_row = _tag[0] | append: '|||' | append: _scoped_count -%}
-    {%- assign cloud_tags = cloud_tags | push: _tag_row -%}
-  {%- endif -%}
-{%- endfor -%}
+{%- include tag-scoped-posts.html -%}
+{%- include tag-counts.html -%}
 {%- assign show_count = include.show_count -%}
 {%- if show_count == nil -%}
   {%- assign show_count = true -%}
 {%- endif -%}
 
-{%- if cloud_tags.size > 0 -%}
-  {%- assign min_posts = 999999999 -%}
-  {%- assign max_posts = 0 -%}
+{%- if _tag_counts.size > 0 -%}
   {%- assign min_size = include.min_size | default: 14 -%}
   {%- assign max_size = include.max_size | default: 34 -%}
-
-  {%- for tag in cloud_tags -%}
-    {%- assign _tag_parts = tag | split: '|||' -%}
-    {%- assign post_count = _tag_parts[1] | plus: 0 -%}
-    {%- if post_count < min_posts -%}
-      {%- assign min_posts = post_count -%}
-    {%- endif -%}
-    {%- if post_count > max_posts -%}
-      {%- assign max_posts = post_count -%}
-    {%- endif -%}
-  {%- endfor -%}
-
-  {%- assign steps = max_posts | minus: min_posts -%}
-  {%- if steps == 0 -%}
-    {%- assign steps = 1 -%}
-  {%- endif -%}
-  {%- assign size_range = max_size | minus: min_size -%}
+  {%- include tag-size-range.html min_size=min_size max_size=max_size -%}
 
   <div class="{{ include.class_name | default: 'tag-cloud tag-cloud--scaled' }}">
-    {%- for tag in cloud_tags -%}
+    {%- for tag in _tag_counts -%}
       {%- assign _tag_parts = tag | split: '|||' -%}
       {%- assign tag_name = _tag_parts[0] -%}
       {%- assign tag_slug = tag_name | slugify -%}

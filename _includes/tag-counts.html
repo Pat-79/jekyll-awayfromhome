@@ -1,0 +1,22 @@
+{%- comment -%}
+  tag-counts.html
+  Shared by tag-cloud.html and tag-index.html.
+  Requires _scoped_urls (see tag-scoped-posts.html) to already be assigned.
+  Assigns: _tag_counts -- an array of "name|||count" strings, sorted by tag name,
+  scoped to posts whose url is present in _scoped_urls.
+{%- endcomment -%}
+
+{%- assign _tag_counts = '' | split: '' -%}
+{%- assign _sorted_site_tags = site.tags | sort -%}
+{%- for _tag in _sorted_site_tags -%}
+  {%- assign _scoped_count = 0 -%}
+  {%- for _tagged_post in _tag[1] -%}
+    {%- if _scoped_urls contains _tagged_post.url -%}
+      {%- assign _scoped_count = _scoped_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if _scoped_count > 0 -%}
+    {%- assign _tag_row = _tag[0] | append: '|||' | append: _scoped_count -%}
+    {%- assign _tag_counts = _tag_counts | push: _tag_row -%}
+  {%- endif -%}
+{%- endfor -%}

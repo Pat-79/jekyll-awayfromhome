@@ -1,0 +1,43 @@
+{%- comment -%}
+  tag-scoped-posts.html
+  Shared by tag-cloud.html and tag-index.html.
+  Computes language-scoped posts (with fallback) for the current page.
+  Assigns: _page_lang, _default_lang, _fallback, _tags_prefix, _tags_base,
+           scoped_posts, _seen_refs, _scoped_urls
+{%- endcomment -%}
+
+{%- assign _page_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign _default_lang = site.lang | default: 'en' -%}
+{%- assign _fallback = site.lang_fallback | default: false -%}
+{%- if _page_lang == _default_lang or _page_lang == '' -%}
+  {%- assign _tags_prefix = '' -%}
+{%- else -%}
+  {%- assign _tags_prefix = '/' | append: _page_lang -%}
+{%- endif -%}
+{%- assign _tags_base = _tags_prefix | append: '/tags/' -%}
+{%- assign scoped_posts = '' | split: '' -%}
+{%- assign _seen_refs = '' | split: '' -%}
+{%- for _p in site.posts -%}
+  {%- assign _p_lang = _p.lang | default: _default_lang -%}
+  {%- if _p_lang == _page_lang -%}
+    {%- assign scoped_posts = scoped_posts | push: _p -%}
+    {%- if _p.ref and _p.ref != '' -%}{%- assign _seen_refs = _seen_refs | push: _p.ref -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- if _fallback and _page_lang != _default_lang -%}
+  {%- for _p in site.posts -%}
+    {%- assign _p_lang = _p.lang | default: _default_lang -%}
+    {%- if _p_lang == _default_lang -%}
+      {%- if _p.ref and _p.ref != '' -%}
+        {%- unless _seen_refs contains _p.ref -%}{%- assign scoped_posts = scoped_posts | push: _p -%}{%- endunless -%}
+      {%- else -%}
+        {%- assign scoped_posts = scoped_posts | push: _p -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- assign scoped_posts = scoped_posts | sort: 'date' | reverse -%}
+{%- endif -%}
+{%- assign _scoped_urls = '' | split: '' -%}
+{%- for _sp in scoped_posts -%}
+  {%- assign _scoped_urls = _scoped_urls | push: _sp.url -%}
+{%- endfor -%}

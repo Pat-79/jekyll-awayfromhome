@@ -804,28 +804,10 @@ body.menu-open .site-body {
   line-height: 1;
 }
 
-.tag-chip--cloud.tag-chip--size-1 {
-  font-size: 14px;
-}
-
-.tag-chip--cloud.tag-chip--size-2 {
-  font-size: 18px;
-}
-
-.tag-chip--cloud.tag-chip--size-3 {
-  font-size: 22px;
-}
-
-.tag-chip--cloud.tag-chip--size-4 {
-  font-size: 26px;
-}
-
-.tag-chip--cloud.tag-chip--size-5 {
-  font-size: 30px;
-}
-
-.tag-chip--cloud.tag-chip--size-6 {
-  font-size: 34px;
+@for $i from 1 through 6 {
+  .tag-chip--cloud.tag-chip--size-#{$i} {
+    font-size: 14px + ($i - 1) * 4px;
+  }
 }
 
 /// Inside the drawer the background is always dark, so restore frost values.

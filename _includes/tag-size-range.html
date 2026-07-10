@@ -1,0 +1,26 @@
+{%- comment -%}
+  tag-size-range.html
+  Shared by tag-cloud.html and tag-index.html.
+  Requires _tag_counts (see tag-counts.html) to already be assigned.
+  Params: min_size, max_size
+  Assigns: min_posts, max_posts, steps, size_range
+{%- endcomment -%}
+
+{%- assign min_posts = 999999999 -%}
+{%- assign max_posts = 0 -%}
+{%- for tag in _tag_counts -%}
+  {%- assign _tag_parts = tag | split: '|||' -%}
+  {%- assign post_count = _tag_parts[1] | plus: 0 -%}
+  {%- if post_count < min_posts -%}
+    {%- assign min_posts = post_count -%}
+  {%- endif -%}
+  {%- if post_count > max_posts -%}
+    {%- assign max_posts = post_count -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign steps = max_posts | minus: min_posts -%}
+{%- if steps == 0 -%}
+  {%- assign steps = 1 -%}
+{%- endif -%}
+{%- assign size_range = include.max_size | minus: include.min_size -%}

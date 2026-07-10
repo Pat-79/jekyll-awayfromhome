@@ -1,22 +1,4 @@
 (function () {
-  function readMetaJson(metaEl) {
-    if (!metaEl) return null;
-
-    var raw = '';
-    if (metaEl.content && typeof metaEl.content.textContent === 'string') {
-      raw = metaEl.content.textContent;
-    }
-    if (!raw && typeof metaEl.innerHTML === 'string') {
-      raw = metaEl.innerHTML;
-    }
-    if (!raw && typeof metaEl.textContent === 'string') {
-      raw = metaEl.textContent;
-    }
-
-    raw = raw ? raw.trim() : '';
-    return raw ? JSON.parse(raw) : null;
-  }
-
   var tagPostsPage = document.querySelector("[data-tag-posts-page]");
 
   if (!tagPostsPage) {
