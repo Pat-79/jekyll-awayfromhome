@@ -125,6 +125,7 @@ tags:
 
 sitemap:
   intro: استعرض كل صفحة ومقالة وأرشيف سنوي باستخدام نفس تخطيط البطاقات في الصفحة الرئيسية.
+  jump_to: انتقل إلى
   section_blog: المدوّنة
   section_pages: الصفحات
   section_archive: الأرشيف

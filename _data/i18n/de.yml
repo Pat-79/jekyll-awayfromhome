@@ -128,6 +128,7 @@ tags:
 
 sitemap:
   intro: Durchsuche jede Seite, jeden Beitrag und jedes Jahresarchiv mit demselben Kartenlayout wie auf der Startseite.
+  jump_to: Springe zu
   section_blog: Blog
   section_pages: Seiten
   section_archive: Archiv

@@ -33,10 +33,15 @@ layout: page
     {% if sitemap_intro and sitemap_intro != '' %}
       <p>{{ sitemap_intro }}</p>
     {% endif %}
+    <nav class="tag-cloud" aria-label="{{ t.sitemap.jump_to | default: 'Jump to' }}">
+      <a class="tag-chip" href="#blog">{{ t.sitemap.section_blog | default: t.nav.blog | default: 'Blog' }}</a>
+      <a class="tag-chip" href="#pages">{{ t.sitemap.section_pages | default: 'Pages' }}</a>
+      <a class="tag-chip" href="#archive">{{ t.sitemap.section_archive | default: t.nav.archive | default: 'Archive' }}</a>
+    </nav>
   </div>
 </section>
 
-<section class="page-section page-section--spaced">
+<section id="blog" class="page-section page-section--spaced page-section--anchor">
   <div class="container story-list">
     <div class="home-section-head">
       <h2>{{ t.sitemap.section_blog | default: t.nav.blog | default: 'Blog' }}</h2>
@@ -91,7 +96,7 @@ layout: page
   </div>
 </section>
 
-<section class="page-section page-section--spaced">
+<section id="pages" class="page-section page-section--spaced page-section--anchor">
   <div class="container story-list">
     <div class="home-section-head">
       <h2>{{ t.sitemap.section_pages | default: 'Pages' }}</h2>
@@ -181,7 +186,7 @@ layout: page
   </div>
 </section>
 
-<section class="page-section page-section--spaced">
+<section id="archive" class="page-section page-section--spaced page-section--anchor">
   <div class="container story-list">
     <div class="home-section-head">
       <h2>{{ t.sitemap.section_archive | default: t.nav.archive | default: 'Archive' }}</h2>

@@ -82,6 +82,19 @@ body:not(.layout-post) .page-content > :last-child {
   margin-top: 1.25rem;
 }
 
+/// Sections targeted by in-page anchor links (e.g. the sitemap's jump index) -
+/// keeps the fixed header from covering the heading on arrival.
+.page-section--anchor {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+
+/// Guarantees enough scroll room for the last anchor-targeted section to clear
+/// the fixed header even when little content follows it (e.g. the last section
+/// on a short page, sitting right above the footer).
+.page-content > .page-section--spaced:last-child {
+  padding-bottom: calc(var(--header-height) + 2rem);
+}
+
 
 // ============================================================================
 // BLOG: Client-side pagination controls
