@@ -21,7 +21,8 @@
   margin: 0 0 $widget-header-margin-bottom;
 }
 
-.afh-map__header.is-empty {
+.afh-map__header.is-empty,
+.afh-map__header.is-hidden {
   display: none;
 }
 

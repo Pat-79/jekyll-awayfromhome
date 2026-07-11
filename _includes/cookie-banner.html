@@ -111,11 +111,12 @@
                   {{- _cb_cc.always_on | default: 'Always on' -}}
                 </span>
               {%- else -%}
-                <label
-                  class="afh-toggle"
-                  aria-label="{{ _cb_cat_str.name | default: _cb_cat.id | escape }}"
-                >
-                  <input type="checkbox" data-consent-toggle="{{ _cb_cat.id | escape }}">
+                <label class="afh-toggle">
+                  <input
+                    type="checkbox"
+                    data-consent-toggle="{{ _cb_cat.id | escape }}"
+                    aria-label="{{ _cb_cat_str.name | default: _cb_cat.id | escape }}"
+                  >
                   <span class="afh-toggle__track" aria-hidden="true"></span>
                 </label>
               {%- endif -%}

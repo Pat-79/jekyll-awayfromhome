@@ -63,7 +63,7 @@
         <p class="author-card__meta">{{ author_location }}</p>
       {%- endif %}
       {%- if author_social_links and author_social_links.size > 0 -%}
-        <div class="author-card__social" aria-label="Author social links">
+        <div class="author-card__social" role="group" aria-label="Author social links">
           {%- for item in author_social_links -%}
             {%- assign platform_name = item.platform | default: 'globe' | downcase -%}
             {%- if platform_name == 'website' -%}

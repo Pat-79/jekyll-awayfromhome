@@ -101,8 +101,8 @@
   style="--afh-map-height: {{ map_height_css | escape }};{% if map_width_css != '' %} --afh-map-width: {{ map_width_css | escape }};{% endif %}{% if map_max_width_css != '' %} --afh-map-max-width: {{ map_max_width_css | escape }};{% endif %}{% if map_max_height_css != '' %} --afh-map-max-height: {{ map_max_height_css | escape }};{% endif %}"
 >
   <header class="afh-map__header{% if map_title == '' and map_description == '' %} is-empty{% endif %}{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} is-hidden{% endif %}">
-    <h2 class="afh-map__title">{{ map_title }}</h2>
-    <p class="afh-map__description">{{ map_description }}</p>
+    {%- if map_title != '' -%}<h2 class="afh-map__title">{{ map_title }}</h2>{%- endif -%}
+    {%- if map_description != '' -%}<p class="afh-map__description">{{ map_description }}</p>{%- endif -%}
   </header>
 
   <div class="afh-map__frame">

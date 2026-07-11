@@ -211,10 +211,10 @@
     {%- if avif_srcset_items != '' -%}
       <picture>
         <source type="image/avif" srcset="{{ avif_srcset_items }}"{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}>
-        <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+        <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' and srcset_items != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
       </picture>
     {%- else -%}
-      <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+      <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' and srcset_items != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
     {%- endif -%}
   {%- endif -%}
 {%- endif -%}

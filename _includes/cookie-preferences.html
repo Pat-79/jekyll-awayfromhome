@@ -34,11 +34,12 @@
               {{- _cp_cc.always_on | default: 'Always on' -}}
             </span>
           {%- else -%}
-            <label
-              class="afh-toggle"
-              aria-label="{{ _cp_cat_str.name | default: _cp_cat.id | escape }}"
-            >
-              <input type="checkbox" data-consent-toggle="{{ _cp_cat.id | escape }}">
+            <label class="afh-toggle">
+              <input
+                type="checkbox"
+                data-consent-toggle="{{ _cp_cat.id | escape }}"
+                aria-label="{{ _cp_cat_str.name | default: _cp_cat.id | escape }}"
+              >
               <span class="afh-toggle__track" aria-hidden="true"></span>
             </label>
           {%- endif -%}
