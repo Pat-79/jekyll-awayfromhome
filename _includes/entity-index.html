@@ -244,7 +244,7 @@
               {%- if is_post -%}
                 {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths item_attr="data-entity-item" show_author=true -%}
               {%- else -%}
-                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true is_page=true -%}
+                {%- include story-card.html page=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true -%}
               {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
@@ -340,7 +340,7 @@
               {%- if is_post -%}
                 {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths item_attr="data-entity-item" show_author=true -%}
               {%- else -%}
-                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true is_page=true -%}
+                {%- include story-card.html page=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true -%}
               {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
@@ -436,7 +436,7 @@
               {%- if is_post -%}
                 {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths item_attr="data-entity-item" show_author=true -%}
               {%- else -%}
-                {%- include story-card.html post=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true is_page=true -%}
+                {%- include story-card.html page=item t=t default_lang=_default_lang all_static_paths=_all_static_paths extra_class="story-card--blog" item_attr="data-entity-item" show_author=true -%}
               {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
