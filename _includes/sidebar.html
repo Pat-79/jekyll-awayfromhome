@@ -51,7 +51,7 @@
   {%- assign _archive_months = t.archive.months -%}
 
   <section class="menu-section">
-    <h2 data-i18n="drawer.navigate" data-i18n-upcase>{{ t.drawer.navigate | default: 'Navigate' | upcase }}</h2>
+    <p class="menu-section__label" data-i18n="drawer.navigate" data-i18n-upcase>{{ t.drawer.navigate | default: 'Navigate' | upcase }}</p>
     <nav aria-label="{{ t.drawer.navigate | default: 'Drawer navigation' }}">
       <ul class="menu-list">
         {%- for item in site.navigation %}
@@ -65,7 +65,7 @@
   </section>
 
   <section class="menu-section">
-    <h2 data-i18n="drawer.tags" data-i18n-upcase>{{ t.drawer.tags | default: 'Tags' | upcase }}</h2>
+    <p class="menu-section__label" data-i18n="drawer.tags" data-i18n-upcase>{{ t.drawer.tags | default: 'Tags' | upcase }}</p>
     {%- include tag-cloud.html
       min_size=13
       max_size=19
@@ -78,12 +78,12 @@
   </section>
 
   <section class="menu-section">
-    <h2 data-i18n="drawer.social" data-i18n-upcase>{{ t.drawer.social | default: 'Social Media' | upcase }}</h2>
+    <p class="menu-section__label" data-i18n="drawer.social" data-i18n-upcase>{{ t.drawer.social | default: 'Social Media' | upcase }}</p>
     {%- include social-links.html class_name='social-links social-links--drawer' %}
   </section>
   {%- if sidebar_archive_enabled -%}
     <section class="menu-section">
-      <h2 data-i18n="drawer.archive" data-i18n-upcase>{{ t.drawer.archive | default: 'Archive' | upcase }}</h2>
+      <p class="menu-section__label" data-i18n="drawer.archive" data-i18n-upcase>{{ t.drawer.archive | default: 'Archive' | upcase }}</p>
       <ul class="menu-list">
         {%- assign archive_keys = '' | split: '' -%}
         {%- assign archive_year_keys = '' | split: '' -%}

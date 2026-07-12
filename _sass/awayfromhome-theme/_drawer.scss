@@ -151,9 +151,11 @@ body.menu-open .site-body {
   text-align: $drawer-text-align;
 }
 
-/// Section headers in drawer - small caps style
-.menu-section h2 {
-  margin-bottom: 1rem;
+/// Section labels in drawer - small caps style (not headings: the drawer is
+/// a modal dialog with its own accessible name, not part of the document's
+/// linear heading outline)
+.menu-section__label {
+  margin: 0 0 1rem;
   color: var(--drawer-text);
   font-size: 0.92rem;
   font-weight: 800;
