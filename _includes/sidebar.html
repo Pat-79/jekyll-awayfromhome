@@ -50,7 +50,7 @@
   {%- assign _lang_url_key = 'url_' | append: _page_lang -%}
   {%- assign _archive_months = t.archive.months -%}
 
-  <section class="menu-section">
+  <div class="menu-section">
     <p class="menu-section__label" data-i18n="drawer.navigate" data-i18n-upcase>{{ t.drawer.navigate | default: 'Navigate' | upcase }}</p>
     <nav aria-label="{{ t.drawer.navigate | default: 'Drawer navigation' }}">
       <ul class="menu-list">
@@ -62,9 +62,9 @@
         {%- endfor %}
       </ul>
     </nav>
-  </section>
+  </div>
 
-  <section class="menu-section">
+  <div class="menu-section">
     <p class="menu-section__label" data-i18n="drawer.tags" data-i18n-upcase>{{ t.drawer.tags | default: 'Tags' | upcase }}</p>
     {%- include tag-cloud.html
       min_size=13
@@ -75,14 +75,14 @@
       chip_class='tag-chip tag-chip--cloud'
       empty_class='menu-note'
     -%}
-  </section>
+  </div>
 
-  <section class="menu-section">
+  <div class="menu-section">
     <p class="menu-section__label" data-i18n="drawer.social" data-i18n-upcase>{{ t.drawer.social | default: 'Social Media' | upcase }}</p>
     {%- include social-links.html class_name='social-links social-links--drawer' %}
-  </section>
+  </div>
   {%- if sidebar_archive_enabled -%}
-    <section class="menu-section">
+    <div class="menu-section">
       <p class="menu-section__label" data-i18n="drawer.archive" data-i18n-upcase>{{ t.drawer.archive | default: 'Archive' | upcase }}</p>
       <ul class="menu-list">
         {%- assign archive_keys = '' | split: '' -%}
@@ -209,6 +209,6 @@
           {%- endif -%}
         {%- endfor -%}
       </ul>
-    </section>
+    </div>
   {%- endif -%}
 </div>
