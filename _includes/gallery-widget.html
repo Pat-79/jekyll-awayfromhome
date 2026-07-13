@@ -268,7 +268,7 @@
             {%- assign _gw_stage_alt = _gw_item_alt -%}
           {%- endif -%}
 
-          <article class="afh-gallery__item{% if _gw_mode == 'carousel' and forloop.first %} is-active{% endif %}" data-gallery-item data-gallery-file="{{ _gw_file_name | escape }}">
+          <figure class="afh-gallery__item{% if _gw_mode == 'carousel' and forloop.first %} is-active{% endif %}" data-gallery-item data-gallery-file="{{ _gw_file_name | escape }}">
             <a
               class="{% if _gw_mode == 'carousel' %}afh-gallery__thumb-link{% else %}afh-gallery__link{% endif %}"
               href="{{ _gw_href }}"
@@ -300,7 +300,7 @@
               {{ _gw_thumb_img | strip }}
               {%- endif -%}
             </a>
-          </article>
+          </figure>
         {%- endfor -%}
       {%- endcapture -%}
 
@@ -380,7 +380,7 @@
     {%- endif -%}
 
     {%- if _gw_description != '' -%}
-      <figcaption class="afh-gallery__description" data-gallery-description-text>{{ _gw_description }}</figcaption>
+      <p class="afh-gallery__description" data-gallery-description-text>{{ _gw_description }}</p>
     {%- endif -%}
 
     {%- if _gw_count > 0 -%}
