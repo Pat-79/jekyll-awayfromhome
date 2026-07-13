@@ -149,7 +149,8 @@
 
       var hls = new window.Hls({
         enableWorker: true,
-        lowLatencyMode: true
+        lowLatencyMode: true,
+        capLevelToPlayerSize: true
       });
 
       hls.loadSource(hlsSource);
