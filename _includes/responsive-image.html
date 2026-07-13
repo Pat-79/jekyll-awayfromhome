@@ -54,6 +54,18 @@
       {%- assign variant_stem = variant_stem | split: '.full' | first -%}
     {%- endif -%}
 
+    {%- comment -%}
+      Width/height, when known, prevent layout shift while the image loads.
+      Looked up from a data file generated offline by
+      scripts/generate-image-variants.sh (keyed by dir+stem, extension-
+      independent) rather than computed here, since remote_theme/GitHub
+      Pages safe mode can't run a custom build-time plugin to read image
+      headers. Sites that haven't (re)run that script simply get no
+      attributes, same as before this existed.
+    {%- endcomment -%}
+    {%- assign _dim_key = variant_root_dir | append: variant_stem -%}
+    {%- assign _dim = site.data['image-dimensions'][_dim_key] -%}
+
     {%- assign static_marker = include.all_static_paths | default: _all_static_paths | default: '' -%}
     {%- if static_marker == '' -%}
       {%- assign static_marker = site.static_files | map: 'path' | join: '||' -%}
@@ -211,10 +223,10 @@
     {%- if avif_srcset_items != '' -%}
       <picture>
         <source type="image/avif" srcset="{{ avif_srcset_items }}"{% if image_sizes != '' %} sizes="{{ image_sizes }}"{% endif %}>
-        <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' and srcset_items != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+        <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' and srcset_items != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}{% if _dim %} width="{{ _dim.width }}" height="{{ _dim.height }}"{% endif %}>
       </picture>
     {%- else -%}
-      <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' and srcset_items != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}>
+      <img class="{{ image_class }}" src="{{ resolved_src }}" alt="{{ image_alt | escape }}" loading="{{ image_loading }}" decoding="{{ image_decoding }}"{% if srcset_items != '' %} srcset="{{ srcset_items }}"{% endif %}{% if image_sizes != '' and srcset_items != '' %} sizes="{{ image_sizes }}"{% endif %}{% if image_fetchpriority != '' %} fetchpriority="{{ image_fetchpriority }}"{% endif %}{% if _dim %} width="{{ _dim.width }}" height="{{ _dim.height }}"{% endif %}>
     {%- endif -%}
   {%- endif -%}
 {%- endif -%}

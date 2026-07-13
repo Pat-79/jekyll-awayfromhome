@@ -332,6 +332,7 @@ $gallery-on-image-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 .afh-gallery[data-gallery-mode='carousel'] .afh-gallery__thumb {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 3;
   border-radius: calc(#{$widget-media-radius} - 0.1rem);
   transition: transform $motion-base, filter $motion-base, opacity $motion-base;
@@ -411,6 +412,7 @@ $gallery-on-image-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 
 .afh-gallery__thumb {
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 3;
   display: block;
   object-fit: cover;

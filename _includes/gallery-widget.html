@@ -188,7 +188,18 @@
           {%- assign _gw_base_url = _gw_image_path | relative_url -%}
 
           {%- comment -%} Responsive variants: thumbs/, small/, medium/, large/, full/ -> 250w, 600w, 720w, 1080w, 1600w {%- endcomment -%}
-          {%- assign _gw_file_stem = _gw_file_name | split: '.' | first -%}
+          {%- assign _gw_file_ext = _gw_file_name | split: '.' | last -%}
+          {%- assign _gw_file_ext_suffix = '.' | append: _gw_file_ext -%}
+          {%- assign _gw_file_stem = _gw_file_name | remove: _gw_file_ext_suffix -%}
+          {%- comment -%}
+            Width/height, when known, prevent layout shift while the image
+            loads. Looked up from a data file generated offline by
+            scripts/generate-image-variants.sh (keyed by dir+stem) rather
+            than computed here, since remote_theme/GitHub Pages safe mode
+            can't run a custom build-time plugin to read image headers.
+          {%- endcomment -%}
+          {%- assign _gw_dim_key = _gw_root_dir | append: _gw_file_stem -%}
+          {%- assign _gw_dim = site.data['image-dimensions'][_gw_dim_key] -%}
           {%- assign _gw_variant_dirs = 'thumbs/,small/,medium/,large/,full/' | split: ',' -%}
           {%- assign _gw_variant_widths = '250w,600w,720w,1080w,1600w' | split: ',' -%}
           {%- assign _gw_variant_urls = '' | split: '' -%}
@@ -251,7 +262,7 @@
           {%- assign _gw_href_priority = _gw_full_url | append: '||' | append: _gw_large_url | append: '||' | append: _gw_base_url | split: '||' | where_exp: 'v', "v != ''" -%}
           {%- assign _gw_href = _gw_href_priority | first | default: '' -%}
 
-          {%- assign _gw_display_name = _gw_file_name | split: '.' | first | replace: '-', ' ' | replace: '_', ' ' -%}
+          {%- assign _gw_display_name = _gw_file_stem | replace: '-', ' ' | replace: '_', ' ' -%}
           {%- if _gw_count == 1 -%}
             {%- assign _gw_item_alt = _gw_alt -%}
             {%- if _gw_item_alt == '' -%}{%- assign _gw_item_alt = _gw_description -%}{%- endif -%}
@@ -266,6 +277,7 @@
             {%- assign _gw_stage_srcset = _gw_srcset -%}
             {%- assign _gw_stage_avif_srcset = _gw_avif_srcset -%}
             {%- assign _gw_stage_alt = _gw_item_alt -%}
+            {%- assign _gw_stage_dim = _gw_dim -%}
           {%- endif -%}
 
           <figure class="afh-gallery__item{% if _gw_mode == 'carousel' and forloop.first %} is-active{% endif %}" data-gallery-item data-gallery-file="{{ _gw_file_name | escape }}">
@@ -289,6 +301,7 @@
                   alt="{{ _gw_item_alt | escape }}"
                   loading="{{ _gw_loading }}"
                   decoding="{{ _gw_decoding }}"
+                  {% if _gw_dim %}width="{{ _gw_dim.width }}" height="{{ _gw_dim.height }}"{% endif %}
                 >
               {%- endcapture -%}
               {%- if _gw_avif_srcset != '' -%}
@@ -324,6 +337,7 @@
                 alt="{{ _gw_stage_alt | escape }}"
                 loading="{{ _gw_loading }}"
                 decoding="{{ _gw_decoding }}"
+                {% if _gw_stage_dim %}width="{{ _gw_stage_dim.width }}" height="{{ _gw_stage_dim.height }}"{% endif %}
               >
             {%- endcapture -%}
             <picture class="afh-gallery__stage-picture is-active" data-gallery-stage-picture>
