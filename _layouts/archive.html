@@ -33,9 +33,6 @@ layout: page
 
 <section class="page-section">
   <div class="container">
-    {% unless page.image %}
-      <h1>{{ page.title | default: 'Archive' }}</h1>
-    {% endunless %}
     {% if archive_intro and archive_intro != '' %}
       <p>{{ archive_intro }}</p>
     {% endif %}

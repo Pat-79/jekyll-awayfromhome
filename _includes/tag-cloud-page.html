@@ -1,8 +1,5 @@
 <section class="page-section">
   <div class="container page-copy">
-    {% unless page.image %}
-      <h1>{{ page.title | default: 'Tag Cloud' }}</h1>
-    {% endunless %}
     <p>{{ page.tag_intro | default: 'Browse all tags and jump to the filtered tag index view for each one.' }}</p>
     {%- include tag-cloud.html
       min_size=14

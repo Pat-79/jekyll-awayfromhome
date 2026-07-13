@@ -118,9 +118,6 @@
 
 <section class="page-section">
   <div class="container">
-    {% unless page.image %}
-      <h1>{{ page.title | default: 'Browse' }}</h1>
-    {% endunless %}
     <p data-i18n="browse.intro">{{ page.entity_posts_intro | default: t.browse.intro | default: 'Select a category below to filter posts and pages by author, category, or tag.' }}</p>
 
     <div class="entity-type-selector">

@@ -27,9 +27,6 @@ layout: page
 
 <section class="page-section">
   <div class="container sitemap-index">
-    {% unless page.image %}
-      <h1>{{ page.title | default: "Sitemap" }}</h1>
-    {% endunless %}
     {% if sitemap_intro and sitemap_intro != '' %}
       <p>{{ sitemap_intro }}</p>
     {% endif %}

@@ -9,9 +9,6 @@
 
 <section class="page-section">
   <div class="container">
-    {% unless page.image %}
-      <h1>{{ page.title | default: 'Tags' }}</h1>
-    {% endunless %}
     <p data-i18n="tags.intro">{{ page.tag_posts_intro | default: t.tags.intro | default: 'Filter posts by tag, or leave the page unfiltered to browse every tagged section.' }}</p>
     <div class="tag-cloud tag-cloud--scaled tag-cloud--page tag-cloud--filters">
       <a class="tag-chip tag-chip--cloud tag-filter-chip" href="{{ _tags_base | relative_url }}" data-tag-filter-link data-tag-value="all">

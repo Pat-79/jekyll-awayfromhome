@@ -14,10 +14,6 @@ layout: page
 
 <section class="page-section">
   <div class="container">
-    {% unless page.image %}
-      <h1>{{ page.title | default: "Social Media" }}</h1>
-    {% endunless %}
-
     {% if social_intro and social_intro != '' %}
       <p>{{ social_intro }}</p>
     {% endif %}
