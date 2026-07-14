@@ -1,0 +1,233 @@
+{%- comment -%}
+  responsive-image-preload.html — Emits <link rel="preload" as="image">
+  tag(s) for a hero/LCP image, using the same variant/srcset resolution as
+  responsive-image.html. A plain href-only preload would tell the browser to
+  fetch the raw original while the actual <img> (via responsive-image.html)
+  requests a differently-sized srcset candidate — the preload is then never
+  used, wasting bandwidth and triggering a "resource was preloaded but not
+  used" browser warning. Passing the matching imagesrcset/imagesizes lets the
+  browser's preload candidate selection agree with the <img> tag's.
+
+  Parameters (mirrors responsive-image.html):
+    src — raw image path (site-root relative or absolute).
+    sizes — sizes attribute the corresponding <img> will use.
+    fallback — fallback image path if no variant/original exists.
+    fetchpriority — defaults to 'high' (this include exists for LCP images).
+    all_static_paths — precomputed '||'-joined site.static_files list, optional.
+{%- endcomment -%}
+{%- assign _rip_src_raw = include.src | default: '' | strip -%}
+{%- if _rip_src_raw != '' -%}
+  {%- assign _rip_sizes = include.sizes | default: '100vw' | strip -%}
+  {%- assign _rip_fallback = include.fallback | default: '' | strip -%}
+  {%- assign _rip_fetchpriority = include.fetchpriority | default: 'high' | strip -%}
+
+  {%- assign _rip_is_external = false -%}
+  {%- if _rip_src_raw contains '://' or _rip_src_raw contains 'data:' or _rip_src_raw contains '//' -%}
+    {%- assign _rip_is_external = true -%}
+  {%- endif -%}
+
+  {%- if _rip_is_external -%}
+    <link rel="preload" as="image" href="{{ _rip_src_raw }}" fetchpriority="{{ _rip_fetchpriority }}">
+  {%- else -%}
+    {%- assign _rip_src_no_query = _rip_src_raw | split: '?' | first | split: '#' | first -%}
+    {%- assign _rip_path = _rip_src_no_query -%}
+    {%- assign _rip_first_char = _rip_path | slice: 0, 1 -%}
+    {%- unless _rip_first_char == '/' -%}{%- assign _rip_path = '/' | append: _rip_path -%}{%- endunless -%}
+
+    {%- assign _rip_file_name = _rip_path | split: '/' | last -%}
+    {%- assign _rip_dir = _rip_path | replace: _rip_file_name, '' -%}
+    {%- assign _rip_ext = _rip_file_name | split: '.' | last | downcase -%}
+    {%- assign _rip_stem_suffix = '.' | append: _rip_ext -%}
+    {%- assign _rip_stem = _rip_file_name | remove: _rip_stem_suffix -%}
+    {%- assign _rip_root_dir = _rip_dir -%}
+    {%- assign _rip_variant_stem = _rip_stem -%}
+
+    {%- assign _rip_rd_suffix7 = _rip_root_dir | slice: -7, 7 -%}
+    {%- assign _rip_rd_suffix6 = _rip_root_dir | slice: -6, 6 -%}
+    {%- assign _rip_rd_suffix5 = _rip_root_dir | slice: -5, 5 -%}
+    {%- if _rip_rd_suffix7 == 'thumbs/' -%}
+      {%- assign _rip_root_dir = _rip_root_dir | split: 'thumbs/' | first -%}
+    {%- elsif _rip_rd_suffix6 == 'small/' -%}
+      {%- assign _rip_root_dir = _rip_root_dir | split: 'small/' | first -%}
+    {%- elsif _rip_rd_suffix7 == 'medium/' -%}
+      {%- assign _rip_root_dir = _rip_root_dir | split: 'medium/' | first -%}
+    {%- elsif _rip_rd_suffix6 == 'large/' -%}
+      {%- assign _rip_root_dir = _rip_root_dir | split: 'large/' | first -%}
+    {%- elsif _rip_rd_suffix5 == 'full/' -%}
+      {%- assign _rip_root_dir = _rip_root_dir | split: 'full/' | first -%}
+    {%- endif -%}
+
+    {%- assign _rip_vs_suffix7 = _rip_variant_stem | slice: -7, 7 -%}
+    {%- assign _rip_vs_suffix6 = _rip_variant_stem | slice: -6, 6 -%}
+    {%- assign _rip_vs_suffix5 = _rip_variant_stem | slice: -5, 5 -%}
+    {%- if _rip_vs_suffix6 == '.thumb' -%}
+      {%- assign _rip_variant_stem = _rip_variant_stem | split: '.thumb' | first -%}
+    {%- elsif _rip_vs_suffix6 == '.small' -%}
+      {%- assign _rip_variant_stem = _rip_variant_stem | split: '.small' | first -%}
+    {%- elsif _rip_vs_suffix7 == '.medium' -%}
+      {%- assign _rip_variant_stem = _rip_variant_stem | split: '.medium' | first -%}
+    {%- elsif _rip_vs_suffix6 == '.large' -%}
+      {%- assign _rip_variant_stem = _rip_variant_stem | split: '.large' | first -%}
+    {%- elsif _rip_vs_suffix5 == '.full' -%}
+      {%- assign _rip_variant_stem = _rip_variant_stem | split: '.full' | first -%}
+    {%- endif -%}
+
+    {%- assign _rip_static_marker = include.all_static_paths | default: _all_static_paths | default: '' -%}
+    {%- if _rip_static_marker == '' -%}
+      {%- assign _rip_static_marker = site.static_files | map: 'path' | join: '||' -%}
+      {%- assign _rip_static_marker = '||' | append: _rip_static_marker | append: '||' -%}
+    {%- endif -%}
+
+    {%- assign _rip_base_exists = false -%}
+    {%- assign _rip_base_marker = '||' | append: _rip_path | append: '||' -%}
+    {%- if _rip_static_marker contains _rip_base_marker -%}{%- assign _rip_base_exists = true -%}{%- endif -%}
+    {%- assign _rip_is_svg = false -%}
+    {%- if _rip_ext == 'svg' -%}{%- assign _rip_is_svg = true -%}{%- endif -%}
+
+    {%- assign _rip_known_exts = 'webp,avif,jpg,jpeg,png,gif,svg' | split: ',' -%}
+    {%- assign _rip_ext_candidates = _rip_ext -%}
+    {%- if _rip_ext == '' or _rip_stem == _rip_file_name -%}
+      {%- assign _rip_ext_candidates = 'webp,avif,jpg,jpeg,png,gif,svg' -%}
+    {%- else -%}
+      {%- for _rip_e in _rip_known_exts -%}
+        {%- unless _rip_e == _rip_ext -%}
+          {%- assign _rip_ext_candidates = _rip_ext_candidates | append: ',' | append: _rip_e -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+    {%- assign _rip_ext_candidates = _rip_ext_candidates | split: ',' -%}
+
+    {%- assign _rip_thumb_url = '' -%}
+    {%- assign _rip_small_url = '' -%}
+    {%- assign _rip_medium_url = '' -%}
+    {%- assign _rip_large_url = '' -%}
+    {%- assign _rip_full_url = '' -%}
+
+    {%- if _rip_is_svg == false and _rip_variant_stem != '' and _rip_variant_stem != _rip_file_name -%}
+      {%- for _rip_e in _rip_ext_candidates -%}
+        {%- assign _rip_thumbs_sub = _rip_root_dir | append: 'thumbs/' | append: _rip_variant_stem | append: '.' | append: _rip_e -%}
+        {%- assign _rip_thumb_suffix = _rip_root_dir | append: _rip_variant_stem | append: '.thumb.' | append: _rip_e -%}
+        {%- assign _rip_small_sub = _rip_root_dir | append: 'small/' | append: _rip_variant_stem | append: '.' | append: _rip_e -%}
+        {%- assign _rip_small_suffix = _rip_root_dir | append: _rip_variant_stem | append: '.small.' | append: _rip_e -%}
+        {%- assign _rip_medium_sub = _rip_root_dir | append: 'medium/' | append: _rip_variant_stem | append: '.' | append: _rip_e -%}
+        {%- assign _rip_medium_suffix = _rip_root_dir | append: _rip_variant_stem | append: '.medium.' | append: _rip_e -%}
+        {%- assign _rip_large_sub = _rip_root_dir | append: 'large/' | append: _rip_variant_stem | append: '.' | append: _rip_e -%}
+        {%- assign _rip_large_suffix = _rip_root_dir | append: _rip_variant_stem | append: '.large.' | append: _rip_e -%}
+        {%- assign _rip_full_sub = _rip_root_dir | append: 'full/' | append: _rip_variant_stem | append: '.' | append: _rip_e -%}
+        {%- assign _rip_full_suffix = _rip_root_dir | append: _rip_variant_stem | append: '.full.' | append: _rip_e -%}
+
+        {%- if _rip_thumb_url == '' -%}
+          {%- assign _rip_marker = '||' | append: _rip_thumbs_sub | append: '||' -%}
+          {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_thumb_url = _rip_thumbs_sub | relative_url -%}{%- endif -%}
+          {%- if _rip_thumb_url == '' -%}
+            {%- assign _rip_marker = '||' | append: _rip_thumb_suffix | append: '||' -%}
+            {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_thumb_url = _rip_thumb_suffix | relative_url -%}{%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if _rip_small_url == '' -%}
+          {%- assign _rip_marker = '||' | append: _rip_small_sub | append: '||' -%}
+          {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_small_url = _rip_small_sub | relative_url -%}{%- endif -%}
+          {%- if _rip_small_url == '' -%}
+            {%- assign _rip_marker = '||' | append: _rip_small_suffix | append: '||' -%}
+            {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_small_url = _rip_small_suffix | relative_url -%}{%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if _rip_medium_url == '' -%}
+          {%- assign _rip_marker = '||' | append: _rip_medium_sub | append: '||' -%}
+          {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_medium_url = _rip_medium_sub | relative_url -%}{%- endif -%}
+          {%- if _rip_medium_url == '' -%}
+            {%- assign _rip_marker = '||' | append: _rip_medium_suffix | append: '||' -%}
+            {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_medium_url = _rip_medium_suffix | relative_url -%}{%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if _rip_large_url == '' -%}
+          {%- assign _rip_marker = '||' | append: _rip_large_sub | append: '||' -%}
+          {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_large_url = _rip_large_sub | relative_url -%}{%- endif -%}
+          {%- if _rip_large_url == '' -%}
+            {%- assign _rip_marker = '||' | append: _rip_large_suffix | append: '||' -%}
+            {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_large_url = _rip_large_suffix | relative_url -%}{%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+
+        {%- if _rip_full_url == '' -%}
+          {%- assign _rip_marker = '||' | append: _rip_full_sub | append: '||' -%}
+          {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_full_url = _rip_full_sub | relative_url -%}{%- endif -%}
+          {%- if _rip_full_url == '' -%}
+            {%- assign _rip_marker = '||' | append: _rip_full_suffix | append: '||' -%}
+            {%- if _rip_static_marker contains _rip_marker -%}{%- assign _rip_full_url = _rip_full_suffix | relative_url -%}{%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- assign _rip_base_url = _rip_path | relative_url -%}
+    {%- assign _rip_resolved_src = _rip_base_url -%}
+    {%- if _rip_base_exists == false -%}
+      {%- assign _rip_resolved_src = _rip_thumb_url | default: _rip_small_url | default: _rip_medium_url | default: _rip_large_url | default: _rip_full_url -%}
+      {%- if _rip_resolved_src == '' and _rip_fallback != '' -%}
+        {%- assign _rip_fallback_path = _rip_fallback | split: '?' | first | split: '#' | first -%}
+        {%- assign _rip_fallback_first_char = _rip_fallback_path | slice: 0, 1 -%}
+        {%- unless _rip_fallback_first_char == '/' -%}{%- assign _rip_fallback_path = '/' | append: _rip_fallback_path -%}{%- endunless -%}
+        {%- assign _rip_fallback_marker = '||' | append: _rip_fallback_path | append: '||' -%}
+        {%- if _rip_static_marker contains _rip_fallback_marker -%}
+          {%- assign _rip_resolved_src = _rip_fallback_path | relative_url -%}
+        {%- endif -%}
+      {%- endif -%}
+      {%- if _rip_resolved_src == '' -%}{%- assign _rip_resolved_src = _rip_base_url -%}{%- endif -%}
+    {%- endif -%}
+
+    {%- assign _rip_srcset_items = '' -%}
+    {%- if _rip_thumb_url != '' -%}
+      {%- if _rip_srcset_items != '' -%}{%- assign _rip_srcset_items = _rip_srcset_items | append: ', ' -%}{%- endif -%}
+      {%- assign _rip_srcset_items = _rip_srcset_items | append: _rip_thumb_url | append: ' 480w' -%}
+    {%- endif -%}
+    {%- if _rip_small_url != '' -%}
+      {%- if _rip_srcset_items != '' -%}{%- assign _rip_srcset_items = _rip_srcset_items | append: ', ' -%}{%- endif -%}
+      {%- assign _rip_srcset_items = _rip_srcset_items | append: _rip_small_url | append: ' 768w' -%}
+    {%- endif -%}
+    {%- if _rip_medium_url != '' -%}
+      {%- if _rip_srcset_items != '' -%}{%- assign _rip_srcset_items = _rip_srcset_items | append: ', ' -%}{%- endif -%}
+      {%- assign _rip_srcset_items = _rip_srcset_items | append: _rip_medium_url | append: ' 1200w' -%}
+    {%- endif -%}
+    {%- if _rip_large_url != '' -%}
+      {%- if _rip_srcset_items != '' -%}{%- assign _rip_srcset_items = _rip_srcset_items | append: ', ' -%}{%- endif -%}
+      {%- assign _rip_srcset_items = _rip_srcset_items | append: _rip_large_url | append: ' 1600w' -%}
+    {%- endif -%}
+    {%- if _rip_full_url != '' -%}
+      {%- if _rip_srcset_items != '' -%}{%- assign _rip_srcset_items = _rip_srcset_items | append: ', ' -%}{%- endif -%}
+      {%- assign _rip_srcset_items = _rip_srcset_items | append: _rip_full_url | append: ' 2200w' -%}
+    {%- endif -%}
+
+    {%- comment -%}
+      AVIF gets its own preload (matching <picture><source type="image/avif">
+      in responsive-image.html) so the browser can skip whichever format it
+      won't end up requesting, the same way it does for the <picture> itself.
+    {%- endcomment -%}
+    {%- assign _rip_avif_srcset_items = '' -%}
+    {%- if _rip_is_svg == false and _rip_variant_stem != '' and _rip_variant_stem != _rip_file_name -%}
+      {%- assign _rip_av_thumb  = _rip_root_dir | append: 'thumbs/' | append: _rip_variant_stem | append: '.avif' -%}
+      {%- assign _rip_av_small  = _rip_root_dir | append: 'small/'  | append: _rip_variant_stem | append: '.avif' -%}
+      {%- assign _rip_av_medium = _rip_root_dir | append: 'medium/' | append: _rip_variant_stem | append: '.avif' -%}
+      {%- assign _rip_av_large  = _rip_root_dir | append: 'large/'  | append: _rip_variant_stem | append: '.avif' -%}
+      {%- assign _rip_av_full   = _rip_root_dir | append: 'full/'   | append: _rip_variant_stem | append: '.avif' -%}
+      {%- assign _rip_av_thumb_url = '' -%}{%- assign _rip_m = '||' | append: _rip_av_thumb | append: '||' -%}{%- if _rip_static_marker contains _rip_m -%}{%- assign _rip_av_thumb_url = _rip_av_thumb | relative_url -%}{%- endif -%}
+      {%- assign _rip_av_small_url = '' -%}{%- assign _rip_m = '||' | append: _rip_av_small | append: '||' -%}{%- if _rip_static_marker contains _rip_m -%}{%- assign _rip_av_small_url = _rip_av_small | relative_url -%}{%- endif -%}
+      {%- assign _rip_av_medium_url = '' -%}{%- assign _rip_m = '||' | append: _rip_av_medium | append: '||' -%}{%- if _rip_static_marker contains _rip_m -%}{%- assign _rip_av_medium_url = _rip_av_medium | relative_url -%}{%- endif -%}
+      {%- assign _rip_av_large_url = '' -%}{%- assign _rip_m = '||' | append: _rip_av_large | append: '||' -%}{%- if _rip_static_marker contains _rip_m -%}{%- assign _rip_av_large_url = _rip_av_large | relative_url -%}{%- endif -%}
+      {%- assign _rip_av_full_url = '' -%}{%- assign _rip_m = '||' | append: _rip_av_full | append: '||' -%}{%- if _rip_static_marker contains _rip_m -%}{%- assign _rip_av_full_url = _rip_av_full | relative_url -%}{%- endif -%}
+      {%- if _rip_av_thumb_url  != '' -%}{%- if _rip_avif_srcset_items != '' -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: _rip_av_thumb_url  | append: ' 480w'  -%}{%- endif -%}
+      {%- if _rip_av_small_url  != '' -%}{%- if _rip_avif_srcset_items != '' -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: _rip_av_small_url  | append: ' 768w'  -%}{%- endif -%}
+      {%- if _rip_av_medium_url != '' -%}{%- if _rip_avif_srcset_items != '' -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: _rip_av_medium_url | append: ' 1200w' -%}{%- endif -%}
+      {%- if _rip_av_large_url  != '' -%}{%- if _rip_avif_srcset_items != '' -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: _rip_av_large_url  | append: ' 1600w' -%}{%- endif -%}
+      {%- if _rip_av_full_url   != '' -%}{%- if _rip_avif_srcset_items != '' -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: ', ' -%}{%- endif -%}{%- assign _rip_avif_srcset_items = _rip_avif_srcset_items | append: _rip_av_full_url   | append: ' 2200w' -%}{%- endif -%}
+    {%- endif -%}
+
+    {%- if _rip_avif_srcset_items != '' -%}
+      <link rel="preload" as="image" type="image/avif" imagesrcset="{{ _rip_avif_srcset_items }}" imagesizes="{{ _rip_sizes }}" fetchpriority="{{ _rip_fetchpriority }}">
+    {%- endif -%}
+    <link rel="preload" as="image" href="{{ _rip_resolved_src }}"{% if _rip_srcset_items != '' %} imagesrcset="{{ _rip_srcset_items }}" imagesizes="{{ _rip_sizes }}"{% endif %} fetchpriority="{{ _rip_fetchpriority }}">
+  {%- endif -%}
+{%- endif -%}
