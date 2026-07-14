@@ -35,6 +35,10 @@ env:
   RUBY_VERSION: "3.3"
   THEME_REPO: Pat-79/jekyll-awayfromhome # source of generate-image-variants.sh
   THEME_REF: main # pin to the same ref your remote_theme uses
+  # secrets can't be referenced directly in a step's `if:` condition (GitHub
+  # Actions rejects it at workflow-validation time) — resolve it into a
+  # plain env var here instead, which `if:` can read.
+  CF_MIRROR_ENABLED: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
 
 jobs:
   build:
@@ -121,7 +125,7 @@ jobs:
       # — it's an independent mirror unless you deliberately point your
       # domain at Cloudflare instead.
       - name: Deploy to Cloudflare Pages (optional mirror)
-        if: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+        if: ${{ env.CF_MIRROR_ENABLED == 'true' }}
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
