@@ -302,6 +302,7 @@
                   loading="{{ _gw_loading }}"
                   decoding="{{ _gw_decoding }}"
                   {% if _gw_dim %}width="{{ _gw_dim.width }}" height="{{ _gw_dim.height }}"{% endif %}
+                  {% include image-placeholder-style.html dim=_gw_dim %}
                 >
               {%- endcapture -%}
               {%- if _gw_avif_srcset != '' -%}
@@ -338,6 +339,7 @@
                 loading="{{ _gw_loading }}"
                 decoding="{{ _gw_decoding }}"
                 {% if _gw_stage_dim %}width="{{ _gw_stage_dim.width }}" height="{{ _gw_stage_dim.height }}"{% endif %}
+                {% include image-placeholder-style.html dim=_gw_stage_dim %}
               >
             {%- endcapture -%}
             <picture class="afh-gallery__stage-picture is-active" data-gallery-stage-picture>

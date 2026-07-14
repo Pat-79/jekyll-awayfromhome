@@ -550,6 +550,34 @@ Common options:
 
 Run `./scripts/generate-image-variants.sh --help` for full options.
 
+#### Automating it with GitHub Actions (optional)
+
+The theme works fine without this — the section above describes running the
+script by hand and committing the results, which is all you need. If you'd
+rather it happen automatically on every push instead, an example workflow is
+provided at
+[`examples/github-actions/deploy-with-image-variants.yml`](examples/github-actions/deploy-with-image-variants.yml).
+
+Copy it into `.github/workflows/` in your own site's repo and edit the `env:`
+block at the top (Jekyll root directory, Ruby version, theme ref). It:
+
+- fetches `generate-image-variants.sh` from this theme repo (it isn't pulled
+  in by `remote_theme`, since that only covers Jekyll-recognized assets, not
+  arbitrary scripts) and runs it
+- builds the site with Jekyll and deploys to GitHub Pages
+- caches generated variants between runs so unchanged photos aren't
+  reprocessed every build — this is ephemeral CI cache, not something
+  committed back to your repo; if you'd rather have the generated files
+  versioned in git instead, adapt the workflow to commit them
+- optionally mirrors the same build to Cloudflare Pages — this step no-ops
+  automatically if you haven't configured it, so it's safe to leave in even
+  if you don't use Cloudflare; see the comments in the workflow file for the
+  one-time setup (a Cloudflare Pages project in "Direct Upload" mode, plus
+  two repo secrets and one repo variable)
+
+Requires switching your repository's Pages source to **GitHub Actions**:
+Settings → Pages → Build and deployment → Source.
+
 ### Supported Social Media Platforms
 
 The theme includes icons for the following platforms. Add any or all to your `social_links` array in `_config.yml`:

@@ -1,0 +1,141 @@
+# Example GitHub Actions workflow for consumers of this theme.
+#
+# This is entirely optional — the theme works fine without it, generating
+# image variants/dimensions/placeholders manually via
+# scripts/generate-image-variants.sh and committing the results, as
+# documented in the README. This workflow just automates that step (plus a
+# normal Jekyll build/deploy) so it happens on every push instead.
+#
+# To use: copy this file to .github/workflows/ in your own site's repo, edit
+# the env: block below for your setup, and (optionally) set up the
+# Cloudflare Pages secrets/variable described near the bottom if you want a
+# Cloudflare mirror alongside GitHub Pages.
+#
+# Requires switching your repo's Pages source to "GitHub Actions": Settings
+# -> Pages -> Build and deployment -> Source.
+
+name: Build and deploy Jekyll site
+
+on:
+  push:
+    branches: ["main"] # <-- your deploy branch
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  JEKYLL_ROOT: . # subdirectory containing _config.yml ("." if at repo root)
+  RUBY_VERSION: "3.3"
+  THEME_REPO: Pat-79/jekyll-awayfromhome # source of generate-image-variants.sh
+  THEME_REF: main # pin to the same ref your remote_theme uses
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+          working-directory: ${{ env.JEKYLL_ROOT }}
+
+      - name: Fetch the theme's image-variant script
+        # scripts/generate-image-variants.sh lives in the theme repo, not
+        # yours — remote_theme only pulls in Jekyll-recognized assets at
+        # build time, not arbitrary scripts, so it has to be fetched
+        # separately.
+        run: |
+          mkdir -p "${{ env.JEKYLL_ROOT }}/scripts"
+          curl -fsSL \
+            "https://raw.githubusercontent.com/${{ env.THEME_REPO }}/${{ env.THEME_REF }}/scripts/generate-image-variants.sh" \
+            -o "${{ env.JEKYLL_ROOT }}/scripts/generate-image-variants.sh"
+          chmod +x "${{ env.JEKYLL_ROOT }}/scripts/generate-image-variants.sh"
+
+      - name: Confirm ImageMagick is available
+        run: magick -version
+
+      # Ephemeral by design: nothing this step produces gets committed back
+      # to the repo. Caching here only avoids every build reprocessing every
+      # photo from scratch — cache is CI-only storage, not git history. If
+      # you'd rather commit generated variants/dimensions to your repo
+      # instead (so they're versioned and visible), drop this cache step and
+      # add a git-commit step after the generate step below.
+      - name: Cache generated image variants
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.JEKYLL_ROOT }}/assets/images
+            ${{ env.JEKYLL_ROOT }}/_data/image-dimensions.yml
+          key: image-variants-${{ hashFiles(format('{0}/assets/images/**/*.jpg', env.JEKYLL_ROOT), format('{0}/assets/images/**/*.jpeg', env.JEKYLL_ROOT), format('{0}/assets/images/**/*.png', env.JEKYLL_ROOT), format('{0}/assets/images/**/*.webp', env.JEKYLL_ROOT), format('{0}/assets/images/**/*.gif', env.JEKYLL_ROOT), format('{0}/assets/images/**/*.avif', env.JEKYLL_ROOT)) }}
+          restore-keys: |
+            image-variants-
+
+      - name: Generate responsive image variants, dimensions, and placeholders
+        working-directory: ${{ env.JEKYLL_ROOT }}
+        run: ./scripts/generate-image-variants.sh
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        working-directory: ${{ env.JEKYLL_ROOT }}
+        run: bundle exec jekyll build --destination ../_site
+        env:
+          JEKYLL_ENV: production
+
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      # Optional Cloudflare Pages mirror. Reuses the exact same _site output
+      # built above — no second build, no checkout needed on Cloudflare's
+      # side at all. Skips automatically if you haven't set the secrets
+      # below — delete this step entirely if you don't want it, or just
+      # leave it be and it'll no-op.
+      #
+      # One-time setup to enable:
+      #   1. Cloudflare dashboard -> Workers & Pages -> Create -> Pages ->
+      #      "Upload assets" (NOT "Connect to Git" - that mode builds on
+      #      Cloudflare's side instead of reusing this job's output, and
+      #      won't have ImageMagick available).
+      #   2. Repo secrets (Settings -> Secrets and variables -> Actions ->
+      #      Secrets): CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
+      #   3. Repo variable (same page, Variables tab): CLOUDFLARE_PROJECT_NAME,
+      #      matching the project name chosen in step 1.
+      #
+      # A Cloudflare Pages "Direct Upload" project always gets its own
+      # <project>.pages.dev URL regardless of any custom domain, so running
+      # this alongside GitHub Pages does not require changing your DNS/CNAME
+      # — it's an independent mirror unless you deliberately point your
+      # domain at Cloudflare instead.
+      - name: Deploy to Cloudflare Pages (optional mirror)
+        if: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+          directory: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
