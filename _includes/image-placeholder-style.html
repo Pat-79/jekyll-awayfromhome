@@ -1,0 +1,18 @@
+{%- comment -%}
+  image-placeholder-style.html — Emits a style="" attribute holding a
+  blurred LQIP background-image, for use directly on an <img> tag, when a
+  placeholder is known for that image. Emits nothing otherwise.
+
+  Parameters:
+    dim — the dimensions hash looked up from site.data['image-dimensions']
+          (needs a .placeholder field); leave nil/blank when unknown.
+
+  Set as the <img>'s own CSS background rather than a separate overlay
+  element: browsers paint an <img>'s background behind its actual image
+  content, so the placeholder shows through automatically until the real
+  image loads and paints over it — no JS swap needed. Blur is baked into
+  the generated placeholder itself (scripts/generate-image-variants.sh),
+  not applied here via CSS filter — a filter on the <img> itself would
+  blur the loaded photo too, not just the background sitting behind it.
+{%- endcomment -%}
+{%- if include.dim and include.dim.placeholder %} style="background-image:url('{{ include.dim.placeholder }}');background-size:cover;background-position:center;"{%- endif -%}
