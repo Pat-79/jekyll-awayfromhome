@@ -48,6 +48,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Ruby
+        # bundler-cache: true installs gems into a local vendor/bundle/
+        # inside JEKYLL_ROOT. Make sure your site's _config.yml `exclude:`
+        # list includes `vendor` — otherwise Jekyll will try to parse files
+        # inside the installed gems as site content (surfaces as a build
+        # error about an invalid date in a .erb file buried in
+        # vendor/bundle/.../jekyll-x.y.z/lib/site_template/_posts/).
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}

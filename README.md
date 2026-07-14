@@ -578,6 +578,13 @@ block at the top (Jekyll root directory, Ruby version, theme ref). It:
 Requires switching your repository's Pages source to **GitHub Actions**:
 Settings → Pages → Build and deployment → Source.
 
+Also add `vendor` to your site's `_config.yml` `exclude:` list if it isn't
+there already. The workflow's `bundler-cache: true` installs gems into a
+local `vendor/bundle/` inside your Jekyll root, and without excluding it
+Jekyll will try to parse files inside the installed gems as site content
+(this surfaces as a build error about an invalid date in a `.erb` file
+buried in `vendor/bundle/.../jekyll-x.y.z/lib/site_template/_posts/`).
+
 ### Supported Social Media Platforms
 
 The theme includes icons for the following platforms. Add any or all to your `social_links` array in `_config.yml`:
