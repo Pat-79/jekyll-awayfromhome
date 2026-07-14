@@ -1,0 +1,64 @@
+{%- comment -%}
+  image-placeholder-uri.html — Resolves a raw image src to its blur-up
+  placeholder data URI (if known), and outputs it as plain text.
+
+  Companion to image-placeholder-style.html: that one takes an
+  already-looked-up `dim` hash (for templates like responsive-image.html and
+  gallery-widget.html that already computed one internally); this one is for
+  call sites that only have a raw src string and need the placeholder value
+  itself rather than a full style="" attribute — e.g. a <video poster="">,
+  which can only take one plain URL, not a CSS background.
+
+  Parameters:
+    src — raw image path, same format responsive-image.html accepts
+          (site-root relative or absolute; external/data URLs return empty).
+
+  Outputs nothing (empty string) when the src is external, or no placeholder
+  is known for it — callers should treat an empty result as "fall back to
+  the real image" the same way the rest of the LQIP feature degrades.
+{%- endcomment -%}
+{%- assign _piu_src_raw = include.src | default: '' | strip -%}
+{%- assign _piu_is_external = false -%}
+{%- if _piu_src_raw contains '://' or _piu_src_raw contains 'data:' or _piu_src_raw contains '//' -%}
+  {%- assign _piu_is_external = true -%}
+{%- endif -%}
+{%- if _piu_src_raw != '' and _piu_is_external == false -%}
+  {%- assign _piu_path = _piu_src_raw | split: '?' | first | split: '#' | first -%}
+  {%- assign _piu_first_char = _piu_path | slice: 0, 1 -%}
+  {%- unless _piu_first_char == '/' -%}{%- assign _piu_path = '/' | append: _piu_path -%}{%- endunless -%}
+
+  {%- assign _piu_file_name = _piu_path | split: '/' | last -%}
+  {%- assign _piu_dir = _piu_path | replace: _piu_file_name, '' -%}
+  {%- assign _piu_ext = _piu_file_name | split: '.' | last | downcase -%}
+  {%- assign _piu_stem_suffix = '.' | append: _piu_ext -%}
+  {%- assign _piu_stem = _piu_file_name | remove: _piu_stem_suffix -%}
+  {%- assign _piu_root_dir = _piu_dir -%}
+
+  {%- if _piu_root_dir | slice: -7, 7 == 'thumbs/' -%}
+    {%- assign _piu_root_dir = _piu_root_dir | split: 'thumbs/' | first -%}
+  {%- elsif _piu_root_dir | slice: -6, 6 == 'small/' -%}
+    {%- assign _piu_root_dir = _piu_root_dir | split: 'small/' | first -%}
+  {%- elsif _piu_root_dir | slice: -7, 7 == 'medium/' -%}
+    {%- assign _piu_root_dir = _piu_root_dir | split: 'medium/' | first -%}
+  {%- elsif _piu_root_dir | slice: -6, 6 == 'large/' -%}
+    {%- assign _piu_root_dir = _piu_root_dir | split: 'large/' | first -%}
+  {%- elsif _piu_root_dir | slice: -5, 5 == 'full/' -%}
+    {%- assign _piu_root_dir = _piu_root_dir | split: 'full/' | first -%}
+  {%- endif -%}
+
+  {%- if _piu_stem | slice: -6, 6 == '.thumb' -%}
+    {%- assign _piu_stem = _piu_stem | split: '.thumb' | first -%}
+  {%- elsif _piu_stem | slice: -6, 6 == '.small' -%}
+    {%- assign _piu_stem = _piu_stem | split: '.small' | first -%}
+  {%- elsif _piu_stem | slice: -7, 7 == '.medium' -%}
+    {%- assign _piu_stem = _piu_stem | split: '.medium' | first -%}
+  {%- elsif _piu_stem | slice: -6, 6 == '.large' -%}
+    {%- assign _piu_stem = _piu_stem | split: '.large' | first -%}
+  {%- elsif _piu_stem | slice: -5, 5 == '.full' -%}
+    {%- assign _piu_stem = _piu_stem | split: '.full' | first -%}
+  {%- endif -%}
+
+  {%- assign _piu_dim_key = _piu_root_dir | append: _piu_stem -%}
+  {%- assign _piu_dim = site.data['image-dimensions'][_piu_dim_key] -%}
+  {%- if _piu_dim and _piu_dim.placeholder -%}{{ _piu_dim.placeholder }}{%- endif -%}
+{%- endif -%}

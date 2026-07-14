@@ -40,6 +40,19 @@ layout: base
   {%- assign landing_image_url = landing_image_raw | relative_url -%}
 {%- endif -%}
 
+{%- comment -%}
+  The <video poster="..."> attribute only accepts a single plain URL - no
+  srcset equivalent exists for video posters, so "responsive" isn't
+  possible here the way it is for <img>. It CAN still show something
+  instantly though: point it at the same tiny blur-up placeholder used
+  elsewhere instead of the full-resolution original, which is what it
+  fell back to before. Falls back to the real image when no placeholder
+  is known (site hasn't (re)run scripts/generate-image-variants.sh).
+{%- endcomment -%}
+{%- capture landing_poster_placeholder -%}{%- include image-placeholder-uri.html src=landing_image_raw -%}{%- endcapture -%}
+{%- assign landing_poster_placeholder = landing_poster_placeholder | strip -%}
+{%- assign landing_poster_url = landing_poster_placeholder | default: landing_image_url -%}
+
 {%- if landing_hls_raw and landing_hls_raw != '' -%}
   {%- assign landing_hls_url = landing_hls_raw | strip -%}
   {%- unless landing_hls_url contains '://' -%}
@@ -63,7 +76,7 @@ layout: base
         controlslist="nodownload nofullscreen noplaybackrate noremoteplayback"
         x-webkit-airplay="deny"
         preload="auto"
-        poster="{{ landing_image_url }}"
+        poster="{{ landing_poster_url }}"
       ></video>
     {%- elsif landing_video_id and landing_video_id != '' -%}
       <iframe
