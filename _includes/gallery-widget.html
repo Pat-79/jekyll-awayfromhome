@@ -93,7 +93,8 @@
 
   {%- if _gw_is_file -%}
     {%- assign _gw_file_path = _gw_src -%}
-    {%- unless _gw_file_path | slice: 0, 1 == '/' -%}{%- assign _gw_file_path = '/' | append: _gw_file_path -%}{%- endunless -%}
+    {%- assign _gw_fp_first_char = _gw_file_path | slice: 0, 1 -%}
+    {%- unless _gw_fp_first_char == '/' -%}{%- assign _gw_file_path = '/' | append: _gw_file_path -%}{%- endunless -%}
     {%- assign _gw_images = _gw_images | push: _gw_file_path -%}
     {%- assign _gw_file_name = _gw_file_path | split: '/' | last -%}
     {%- assign _gw_root_dir = _gw_file_path | remove: _gw_file_name -%}
@@ -105,8 +106,10 @@
     {%- endif -%}
   {%- else -%}
     {%- assign _gw_root_dir = _gw_src -%}
-    {%- unless _gw_root_dir | slice: 0, 1 == '/' -%}{%- assign _gw_root_dir = '/' | append: _gw_root_dir -%}{%- endunless -%}
-    {%- unless _gw_root_dir | slice: -1, 1 == '/' -%}{%- assign _gw_root_dir = _gw_root_dir | append: '/' -%}{%- endunless -%}
+    {%- assign _gw_rd_first_char = _gw_root_dir | slice: 0, 1 -%}
+    {%- unless _gw_rd_first_char == '/' -%}{%- assign _gw_root_dir = '/' | append: _gw_root_dir -%}{%- endunless -%}
+    {%- assign _gw_rd_last_char = _gw_root_dir | slice: -1, 1 -%}
+    {%- unless _gw_rd_last_char == '/' -%}{%- assign _gw_root_dir = _gw_root_dir | append: '/' -%}{%- endunless -%}
 
     {%- for _gw_path in _gw_static_paths -%}
       {%- assign _gw_path = _gw_path | strip -%}

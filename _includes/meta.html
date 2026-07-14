@@ -12,10 +12,14 @@
 {%- assign page_category = page.category | default: page.categories | first -%}
 {%- assign twitter_site = site.twitter_username | default: site.twitter.site | default: site.social.twitter -%}
 {%- assign twitter_creator = page.twitter_username | default: page.author.twitter | default: site.author.twitter -%}
-{%- if twitter_site and twitter_site != '' and twitter_site contains '@' == false -%}
+{%- assign _twitter_site_has_at = false -%}
+{%- if twitter_site contains '@' -%}{%- assign _twitter_site_has_at = true -%}{%- endif -%}
+{%- if twitter_site and twitter_site != '' and _twitter_site_has_at == false -%}
   {%- assign twitter_site = '@' | append: twitter_site -%}
 {%- endif -%}
-{%- if twitter_creator and twitter_creator != '' and twitter_creator contains '@' == false -%}
+{%- assign _twitter_creator_has_at = false -%}
+{%- if twitter_creator contains '@' -%}{%- assign _twitter_creator_has_at = true -%}{%- endif -%}
+{%- if twitter_creator and twitter_creator != '' and _twitter_creator_has_at == false -%}
   {%- assign twitter_creator = '@' | append: twitter_creator -%}
 {%- endif -%}
 {%- assign page_image = page.image | default: site.default_post_image | default: site.brand.logo -%}
@@ -25,7 +29,8 @@
   {%- assign _meta_is_external = true -%}
 {%- endif -%}
 {%- unless _meta_is_external -%}
-  {%- unless page_image_resolved | slice: 0, 1 == '/' -%}
+  {%- assign _meta_image_first_char = page_image_resolved | slice: 0, 1 -%}
+  {%- unless _meta_image_first_char == '/' -%}
     {%- assign page_image_resolved = '/' | append: page_image_resolved -%}
   {%- endunless -%}
 {%- endunless -%}

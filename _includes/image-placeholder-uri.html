@@ -34,27 +34,33 @@
   {%- assign _piu_stem = _piu_file_name | remove: _piu_stem_suffix -%}
   {%- assign _piu_root_dir = _piu_dir -%}
 
-  {%- if _piu_root_dir | slice: -7, 7 == 'thumbs/' -%}
+  {%- assign _piu_rd_suffix7 = _piu_root_dir | slice: -7, 7 -%}
+  {%- assign _piu_rd_suffix6 = _piu_root_dir | slice: -6, 6 -%}
+  {%- assign _piu_rd_suffix5 = _piu_root_dir | slice: -5, 5 -%}
+  {%- if _piu_rd_suffix7 == 'thumbs/' -%}
     {%- assign _piu_root_dir = _piu_root_dir | split: 'thumbs/' | first -%}
-  {%- elsif _piu_root_dir | slice: -6, 6 == 'small/' -%}
+  {%- elsif _piu_rd_suffix6 == 'small/' -%}
     {%- assign _piu_root_dir = _piu_root_dir | split: 'small/' | first -%}
-  {%- elsif _piu_root_dir | slice: -7, 7 == 'medium/' -%}
+  {%- elsif _piu_rd_suffix7 == 'medium/' -%}
     {%- assign _piu_root_dir = _piu_root_dir | split: 'medium/' | first -%}
-  {%- elsif _piu_root_dir | slice: -6, 6 == 'large/' -%}
+  {%- elsif _piu_rd_suffix6 == 'large/' -%}
     {%- assign _piu_root_dir = _piu_root_dir | split: 'large/' | first -%}
-  {%- elsif _piu_root_dir | slice: -5, 5 == 'full/' -%}
+  {%- elsif _piu_rd_suffix5 == 'full/' -%}
     {%- assign _piu_root_dir = _piu_root_dir | split: 'full/' | first -%}
   {%- endif -%}
 
-  {%- if _piu_stem | slice: -6, 6 == '.thumb' -%}
+  {%- assign _piu_st_suffix7 = _piu_stem | slice: -7, 7 -%}
+  {%- assign _piu_st_suffix6 = _piu_stem | slice: -6, 6 -%}
+  {%- assign _piu_st_suffix5 = _piu_stem | slice: -5, 5 -%}
+  {%- if _piu_st_suffix6 == '.thumb' -%}
     {%- assign _piu_stem = _piu_stem | split: '.thumb' | first -%}
-  {%- elsif _piu_stem | slice: -6, 6 == '.small' -%}
+  {%- elsif _piu_st_suffix6 == '.small' -%}
     {%- assign _piu_stem = _piu_stem | split: '.small' | first -%}
-  {%- elsif _piu_stem | slice: -7, 7 == '.medium' -%}
+  {%- elsif _piu_st_suffix7 == '.medium' -%}
     {%- assign _piu_stem = _piu_stem | split: '.medium' | first -%}
-  {%- elsif _piu_stem | slice: -6, 6 == '.large' -%}
+  {%- elsif _piu_st_suffix6 == '.large' -%}
     {%- assign _piu_stem = _piu_stem | split: '.large' | first -%}
-  {%- elsif _piu_stem | slice: -5, 5 == '.full' -%}
+  {%- elsif _piu_st_suffix5 == '.full' -%}
     {%- assign _piu_stem = _piu_stem | split: '.full' | first -%}
   {%- endif -%}
 

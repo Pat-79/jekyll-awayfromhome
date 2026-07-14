@@ -30,27 +30,33 @@
     {%- assign variant_root_dir = image_dir -%}
     {%- assign variant_stem = image_stem -%}
 
-    {%- if variant_root_dir | slice: -7, 7 == 'thumbs/' -%}
+    {%- assign _vrd_suffix7 = variant_root_dir | slice: -7, 7 -%}
+    {%- assign _vrd_suffix6 = variant_root_dir | slice: -6, 6 -%}
+    {%- assign _vrd_suffix5 = variant_root_dir | slice: -5, 5 -%}
+    {%- if _vrd_suffix7 == 'thumbs/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'thumbs/' | first -%}
-    {%- elsif variant_root_dir | slice: -6, 6 == 'small/' -%}
+    {%- elsif _vrd_suffix6 == 'small/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'small/' | first -%}
-    {%- elsif variant_root_dir | slice: -7, 7 == 'medium/' -%}
+    {%- elsif _vrd_suffix7 == 'medium/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'medium/' | first -%}
-    {%- elsif variant_root_dir | slice: -6, 6 == 'large/' -%}
+    {%- elsif _vrd_suffix6 == 'large/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'large/' | first -%}
-    {%- elsif variant_root_dir | slice: -5, 5 == 'full/' -%}
+    {%- elsif _vrd_suffix5 == 'full/' -%}
       {%- assign variant_root_dir = variant_root_dir | split: 'full/' | first -%}
     {%- endif -%}
 
-    {%- if variant_stem | slice: -6, 6 == '.thumb' -%}
+    {%- assign _vs_suffix7 = variant_stem | slice: -7, 7 -%}
+    {%- assign _vs_suffix6 = variant_stem | slice: -6, 6 -%}
+    {%- assign _vs_suffix5 = variant_stem | slice: -5, 5 -%}
+    {%- if _vs_suffix6 == '.thumb' -%}
       {%- assign variant_stem = variant_stem | split: '.thumb' | first -%}
-    {%- elsif variant_stem | slice: -6, 6 == '.small' -%}
+    {%- elsif _vs_suffix6 == '.small' -%}
       {%- assign variant_stem = variant_stem | split: '.small' | first -%}
-    {%- elsif variant_stem | slice: -7, 7 == '.medium' -%}
+    {%- elsif _vs_suffix7 == '.medium' -%}
       {%- assign variant_stem = variant_stem | split: '.medium' | first -%}
-    {%- elsif variant_stem | slice: -6, 6 == '.large' -%}
+    {%- elsif _vs_suffix6 == '.large' -%}
       {%- assign variant_stem = variant_stem | split: '.large' | first -%}
-    {%- elsif variant_stem | slice: -5, 5 == '.full' -%}
+    {%- elsif _vs_suffix5 == '.full' -%}
       {%- assign variant_stem = variant_stem | split: '.full' | first -%}
     {%- endif -%}
 
