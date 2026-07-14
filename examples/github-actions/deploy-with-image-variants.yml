@@ -68,11 +68,18 @@ jobs:
 
       - name: Install ImageMagick
         # Not guaranteed to be preinstalled on the runner image — install it
-        # explicitly rather than assume.
+        # explicitly rather than assume. Ubuntu's apt package is ImageMagick
+        # 6.x, which provides `convert`/`identify` but not the unified
+        # `magick` binary (that's IM7-only) — check for whichever is
+        # present, matching generate-image-variants.sh's own fallback logic.
         run: |
           sudo apt-get update
           sudo apt-get install -y imagemagick
-          magick -version
+          if command -v magick >/dev/null 2>&1; then
+            magick -version
+          else
+            convert -version
+          fi
 
       # Ephemeral by design: nothing this step produces gets committed back
       # to the repo. Caching here only avoids every build reprocessing every
