@@ -66,8 +66,13 @@ jobs:
             -o "${{ env.JEKYLL_ROOT }}/scripts/generate-image-variants.sh"
           chmod +x "${{ env.JEKYLL_ROOT }}/scripts/generate-image-variants.sh"
 
-      - name: Confirm ImageMagick is available
-        run: magick -version
+      - name: Install ImageMagick
+        # Not guaranteed to be preinstalled on the runner image — install it
+        # explicitly rather than assume.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          magick -version
 
       # Ephemeral by design: nothing this step produces gets committed back
       # to the repo. Caching here only avoids every build reprocessing every
