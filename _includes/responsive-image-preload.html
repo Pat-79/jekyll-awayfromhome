@@ -226,7 +226,8 @@
     {%- endif -%}
 
     {%- if _rip_avif_srcset_items != '' -%}
-      <link rel="preload" as="image" type="image/avif" imagesrcset="{{ _rip_avif_srcset_items }}" imagesizes="{{ _rip_sizes }}" fetchpriority="{{ _rip_fetchpriority }}">
+      {%- assign _rip_avif_resolved = _rip_av_thumb_url | default: _rip_av_small_url | default: _rip_av_medium_url | default: _rip_av_large_url | default: _rip_av_full_url -%}
+      <link rel="preload" as="image" type="image/avif" href="{{ _rip_avif_resolved }}" imagesrcset="{{ _rip_avif_srcset_items }}" imagesizes="{{ _rip_sizes }}" fetchpriority="{{ _rip_fetchpriority }}">
     {%- endif -%}
     <link rel="preload" as="image" href="{{ _rip_resolved_src }}"{% if _rip_srcset_items != '' %} imagesrcset="{{ _rip_srcset_items }}" imagesizes="{{ _rip_sizes }}"{% endif %} fetchpriority="{{ _rip_fetchpriority }}">
   {%- endif -%}

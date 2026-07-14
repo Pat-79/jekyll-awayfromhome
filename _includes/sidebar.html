@@ -132,7 +132,7 @@
                   {%- endif -%}
                 {%- endfor -%}
               {%- endif -%}
-              <li><a href="{{ archive_url | relative_url }}" data-drawer-link>{{ archive_label }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_count }})</span>{% endif %}</a></li>
+              <li><a href="{{ archive_url | relative_url | escape }}" data-drawer-link>{{ archive_label }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_count }})</span>{% endif %}</a></li>
             {%- endunless -%}
           {%- elsif sidebar_archive_mode == 'month-year' -%}
             {%- assign archive_key = post.date | date: '%Y-%m' -%}
@@ -154,7 +154,7 @@
                   {%- endif -%}
                 {%- endfor -%}
               {%- endif -%}
-              <li><a href="{{ archive_url | relative_url }}" data-drawer-link><span data-i18n="archive.months.{{ _sb_month_num }}">{{ _sb_month_name }}</span> {{ post.date | date: '%Y' }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_count }})</span>{% endif %}</a></li>
+              <li><a href="{{ archive_url | relative_url | escape }}" data-drawer-link><span data-i18n="archive.months.{{ _sb_month_num }}">{{ _sb_month_name }}</span> {{ post.date | date: '%Y' }}{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_count }})</span>{% endif %}</a></li>
             {%- endunless -%}
           {%- else -%}
             {%- assign archive_year = post.date | date: '%Y' -%}
@@ -198,7 +198,7 @@
                               {%- endif -%}
                             {%- endfor -%}
                           {%- endif -%}
-                          <li><a href="{{ archive_month_url | relative_url }}" data-drawer-link><span data-i18n="archive.months.{{ _sb_ym_num }}">{{ archive_month_name }}</span>{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_month_count }})</span>{% endif %}</a></li>
+                          <li><a href="{{ archive_month_url | relative_url | escape }}" data-drawer-link><span data-i18n="archive.months.{{ _sb_ym_num }}">{{ archive_month_name }}</span>{% if sidebar_archive_show_counts %} <span class="archive-tree__count">({{ archive_month_count }})</span>{% endif %}</a></li>
                         {%- endunless -%}
                       {%- endif -%}
                     {%- endfor -%}
