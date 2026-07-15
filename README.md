@@ -581,6 +581,12 @@ block at the top (Jekyll root directory, Ruby version, theme ref). It:
   rewrites a page when it can produce valid output for it, leaves anything it
   can't confidently clean untouched, and never fails the build regardless of
   what it finds
+- runs `scripts/wrap-html-text.py` afterward to rewrap prose text (post
+  bodies, descriptions, etc.) at 72 columns, purely for readability of the
+  HTML source if you ever open it. Also optional. It only rewrites text
+  content — every tag, attribute, comment, and script/style/pre/code block
+  is reproduced byte-for-byte untouched, so it can't affect how the page
+  renders or behaves
 
 Requires switching your repository's Pages source to **GitHub Actions**:
 Settings → Pages → Build and deployment → Source.

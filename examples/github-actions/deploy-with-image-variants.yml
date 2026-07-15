@@ -146,6 +146,23 @@ jobs:
               "$f" || true
           done
 
+      - name: Fetch the theme's HTML text-wrap script
+        # scripts/wrap-html-text.py lives in the theme repo, not yours —
+        # same reasoning as generate-image-variants.sh above.
+        run: |
+          curl -fsSL \
+            "https://raw.githubusercontent.com/${{ env.THEME_REPO }}/${{ env.THEME_REF }}/scripts/wrap-html-text.py" \
+            -o wrap-html-text.py
+
+      # Also optional, also purely cosmetic: rewraps prose text (paragraphs,
+      # headings, etc.) at a fixed column width so the HTML source is easier
+      # to skim if you ever open it. Only touches text content — every tag,
+      # attribute, comment, and script/style/pre/code block is reproduced
+      # byte-for-byte untouched. ubuntu-latest ships python3 preinstalled,
+      # no separate setup step needed.
+      - name: Wrap prose text in generated HTML at 72 columns
+        run: python3 wrap-html-text.py --width 72 _site
+
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
