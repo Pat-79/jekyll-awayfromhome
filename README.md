@@ -574,6 +574,13 @@ block at the top (Jekyll root directory, Ruby version, theme ref). It:
   if you don't use Cloudflare; see the comments in the workflow file for the
   one-time setup (a Cloudflare Pages project in "Direct Upload" mode, plus
   two repo secrets and one repo variable)
+- runs [HTML Tidy](https://www.html-tidy.org/) over the generated `_site`
+  output as a polish pass before upload. Also entirely optional — the site
+  builds and validates fine without it — but it catches things templates can
+  miss (indentation, an unescaped `&` in a generated URL) for free. Tidy only
+  rewrites a page when it can produce valid output for it, leaves anything it
+  can't confidently clean untouched, and never fails the build regardless of
+  what it finds
 
 Requires switching your repository's Pages source to **GitHub Actions**:
 Settings → Pages → Build and deployment → Source.

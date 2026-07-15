@@ -116,6 +116,36 @@ jobs:
         env:
           JEKYLL_ENV: production
 
+      - name: Install HTML Tidy
+        run: sudo apt-get install -y tidy
+
+      # Optional polish pass over the generated HTML. Not required — the
+      # site builds and works fine without this step. It just squeezes out
+      # a bit more consistency (indentation, entity-escaping mistakes like a
+      # bare "&" in a query string) than the templates produce on their own.
+      # Tidy only rewrites a file when it can produce valid output for it,
+      # and leaves anything it can't safely clean untouched — so a stray
+      # page it doesn't understand is skipped, not corrupted. `|| true`
+      # keeps this purely cosmetic: tidy's exit code never fails the build.
+      - name: Clean up generated HTML with HTML Tidy
+        run: |
+          find _site -name "*.html" -print0 | while IFS= read -r -d '' f; do
+            tidy -m -q \
+              --tidy-mark no \
+              --drop-empty-elements no \
+              --merge-divs no \
+              --merge-spans no \
+              --preserve-entities yes \
+              --numeric-entities no \
+              --input-encoding utf8 \
+              --output-encoding utf8 \
+              --wrap 0 \
+              --indent auto \
+              --indent-spaces 2 \
+              --vertical-space no \
+              "$f" || true
+          done
+
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
