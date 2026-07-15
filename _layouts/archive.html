@@ -31,7 +31,7 @@ layout: page
   "page_of": {{ t.archive.page_of | jsonify }}
 }</script>
 
-<section class="page-section">
+<section class="page-section" aria-label="Archive filters">
   <div class="container">
     {% if archive_intro and archive_intro != '' %}
       <p>{{ archive_intro }}</p>
@@ -71,7 +71,7 @@ layout: page
   </div>
 </section>
 
-<section class="page-section page-section--spaced" id="archive-results">
+<section class="page-section page-section--spaced" id="archive-results" aria-label="Archive results">
   <div class="container story-list" data-archive-list data-archive-per-page="{{ archive_per_page }}">
     {%- assign _default_lang = site.lang | default: 'en' -%}
     {%- assign _fallback = site.lang_fallback | default: false -%}

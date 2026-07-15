@@ -99,6 +99,7 @@
   data-map-tile-referrer-policy="{{ map_tile_referrer_policy | escape }}"
   data-map-tile-cross-origin="{{ map_tile_cross_origin | escape }}"
   style="--afh-map-height: {{ map_height_css | escape }};{% if map_width_css != '' %} --afh-map-width: {{ map_width_css | escape }};{% endif %}{% if map_max_width_css != '' %} --afh-map-max-width: {{ map_max_width_css | escape }};{% endif %}{% if map_max_height_css != '' %} --afh-map-max-height: {{ map_max_height_css | escape }};{% endif %}"
+  {% if map_title == '' %}aria-label="Map"{% endif %}
 >
   <header class="afh-map__header{% if map_title == '' and map_description == '' %} is-empty{% endif %}{% if map_bare == 'true' or map_bare == '1' or map_bare == 'yes' %} is-hidden{% endif %}">
     {%- if map_title != '' -%}<h2 class="afh-map__title">{{ map_title }}</h2>{%- endif -%}

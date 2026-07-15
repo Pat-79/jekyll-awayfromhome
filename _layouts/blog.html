@@ -10,7 +10,7 @@ layout: page
 {%- assign _all_static_paths = site.static_files | map: 'path' | join: '||' -%}
 {%- assign _all_static_paths = '||' | append: _all_static_paths | append: '||' -%}
 
-<section class="page-section">
+<section class="page-section" aria-label="Introduction">
   <div class="container">
     {% if blog_intro and blog_intro != '' %}
       <p data-i18n="blog.intro">{{ blog_intro }}</p>
@@ -20,7 +20,7 @@ layout: page
 
 {%- assign blog_per_page = page.blog_per_page | default: site.blog_page.per_page | default: 10 -%}
 
-<section class="page-section page-section--spaced">
+<section class="page-section page-section--spaced" aria-label="Blog posts">
   <div class="container story-list" data-blog-list data-blog-per-page="{{ blog_per_page }}">
     {%- assign _default_lang = site.lang | default: 'en' -%}
     {%- assign _fallback = site.lang_fallback | default: false -%}

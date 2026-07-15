@@ -137,10 +137,11 @@
   class="afh-video{% if is_bare_video %} afh-video--bare{% endif %}{% if is_fixed_height_video %} afh-video--fixed-height{% endif %}"
   data-video-widget
   style="--afh-video-ratio: {{ video_ratio_css | escape }};{% if video_width_css != '' %} --afh-video-width: {{ video_width_css | escape }};{% endif %}{% if video_height_css != '' %} --afh-video-height: {{ video_height_css | escape }};{% endif %}{% if video_max_width_css != '' %} --afh-video-max-width: {{ video_max_width_css | escape }};{% endif %}{% if video_max_height_css != '' %} --afh-video-max-height: {{ video_max_height_css | escape }};{% endif %}"
+  {% if video_title == '' %}aria-label="Video"{% endif %}
 >
   <header class="afh-video__header{% if video_title == '' and video_description == '' %} is-empty{% endif %}{% if is_bare_video %} is-hidden{% endif %}">
-    <h2 class="afh-video__title">{{ video_title }}</h2>
-    <p class="afh-video__description">{{ video_description }}</p>
+    {%- if video_title != '' -%}<h2 class="afh-video__title">{{ video_title }}</h2>{%- endif -%}
+    {%- if video_description != '' -%}<p class="afh-video__description">{{ video_description }}</p>{%- endif -%}
   </header>
 
   <div class="afh-video__frame">

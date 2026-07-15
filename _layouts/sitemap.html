@@ -25,7 +25,7 @@ layout: page
 {%- assign _archive_page = site.pages | where: 'url', _archive_base | first -%}
 {%- assign _archive_image = _archive_page.image | default: site.default_post_image | default: '/assets/images/default-hero.svg' -%}
 
-<section class="page-section">
+<section class="page-section" aria-label="Introduction">
   <div class="container sitemap-index">
     {% if sitemap_intro and sitemap_intro != '' %}
       <p>{{ sitemap_intro }}</p>

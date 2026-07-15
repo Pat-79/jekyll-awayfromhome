@@ -172,6 +172,7 @@
     {% if _gw_description != '' %}data-gallery-description="{{ _gw_description | escape }}"{% endif %}
     {% if _gw_json_url != '' %}data-gallery-json="{{ _gw_json_url }}"{% endif %}
     {% if _gw_style != '' %}style="{{ _gw_style }}"{% endif %}
+    {% if _gw_title == '' %}aria-label="Image gallery"{% endif %}
   >
     {%- if _gw_title != '' -%}
       <header class="afh-gallery__header" data-gallery-header>
